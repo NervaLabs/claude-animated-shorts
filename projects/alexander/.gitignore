@@ -1,0 +1,8 @@
+node_modules/
+out/
+voice/*.onnx
+voice/*.bin
+voice/*.wav
+voice/gen.log
+audio/*.wav
+src/words.js
