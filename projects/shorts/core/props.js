@@ -487,3 +487,23 @@ function vat(g, x, y, w, h, crack = 0) {
   for (let k = 0; k < 4; k++) { const yy = y - h * (0.12 + k * 0.25); if (crack > 0 && k === 2) { line(g, [[x - w * 0.54, yy], [x - w * 0.1, yy]], 12, "#4a4a52"); line(g, [[x + w * 0.1, yy - crack * 40], [x + w * 0.54, yy]], 12, "#4a4a52"); } else line(g, [[x - w * 0.54, yy], [x + w * 0.54, yy]], 12, "#4a4a52"); }
 }
 function beerWave(g, x0, x1, y, t, h) { smoothPath(g, [[x0, y + 1500], [x0, y], ...Array.from({ length: 12 }, (_, i) => [x0 + ((x1 - x0) * i) / 11, y - h * (0.6 + 0.4 * Math.sin(i * 1.3 + t * 4))]), [x1, y + 1500]]); fillInk(g, "#a8641e", 7); for (let i = 0; i < 14; i++) ell(g, x0 + ((x1 - x0) * i) / 13, y - h * (0.6 + 0.4 * Math.sin(i * 1.17 + t * 4)) + 10, 40 + 10 * Math.sin(i), 26, "#fff6dc", 5); }
+
+// ---------- Paris / misc ----------
+function eiffel(g, x, y, h, col = "#8a6a4a", k = 1) {
+  const u = h / 100; g.save(); g.translate(x, y); g.scale(1, k);
+  const L = (a, b, w = 1.4) => line(g, a.map(([px, py]) => [px * u, py * u]), w * u, col);
+  poly(g, [[-30 * u, 0], [-14 * u, -36 * u], [14 * u, -36 * u], [30 * u, 0], [18 * u, 0], [0, -18 * u], [-18 * u, 0]], col, 0.8 * u);
+  poly(g, [[-14 * u, -36 * u], [-6 * u, -70 * u], [6 * u, -70 * u], [14 * u, -36 * u]], col, 0.8 * u);
+  poly(g, [[-6 * u, -70 * u], [0, -100 * u], [6 * u, -70 * u]], col, 0.8 * u);
+  L([[-17, -36], [17, -36]], 2.4); L([[-8, -60], [8, -60]], 2); L([[-5, -76], [5, -76]], 1.6);
+  for (let i = 0; i < 4; i++) { L([[-28 + i * 4, -i * 9], [-24 + i * 4, -(i + 1) * 9]], 0.6); L([[28 - i * 4, -i * 9], [24 - i * 4, -(i + 1) * 9]], 0.6); }
+  for (let i = 0; i < 3; i++) { L([[-12 + i * 2, -36 - i * 11], [12 - i * 2, -36 - (i + 1) * 11]], 0.5); L([[12 - i * 2, -36 - i * 11], [-12 + i * 2, -36 - (i + 1) * 11]], 0.5); }
+  g.beginPath(); g.arc(0, 0, 18 * u, Math.PI, 0); g.lineWidth = 2 * u; g.strokeStyle = col; g.stroke();
+  g.restore();
+}
+function parisSky(g, x0, x1, y, night = false) {
+  sky3(g, x0, y - 2200, x1 - x0, 2300, night ? "#0d1236" : "#5a8ad0", night ? "#2a3060" : "#b3d2ee", night ? "#4a4a7a" : "#f0e6d8");
+  for (let i = 0; x0 + i * 200 < x1; i++) { const hx = x0 + i * 200, hh = 200 + rnd(i) * 140; rect(g, hx, y - hh, 190, hh, ["#e9dcc0", "#d9c8a8", "#efe2c4"][i % 3], 4); poly(g, [[hx - 6, y - hh], [hx + 95, y - hh - 70], [hx + 196, y - hh]], "#6a7a8a", 4); for (let c = 0; c < 3; c++) rect(g, hx + 20 + c * 56, y - hh + 40, 30, 50, night ? "#ffe08a" : "#3a3a5a", 3); }
+}
+function picFrame(g, x, y, w, h, inner) { rect(g, x - w / 2 - 26, y - h / 2 - 26, w + 52, h + 52, "#c9973f", 7, 6); rect(g, x - w / 2, y - h / 2, w, h, "#3a3a2a", 5); g.save(); g.beginPath(); g.rect(x - w / 2, y - h / 2, w, h); g.clip(); inner && inner(g); g.restore(); }
+function bunny(g, x, y, s, t = 0, col = "#f2efe6") { const u = s / 100; g.save(); g.translate(x, y); ell(g, 0, -30 * u, 40 * u, 30 * u, col, 4 * u); ell(g, 34 * u, -54 * u, 22 * u, 20 * u, col, 4 * u); for (const dx of [26, 40]) ell(g, dx * u, -88 * u + Math.sin(t * 4 + dx) * 2 * u, 7 * u, 22 * u, col, 3 * u, 0.15); g.beginPath(); g.arc(42 * u, -58 * u, 3 * u, 0, TAU); g.fillStyle = INK; g.fill(); ell(g, 55 * u, -50 * u, 3.5 * u, 2.8 * u, "#e98a96", 0); ell(g, -38 * u, -36 * u, 10 * u, 10 * u, "#fff", 2.5 * u); g.restore(); }
