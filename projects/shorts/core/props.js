@@ -453,3 +453,37 @@ const WW = {
   russianOfficer: { tunic: "#1f2a44", trim: "#e7c15f", helmet: "peaked", hatCol: "#f2efe6", trousers: "#1f2a44", beard: "#3a2a22" },
   fisher: { tunic: "#e2b64b", trim: "#c9a35a", helmet: "sailor", hatCol: "#e2b64b", band: "#c9a35a", trousers: "#3a4a5a", beard: "#7a5a3a" },
 };
+
+// ---------- more shared scenery ----------
+function halfTimber(g, x, y, w, h, col = "#efe2c4", roof = "#8a3a2a", lw = 5) {
+  rect(g, x - w / 2, y - h, w, h, col, lw);
+  for (let i = 0; i <= 3; i++) line(g, [[x - w / 2 + (w * i) / 3, y - h], [x - w / 2 + (w * i) / 3, y]], lw * 1.3, "#5a3b2a");
+  line(g, [[x - w / 2, y - h * 0.5], [x + w / 2, y - h * 0.5]], lw * 1.3, "#5a3b2a");
+  line(g, [[x - w / 2, y - h * 0.5], [x - w / 6, y - h]], lw, "#5a3b2a"); line(g, [[x + w / 6, y - h], [x + w / 2, y - h * 0.5]], lw, "#5a3b2a");
+  poly(g, [[x - w / 2 - 16, y - h], [x, y - h - w * 0.6], [x + w / 2 + 16, y - h]], roof, lw);
+  rect(g, x - w * 0.1, y - h * 0.38, w * 0.2, h * 0.38, "#6b4024", lw * 0.7);
+  for (const sx of [-0.3, 0.3]) rect(g, x + sx * w - w * 0.08, y - h * 0.8, w * 0.16, h * 0.18, "#ffe08a", lw * 0.6);
+}
+function medievalTown(g, x0, x1, y, seed = 1, spire = true) {
+  sky3(g, x0, y - 2200, x1 - x0, 2300, "#4f86d0", "#a9cdee", "#efe6d0");
+  if (spire) { rect(g, 700, y - 900, 140, 700, "#c98a7a", 6); poly(g, [[690, y - 900], [770, y - 1350], [850, y - 900]], "#b97a6a", 6); }
+  for (let i = 0; x0 + i * 260 < x1; i++) halfTimber(g, x0 + 130 + i * 260, y, 220, 260 + rnd(seed + i) * 120, ["#efe2c4", "#e6cfa6", "#f3e9d6", "#d9c4a0"][i % 4], ["#8a3a2a", "#6a4a3a", "#9a4a2a"][i % 3]);
+  g.fillStyle = vgrad(g, y, y + 1000, [[0, "#b9ab94"], [1, "#8a7f6c"]]); g.fillRect(x0, y, x1 - x0, 1600); line(g, [[x0, y], [x1, y]], 6);
+  for (let r = 0; r < 10; r++) for (let x = x0; x < x1; x += 90) rect(g, x + (r % 2) * 45, y + r * r * 9, 90, 9 + r * 2, null, 1.5);
+  paintGrain(g, x0, y - 2200, x1 - x0, 3800, 0.08);
+}
+/** dancing pose helper: returns guy state */
+function danceState(t, i, extra = {}) {
+  const p = t * 2.6 + i * 0.37;
+  return { walk: p % 1, armR: [2.2 + Math.sin(p * 6.3) * 0.7, Math.sin(p * 3) * 0.6], armL: [-2.2 - Math.cos(p * 6.3) * 0.7, -Math.sin(p * 3) * 0.6], lean: Math.sin(p * 6.3) * 12, headTilt: Math.cos(p * 6.3) * 10, bob: -Math.abs(Math.sin(p * 6.3)) * 6, ...extra };
+}
+function acacia(g, x, y, h) { limb(g, [[x, y], [x + h * 0.05, y - h * 0.5], [x - h * 0.05, y - h * 0.75]], h * 0.05, "#6b4024", 4); smoothPath(g, [[x - h * 0.6, y - h * 0.75], [x - h * 0.3, y - h * 0.95], [x + h * 0.3, y - h * 0.97], [x + h * 0.6, y - h * 0.78], [x + h * 0.3, y - h * 0.68], [x - h * 0.3, y - h * 0.68]]); fillInk(g, "#5f8a3a", 5); }
+function hut(g, x, y, s) { rect(g, x - s * 0.5, y - s * 0.5, s, s * 0.5, "#c98a5a", 5); poly(g, [[x - s * 0.65, y - s * 0.48], [x, y - s * 1.0], [x + s * 0.65, y - s * 0.48]], "#d9b06a", 5); rect(g, x - s * 0.1, y - s * 0.32, s * 0.2, s * 0.32, "#4a2a1a", 4); }
+function meatChunk(g, x, y, r, rot = 0) { g.save(); g.translate(x, y); g.rotate(rot); smoothPath(g, [[-r, 0], [-r * 0.5, -r * 0.7], [r * 0.6, -r * 0.6], [r, 0], [r * 0.4, r * 0.6], [-r * 0.6, r * 0.5]]); fillInk(g, "#c9434a", r * 0.12); smoothPath(g, [[-r * 0.4, -r * 0.1], [0, -r * 0.35], [r * 0.4, -r * 0.05], [0, r * 0.2]]); fillInk(g, "#f2b4bc", 0); g.restore(); }
+function vulture(g, x, y, s, t) { const fl = Math.sin(t * 8) * 0.5; g.save(); g.translate(x, y); for (const sd of [-1, 1]) poly(g, [[0, 0], [sd * s * 1.2, -s * fl * 0.6 - s * 0.2], [sd * s * 1.4, s * 0.1 - s * fl * 0.4], [sd * s * 0.3, s * 0.25]], "#3a2a2a", s * 0.06, true); ell(g, 0, s * 0.1, s * 0.35, s * 0.22, "#3a2a2a", s * 0.06); ell(g, s * 0.42, -s * 0.05, s * 0.14, s * 0.13, "#e98a7a", s * 0.05); g.restore(); }
+function vat(g, x, y, w, h, crack = 0) {
+  smoothPath(g, [[x - w / 2, y - h], [x + w / 2, y - h], [x + w * 0.55, y - h / 2], [x + w / 2, y], [x - w / 2, y], [x - w * 0.55, y - h / 2]]); fillInk(g, "#9a6a3a", 7);
+  for (let i = 0; i < 6; i++) line(g, [[x - w / 2 + (w * i) / 5, y - h + 6], [x - w / 2 + (w * i) / 5, y - 6]], 3, "rgba(60,30,10,0.45)");
+  for (let k = 0; k < 4; k++) { const yy = y - h * (0.12 + k * 0.25); if (crack > 0 && k === 2) { line(g, [[x - w * 0.54, yy], [x - w * 0.1, yy]], 12, "#4a4a52"); line(g, [[x + w * 0.1, yy - crack * 40], [x + w * 0.54, yy]], 12, "#4a4a52"); } else line(g, [[x - w * 0.54, yy], [x + w * 0.54, yy]], 12, "#4a4a52"); }
+}
+function beerWave(g, x0, x1, y, t, h) { smoothPath(g, [[x0, y + 1500], [x0, y], ...Array.from({ length: 12 }, (_, i) => [x0 + ((x1 - x0) * i) / 11, y - h * (0.6 + 0.4 * Math.sin(i * 1.3 + t * 4))]), [x1, y + 1500]]); fillInk(g, "#a8641e", 7); for (let i = 0; i < 14; i++) ell(g, x0 + ((x1 - x0) * i) / 13, y - h * (0.6 + 0.4 * Math.sin(i * 1.17 + t * 4)) + 10, 40 + 10 * Math.sin(i), 26, "#fff6dc", 5); }
