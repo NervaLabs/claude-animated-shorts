@@ -507,3 +507,28 @@ function parisSky(g, x0, x1, y, night = false) {
 }
 function picFrame(g, x, y, w, h, inner) { rect(g, x - w / 2 - 26, y - h / 2 - 26, w + 52, h + 52, "#c9973f", 7, 6); rect(g, x - w / 2, y - h / 2, w, h, "#3a3a2a", 5); g.save(); g.beginPath(); g.rect(x - w / 2, y - h / 2, w, h); g.clip(); inner && inner(g); g.restore(); }
 function bunny(g, x, y, s, t = 0, col = "#f2efe6") { const u = s / 100; g.save(); g.translate(x, y); ell(g, 0, -30 * u, 40 * u, 30 * u, col, 4 * u); ell(g, 34 * u, -54 * u, 22 * u, 20 * u, col, 4 * u); for (const dx of [26, 40]) ell(g, dx * u, -88 * u + Math.sin(t * 4 + dx) * 2 * u, 7 * u, 22 * u, col, 3 * u, 0.15); g.beginPath(); g.arc(42 * u, -58 * u, 3 * u, 0, TAU); g.fillStyle = INK; g.fill(); ell(g, 55 * u, -50 * u, 3.5 * u, 2.8 * u, "#e98a96", 0); ell(g, -38 * u, -36 * u, 10 * u, 10 * u, "#fff", 2.5 * u); g.restore(); }
+
+// ---------- jet age ----------
+/** side-view jetliner facing +x (tri-jet, rear airstair option) */
+function jet(g, s) {
+  const u = (s.h ?? 100) / 100, lw = clamp(u * 3, 1.5, 7), col = s.col ?? "#e9eef2", stripe = s.stripe ?? "#2f5f9f";
+  g.save(); g.translate(s.x ?? 0, s.y ?? 0); if ((s.dir ?? 1) < 0) g.scale(-1, 1); g.rotate(s.rot ?? 0);
+  poly(g, [[-150 * u, -18 * u], [-180 * u, -80 * u], [-150 * u, -80 * u], [-110 * u, -22 * u]], col, lw);
+  smoothPath(g, [[-170 * u, -10 * u], [-100 * u, -26 * u], [120 * u, -26 * u], [175 * u, -6 * u], [170 * u, 12 * u], [120 * u, 22 * u], [-110 * u, 20 * u], [-170 * u, 6 * u]]); fillInk(g, col, lw);
+  line(g, [[-160 * u, 0], [165 * u, 0]], 6 * u, stripe);
+  for (let i = 0; i < 12; i++) ell(g, (-90 + i * 17) * u, -10 * u, 3.5 * u, 4.5 * u, "#3a4a6a", 0);
+  smoothPath(g, [[140 * u, -20 * u], [160 * u, -14 * u], [150 * u, -8 * u], [134 * u, -12 * u]]); fillInk(g, "#3a4a6a", lw * 0.5);
+  poly(g, [[-20 * u, 6 * u], [60 * u, 6 * u], [-10 * u, 60 * u], [-50 * u, 60 * u]], shade(col, 0.9), lw);
+  rect(g, -150 * u, -46 * u, 40 * u, 18 * u, shade(col, 0.85), lw * 0.8, 8 * u);
+  if (s.stairs) { g.save(); g.translate(-160 * u, 10 * u); g.rotate(0.9 * s.stairs); rect(g, -6 * u, 0, 12 * u, 70 * u, "#8a8f96", lw * 0.6); for (let i = 1; i < 6; i++) line(g, [[-6 * u, i * 12 * u], [6 * u, i * 12 * u]], 1.5 * u); g.restore(); }
+  if (s.label) strokeText(g, s.label, 20 * u, -40 * u, 16 * u, { fill: stripe, lw: 0, shadow: false });
+  g.restore();
+}
+function vaultDoor(g, x, y, r, open = 0, t = 0) {
+  g.save(); g.translate(x, y);
+  rect(g, -r * 1.25, -r * 1.25, r * 2.5, r * 2.5, "#5a5f6a", 7, 12);
+  g.scale(1 - open * 0.75, 1); ell(g, 0, 0, r, r, "#9aa0ab", 8); ell(g, 0, 0, r * 0.8, r * 0.8, "#b9bec8", 5);
+  g.rotate(t * 0.5 * (1 - open)); for (let i = 0; i < 3; i++) { g.rotate(Math.PI / 3); line(g, [[-r * 0.55, 0], [r * 0.55, 0]], r * 0.07, "#4a4a52"); } ell(g, 0, 0, r * 0.18, r * 0.18, "#4a4a52", 4);
+  g.restore();
+}
+function diamond(g, x, y, r, t = 0) { poly(g, [[x - r, y - r * 0.3], [x - r * 0.5, y - r * 0.8], [x + r * 0.5, y - r * 0.8], [x + r, y - r * 0.3], [x, y + r]], "#bfe9ff", r * 0.08); line(g, [[x - r, y - r * 0.3], [x + r, y - r * 0.3]], r * 0.05); line(g, [[x - r * 0.5, y - r * 0.8], [x, y + r], [x + r * 0.5, y - r * 0.8]], r * 0.05); sparkle(g, x + r * 0.4, y - r * 0.6, r * 0.5, (t * 0.8 + x * 0.001) % 1); }

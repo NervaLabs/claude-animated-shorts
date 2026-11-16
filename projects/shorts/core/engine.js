@@ -80,9 +80,9 @@ const ev = (t, k, v = 1) => EVENTS.push({ t, k, v });
 // ---------- titles ----------
 /** stamped title: scales from 1.6 → 1 with a slight overshoot, holds, fades */
 function stamp(g, txt, x, y, size, t, t0, t1, opt = {}) {
-  const a = t - t0; if (a < 0 || t > t1 + 0.12) return;
+  const a = t - t0; if (a < 0 || t > t1) return;
   const k = a < 0.22 ? lerp(1.8, 1, easeOut(a / 0.22)) : 1 + 0.012 * Math.sin(a * 2);
-  const al = clamp(a / 0.08) * clamp((t1 + 0.12 - t) / 0.12);
+  const al = clamp(a / 0.08) * clamp((t1 - t) / 0.1);
   g.save(); g.font = `${opt.weight ?? 900} ${size}px ${opt.font ?? "Cinzel"}`; g.letterSpacing = (opt.spacing ?? 2) + "px"; const fit = Math.min(1, 960 / (g.measureText(txt).width + size * 0.3)); g.restore();
   g.save(); g.globalAlpha = al; g.translate(x, y); g.scale(k * fit, k * fit); g.rotate(((opt.rot ?? -3) * Math.PI) / 180);
   if (opt.plate) { g.save(); g.font = `${opt.weight ?? 900} ${size}px ${opt.font ?? "Cinzel"}`; const w = g.measureText(txt).width + size * 0.9; rect(g, -w / 2, -size * 0.72, w, size * 1.44, opt.plate, size * 0.08, size * 0.18); g.restore(); }
@@ -91,10 +91,10 @@ function stamp(g, txt, x, y, size, t, t0, t1, opt = {}) {
 }
 /** typewriter-ish label with a pop for each letter */
 function label(g, txt, x, y, size, t, t0, t1, opt = {}) {
-  const a = t - t0; if (a < 0 || t > t1 + 0.12) return;
+  const a = t - t0; if (a < 0 || t > t1) return;
   const n = Math.min(txt.length, Math.floor(a * 40) + 1);
   g.save(); g.font = `900 ${size}px ${opt.font ?? "Montserrat"}`; g.letterSpacing = (opt.spacing ?? 1) + "px"; const fit = Math.min(1, 980 / (g.measureText(txt).width + size * 0.3)); g.restore();
-  g.save(); g.globalAlpha = clamp((t1 + 0.12 - t) / 0.12); g.translate(x, y); g.scale(fit, fit); g.translate(-x, -y);
+  g.save(); g.globalAlpha = clamp((t1 - t) / 0.1); g.translate(x, y); g.scale(fit, fit); g.translate(-x, -y);
   strokeText(g, txt.slice(0, n), x, y, size, { font: opt.font ?? "Montserrat", fill: opt.fill ?? "#fff", weight: 900, spacing: opt.spacing ?? 1 });
   g.restore();
 }
