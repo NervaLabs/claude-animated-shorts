@@ -370,3 +370,86 @@ function museumCase(g, x, y, w, h, inner) {
   line(g, [[x - w / 2 + 30, y - h + 40], [x - w / 2 + 90, y - h + 120]], 8, "rgba(255,255,255,0.7)");
 }
 function plaque(g, x, y, txt, size = 40) { g.save(); g.font = `900 ${size}px Cinzel`; const w = g.measureText(txt).width + size; rect(g, x - w / 2, y - size * 0.8, w, size * 1.6, "#d4a632", 5, 6); strokeText(g, txt, x, y, size, { font: "Cinzel", fill: "#3a2418", lw: 0, shadow: false }); g.restore(); }
+
+// ---------- 20th-century props ----------
+/** side-view propeller plane facing +x. s: {h, col, roundel, wood, t, bomber} */
+function plane(g, s) {
+  const u = (s.h ?? 100) / 100, lw = clamp(u * 3, 1.5, 7), t = s.t ?? 0, col = s.col ?? "#6f7a5a";
+  g.save(); g.translate(s.x ?? 0, s.y ?? 0); if ((s.dir ?? 1) < 0) g.scale(-1, 1); g.rotate(s.rot ?? 0);
+  const wood = s.wood, fill = wood ? "#c9965a" : col;
+  poly(g, [[-120 * u, -10 * u], [-150 * u, -46 * u], [-130 * u, -46 * u], [-100 * u, -14 * u]], fill, lw); // tail fin
+  smoothPath(g, [[-140 * u, -8 * u], [-60 * u, -22 * u], [70 * u, -24 * u], [110 * u, -12 * u], [112 * u, 8 * u], [70 * u, 18 * u], [-60 * u, 12 * u], [-140 * u, 2 * u]]); fillInk(g, fill, lw);
+  if (wood) for (let i = -4; i < 6; i++) line(g, [[i * 24 * u, -20 * u], [i * 24 * u + 4 * u, 14 * u]], 1.6 * u, "rgba(90,50,20,0.55)");
+  smoothPath(g, [[40 * u, -22 * u], [60 * u, -38 * u], [86 * u, -36 * u], [96 * u, -18 * u]]); fillInk(g, wood ? "#b9864a" : "#bfe0f2", lw * 0.8);
+  poly(g, [[-30 * u, 0], [40 * u, 0], [30 * u, 26 * u], [-40 * u, 22 * u]], shade(fill, 0.85), lw); // wing
+  if (s.roundel) { ell(g, -60 * u, -4 * u, 12 * u, 12 * u, "#2f4f9a", lw * 0.5); ell(g, -60 * u, -4 * u, 8 * u, 8 * u, "#f6f3ea", 0); ell(g, -60 * u, -4 * u, 4.5 * u, 4.5 * u, "#c0262e", 0); }
+  if (s.bomber) for (const ex of [-10, 20]) { ell(g, ex * u, 10 * u, 12 * u, 8 * u, shade(fill, 0.8), lw * 0.7); }
+  rect(g, 110 * u, -6 * u, 8 * u, 12 * u, "#3a3a44", lw * 0.6);
+  const pr = Math.sin(t * 60) * 34 * u; ell(g, 122 * u, 0, 4 * u, Math.abs(pr) + 2 * u, "rgba(60,60,70,0.6)", 0);
+  if (s.pilot) { ell(g, 66 * u, -36 * u, 9 * u, 9 * u, SKIN, lw * 0.5); ell(g, 66 * u, -40 * u, 9 * u, 6 * u, "#6b4024", lw * 0.5); }
+  g.restore();
+}
+function truck(g, s) {
+  const u = (s.h ?? 100) / 100, lw = clamp(u * 3, 1.5, 7), wood = s.wood, col = wood ? "#c9965a" : (s.col ?? "#5f6a45");
+  g.save(); g.translate(s.x ?? 0, s.y ?? 0); if ((s.dir ?? 1) < 0) g.scale(-1, 1);
+  rect(g, -90 * u, -80 * u, 120 * u, 60 * u, col, lw, 6 * u);
+  rect(g, 30 * u, -64 * u, 50 * u, 44 * u, shade(col, 1.08), lw, 6 * u); rect(g, 44 * u, -58 * u, 26 * u, 18 * u, wood ? "#b9864a" : "#bfe0f2", lw * 0.6);
+  if (wood) for (let i = 0; i < 5; i++) line(g, [[-88 * u, (-74 + i * 12) * u], [28 * u, (-74 + i * 12) * u]], 1.5 * u, "rgba(90,50,20,0.5)");
+  for (const wx of [-60, 50]) { ell(g, wx * u, -18 * u, 16 * u, 16 * u, "#26222c", lw); ell(g, wx * u, -18 * u, 6 * u, 6 * u, "#8a8a96", 0); }
+  g.restore();
+}
+function hangar(g, x, y, w, h, wood = false) {
+  smoothPath(g, [[x - w / 2, y], [x - w / 2, y - h * 0.5], [x, y - h], [x + w / 2, y - h * 0.5], [x + w / 2, y]]); fillInk(g, wood ? "#c9965a" : "#8a8f96", 6);
+  for (let i = 1; i < 8; i++) line(g, [[x - w / 2 + (w * i) / 8, y], [x - w / 2 + (w * i) / 8, y - h * (0.55 + 0.4 * Math.sin((i / 8) * Math.PI))]], 2.5, "rgba(40,30,30,0.35)");
+  rect(g, x - w * 0.3, y - h * 0.55, w * 0.6, h * 0.55, "#2a2430", 5);
+}
+function landingCraft(g, s) {
+  const u = (s.h ?? 100) / 100, lw = clamp(u * 3, 1.5, 7);
+  g.save(); g.translate(s.x ?? 0, s.y ?? 0); g.rotate(Math.sin((s.t ?? 0) * 2 + (s.seed ?? 0)) * 0.03);
+  poly(g, [[-90 * u, -40 * u], [70 * u, -40 * u], [90 * u, -60 * u], [96 * u, 0], [-90 * u, 0]], "#6f7a6a", lw);
+  if (s.ramp) poly(g, [[90 * u, -60 * u], [96 * u, 0], [160 * u, 10 * u], [150 * u, -10 * u]], "#5f6a5a", lw);
+  g.restore();
+}
+function dog(g, s) {
+  const u = (s.h ?? 100) / 100, lw = clamp(u * 3, 1.5, 6), ph = s.phase ?? null, col = s.col ?? "#b98a5a";
+  g.save(); g.translate(s.x ?? 0, s.y ?? 0); if ((s.dir ?? 1) < 0) g.scale(-1, 1);
+  for (const [lx, o] of [[-30, 0], [-20, 0.5], [22, 0.25], [32, 0.75]]) { const a = ph != null ? Math.sin((ph + o) * TAU) * 0.5 : 0; limb(g, [[lx * u, -34 * u], [lx * u + Math.sin(a) * 30 * u, 0]], 7 * u, col, lw * 0.6); }
+  ell(g, 0, -48 * u, 46 * u, 22 * u, col, lw);
+  ell(g, 46 * u, -70 * u, 22 * u, 20 * u, col, lw); ell(g, 64 * u, -64 * u, 12 * u, 9 * u, col, lw * 0.7); ell(g, 74 * u, -66 * u, 4 * u, 4 * u, INK, 0);
+  poly(g, [[30 * u, -84 * u], [34 * u, -104 * u], [46 * u, -86 * u]], shade(col, 0.8), lw * 0.7);
+  g.beginPath(); g.arc(52 * u, -74 * u, 2.6 * u, 0, TAU); g.fillStyle = INK; g.fill();
+  const wag = Math.sin((s.t ?? 0) * 14) * 0.5; line(g, [[-44 * u, -52 * u], [-44 * u - Math.cos(wag) * 26 * u, -52 * u - 20 * u - Math.sin(wag) * 10 * u]], 6 * u, INK); line(g, [[-44 * u, -52 * u], [-44 * u - Math.cos(wag) * 26 * u, -52 * u - 20 * u - Math.sin(wag) * 10 * u]], 3.5 * u, col);
+  if (s.tongue) ell(g, 66 * u, -54 * u, 4 * u, 7 * u, "#e86e78", lw * 0.4);
+  g.restore();
+}
+function telegram(g, x, y, w, lines, k = 1, rot = 0, title = "TELEGRAM") {
+  g.save(); g.translate(x, y); g.rotate(rot); g.scale(easeBack(k), easeBack(k));
+  const h = 120 + lines.length * 70;
+  rect(g, -w / 2, -h / 2, w, h, "#f3e7c4", 7, 6);
+  strokeText(g, title, 0, -h / 2 + 55, 46, { font: "Cinzel", fill: "#5a1e28", lw: 0, shadow: false });
+  line(g, [[-w * 0.42, -h / 2 + 90], [w * 0.42, -h / 2 + 90]], 3);
+  lines.forEach((l, i) => { g.save(); g.font = "800 40px Montserrat"; g.textAlign = "center"; g.fillStyle = "#1c1422"; g.fillText(l, 0, -h / 2 + 150 + i * 70, w * 0.9); g.restore(); });
+  g.restore();
+}
+function football(g, x, y, r, rot = 0) {
+  g.save(); g.translate(x, y); g.rotate(rot); ell(g, 0, 0, r, r, "#f6f3ea", r * 0.1);
+  g.beginPath(); for (let i = 0; i < 5; i++) { const a = (i / 5) * TAU - Math.PI / 2; g.lineTo(Math.cos(a) * r * 0.35, Math.sin(a) * r * 0.35); } g.closePath(); g.fillStyle = INK; g.fill();
+  for (let i = 0; i < 5; i++) { const a = (i / 5) * TAU - Math.PI / 2; line(g, [[Math.cos(a) * r * 0.35, Math.sin(a) * r * 0.35], [Math.cos(a) * r * 0.95, Math.sin(a) * r * 0.95]], r * 0.07); }
+  g.restore();
+}
+function fog(g, t, a = 0.5, y0 = 900) {
+  g.save();
+  for (let i = 0; i < 9; i++) { const x = ((rnd(i) * 1600 + t * (30 + i * 6)) % 1900) - 400, y = y0 + rnd(i * 3) * 900; g.globalAlpha = a * (0.5 + 0.5 * rnd(i * 5)); g.fillStyle = rgrad(g, x, y, 0, 420, [[0, "rgba(225,230,238,0.9)"], [1, "rgba(225,230,238,0)"]]); g.fillRect(x - 420, y - 420, 840, 840); }
+  g.restore();
+}
+const WW = {
+  tommy: { tunic: "#8a7a4a", trim: "#6a5a3a", helmet: "steel", hatCol: "#6f6a45", trousers: "#7a6a40", boots: "#3a2a1a" },
+  gi: { tunic: "#6f6a45", trim: "#5a5535", helmet: "steel", hatCol: "#5f5a3a", trousers: "#7a7350", boots: "#3a2a1a" },
+  german: { tunic: "#6a6f6a", trim: "#4a4f4a", helmet: "peaked", hatCol: "#5a5f5a", badge: "#c9c9c9", trousers: "#5a5f5a", boots: "#1f1a24" },
+  pilot: { tunic: "#6b4a2a", trim: "#d9c08a", helmet: "cap", hatCol: "#5a3a22", trousers: "#5a6a7a", boots: "#1f1a24" },
+  rafPilot: { tunic: "#5a6f8f", trim: "#d9c08a", helmet: "peaked", hatCol: "#4a5f7f", trousers: "#4a5f7f", moust: true, beard: null },
+  general: { tunic: "#6f6a45", trim: "#e7c15f", helmet: "steel", hatCol: "#5f5a3a", trousers: "#a89a6a", boots: "#5a3a22", sash: null },
+  russianSailor: { tunic: "#f2efe6", trim: "#2f4f8f", helmet: "sailor", hatCol: "#1f1a24", band: "#c9a35a", trousers: "#1f2a44" },
+  russianOfficer: { tunic: "#1f2a44", trim: "#e7c15f", helmet: "peaked", hatCol: "#f2efe6", trousers: "#1f2a44", beard: "#3a2a22" },
+  fisher: { tunic: "#e2b64b", trim: "#c9a35a", helmet: "sailor", hatCol: "#e2b64b", band: "#c9a35a", trousers: "#3a4a5a", beard: "#7a5a3a" },
+};
