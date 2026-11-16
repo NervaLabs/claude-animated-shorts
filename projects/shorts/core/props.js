@@ -532,3 +532,23 @@ function vaultDoor(g, x, y, r, open = 0, t = 0) {
   g.restore();
 }
 function diamond(g, x, y, r, t = 0) { poly(g, [[x - r, y - r * 0.3], [x - r * 0.5, y - r * 0.8], [x + r * 0.5, y - r * 0.8], [x + r, y - r * 0.3], [x, y + r]], "#bfe9ff", r * 0.08); line(g, [[x - r, y - r * 0.3], [x + r, y - r * 0.3]], r * 0.05); line(g, [[x - r * 0.5, y - r * 0.8], [x, y + r], [x + r * 0.5, y - r * 0.8]], r * 0.05); sparkle(g, x + r * 0.4, y - r * 0.6, r * 0.5, (t * 0.8 + x * 0.001) % 1); }
+
+// ---------- ancient & misc ----------
+function mammoth(g, s) {
+  const u = (s.h ?? 100) / 100, lw = clamp(u * 3, 1.5, 7), ph = s.phase ?? null, col = s.col ?? "#7a4a2a";
+  g.save(); g.translate(s.x ?? 0, s.y ?? 0); if ((s.dir ?? 1) < 0) g.scale(-1, 1);
+  g.save(); g.globalAlpha = 0.28; ell(g, 0, 0, 90 * u, 10 * u, "#1a1030", 0); g.restore();
+  for (const [lx, o] of [[-50, 0], [-30, 0.5], [30, 0.25], [50, 0.75]]) { const a = ph != null ? Math.sin((ph + o) * TAU) * 0.3 : 0; limb(g, [[lx * u, -50 * u], [lx * u + Math.sin(a) * 30 * u, 0]], 22 * u, shade(col, o % 0.5 ? 0.85 : 1), lw); }
+  smoothPath(g, [[-80 * u, -40 * u], [-70 * u, -110 * u], [0, -140 * u], [60 * u, -130 * u], [90 * u, -90 * u], [80 * u, -40 * u], [0, -30 * u]]); fillInk(g, col, lw);
+  for (let i = 0; i < 8; i++) line(g, [[(-60 + i * 18) * u, -50 * u], [(-64 + i * 18) * u, -20 * u]], 3 * u, shade(col, 0.75));
+  ell(g, 90 * u, -110 * u, 40 * u, 40 * u, col, lw);
+  limb(g, [[118 * u, -100 * u], [130 * u, -60 * u], [120 * u, -20 * u], [132 * u, -10 * u]], 13 * u, col, lw * 0.8);
+  g.beginPath(); g.moveTo(108 * u, -86 * u); g.quadraticCurveTo(170 * u, -70 * u, 150 * u, -130 * u); g.lineWidth = 11 * u; g.strokeStyle = INK; g.stroke(); g.lineWidth = 7 * u; g.strokeStyle = "#f6f0dc"; g.stroke();
+  g.beginPath(); g.arc(100 * u, -120 * u, 3.5 * u, 0, TAU); g.fillStyle = INK; g.fill();
+  g.restore();
+}
+function pyramid(g, x, y, s, k = 1) { poly(g, [[x - s, y], [x - s + s * k, y - s * k], [x - s + 2 * s * k, y]], "#e8c47a", 6); if (k >= 1) { poly(g, [[x, y - s], [x + s, y], [x + s * 0.18, y]], "#c99a52", 0); poly(g, [[x - s, y], [x, y - s], [x + s, y]], null, 6); } for (let i = 1; i < 6; i++) line(g, [[x - s + (s * i) / 6 * k, y - (s * i) / 6 * k], [x - s + 2 * s * k - (s * i) / 6 * k, y - (s * i) / 6 * k]], 2, "rgba(120,80,30,0.4)"); }
+function ziggurat(g, x, y, s) { for (let i = 0; i < 4; i++) rect(g, x - s + i * s * 0.22, y - (i + 1) * s * 0.25, 2 * s - i * s * 0.44, s * 0.25, ["#c9a87a", "#b9986a", "#d9b88a", "#c9a87a"][i], 5); }
+function cake(g, x, y, s, txt, t = 0) { rect(g, x - s, y - s * 0.6, s * 2, s * 0.6, "#f2b4bc", 6, 10); rect(g, x - s, y - s * 0.6, s * 2, s * 0.15, "#fff6f6", 4, 6); for (let i = -2; i <= 2; i++) { rect(g, x + i * s * 0.35 - 6, y - s * 0.95, 12, s * 0.35, "#cfe9ff", 3); flame(g, x + i * s * 0.35, y - s * 0.97, s * 0.07, t + i); } if (txt) strokeText(g, txt, x, y - s * 0.3, s * 0.32, { fill: "#c0262e", lw: 0, shadow: false }); }
+function gothicCollege(g, x, y, w, h) { rect(g, x - w / 2, y - h, w, h, "#d9c8a0", 7); for (let i = 0; i < 5; i++) { const tx = x - w / 2 + (w * i) / 4; rect(g, tx - 24, y - h - 120, 48, 120, "#d9c8a0", 5); poly(g, [[tx - 30, y - h - 120], [tx, y - h - 220], [tx + 30, y - h - 120]], "#b9a880", 5); } for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++) { const wx = x - w / 2 + 50 + c * (w - 100) / 4; smoothPath(g, [[wx - 26, y - h + 120 + r * 220 + 110], [wx - 26, y - h + 120 + r * 220 + 30], [wx, y - h + 120 + r * 220], [wx + 26, y - h + 120 + r * 220 + 30], [wx + 26, y - h + 120 + r * 220 + 110]]); fillInk(g, "#5a7a9a", 4); } smoothPath(g, [[x - 60, y], [x - 60, y - 140], [x, y - 200], [x + 60, y - 140], [x + 60, y]]); fillInk(g, "#5a3b2a", 6); }
+function stepTemple(g, x, y, s) { for (let i = 0; i < 4; i++) rect(g, x - s + i * s * 0.2, y - (i + 1) * s * 0.28, 2 * s - i * s * 0.4, s * 0.28, ["#d9c8a0", "#c9b890", "#e2d4ae", "#d9c8a0"][i], 5); rect(g, x - s * 0.12, y - s * 1.12, s * 0.24, s * 1.12, "#b9a880", 4); for (const dx of [-0.3, 0.3]) { rect(g, x + dx * s - s * 0.14, y - s * 1.4, s * 0.28, s * 0.28, dx < 0 ? "#c0392b" : "#2f6fcf", 5); } }
