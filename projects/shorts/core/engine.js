@@ -83,7 +83,8 @@ function stamp(g, txt, x, y, size, t, t0, t1, opt = {}) {
   const a = t - t0; if (a < 0 || t > t1 + 0.12) return;
   const k = a < 0.22 ? lerp(1.8, 1, easeOut(a / 0.22)) : 1 + 0.012 * Math.sin(a * 2);
   const al = clamp(a / 0.08) * clamp((t1 + 0.12 - t) / 0.12);
-  g.save(); g.globalAlpha = al; g.translate(x, y); g.scale(k, k); g.rotate(((opt.rot ?? -3) * Math.PI) / 180);
+  g.save(); g.font = `${opt.weight ?? 900} ${size}px ${opt.font ?? "Cinzel"}`; g.letterSpacing = (opt.spacing ?? 2) + "px"; const fit = Math.min(1, 960 / (g.measureText(txt).width + size * 0.3)); g.restore();
+  g.save(); g.globalAlpha = al; g.translate(x, y); g.scale(k * fit, k * fit); g.rotate(((opt.rot ?? -3) * Math.PI) / 180);
   if (opt.plate) { g.save(); g.font = `${opt.weight ?? 900} ${size}px ${opt.font ?? "Cinzel"}`; const w = g.measureText(txt).width + size * 0.9; rect(g, -w / 2, -size * 0.72, w, size * 1.44, opt.plate, size * 0.08, size * 0.18); g.restore(); }
   strokeText(g, txt, 0, 0, size, { font: opt.font ?? "Cinzel", weight: opt.weight ?? 900, fill: opt.fill ?? "#ffe08a", lw: size * 0.14, spacing: opt.spacing ?? 2, shadow: opt.shadow });
   g.restore();
@@ -92,7 +93,8 @@ function stamp(g, txt, x, y, size, t, t0, t1, opt = {}) {
 function label(g, txt, x, y, size, t, t0, t1, opt = {}) {
   const a = t - t0; if (a < 0 || t > t1 + 0.12) return;
   const n = Math.min(txt.length, Math.floor(a * 40) + 1);
-  g.save(); g.globalAlpha = clamp((t1 + 0.12 - t) / 0.12);
+  g.save(); g.font = `900 ${size}px ${opt.font ?? "Montserrat"}`; g.letterSpacing = (opt.spacing ?? 1) + "px"; const fit = Math.min(1, 980 / (g.measureText(txt).width + size * 0.3)); g.restore();
+  g.save(); g.globalAlpha = clamp((t1 + 0.12 - t) / 0.12); g.translate(x, y); g.scale(fit, fit); g.translate(-x, -y);
   strokeText(g, txt.slice(0, n), x, y, size, { font: opt.font ?? "Montserrat", fill: opt.fill ?? "#fff", weight: 900, spacing: opt.spacing ?? 1 });
   g.restore();
 }
@@ -110,6 +112,7 @@ function captions(g, t) {
   const txt = w.w.replace(/[.,:;?!]+$/, "").replace(/^"|"$/g, "");
   g.save(); g.translate(W / 2, H * 0.705); g.scale(k, k);
   g.font = "900 96px Montserrat"; g.textAlign = "center"; g.textBaseline = "middle"; g.lineJoin = "round";
+  const fit = Math.min(1, 1000 / (g.measureText(txt).width + 30)); g.scale(fit, fit);
   g.fillStyle = "rgba(0,0,0,0.35)"; g.fillText(txt, 4, 8);
   g.lineWidth = 15; g.strokeStyle = "#0e0a12"; g.strokeText(txt, 0, 0);
   g.fillStyle = "#ffffff"; g.fillText(txt, 0, 0);
