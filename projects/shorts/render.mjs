@@ -3,7 +3,7 @@ import { createRequire } from "module"; const { chromium } = createRequire(impor
 import fs from "fs"; import path from "path"; import { spawn } from "child_process";
 const here = path.dirname(new URL(import.meta.url).pathname);
 const [vdir0, mode, arg] = process.argv.slice(2);
-const vdir = path.resolve(vdir0), cur = path.join(here, "out/cur");
+const vdir = path.resolve(vdir0), curName = "cur-" + path.basename(vdir) + "-" + (mode === "stills" ? "s" : "v"), cur = path.join(here, "out", curName);
 fs.mkdirSync(cur, { recursive: true });
 fs.writeFileSync(path.join(cur, "words.js"), "window.WORDS=" + fs.readFileSync(path.join(vdir, "words.json")) + ";");
 fs.copyFileSync(path.join(vdir, "scenes.js"), path.join(cur, "scenes.js"));
@@ -14,7 +14,7 @@ async function openPage() {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on("pageerror", (e) => { errs++; console.error("PAGEERR", e.message); });
   page.on("console", (m) => { if (m.type() === "error") console.error("CONSOLE", m.text()); });
-  await page.goto("file://" + path.join(here, "core/index.html"));
+  await page.goto("file://" + path.join(here, "core/index.html") + "?cur=" + curName);
   await page.evaluate(() => window.READY);
   return page;
 }
