@@ -14,7 +14,7 @@ function buildShots() {
     ev(tY, "boom", 0.4); ev(tR, "boom", 0.4); ev(tP, "clank"); }
   // 2 Tenochtitlan 1325
   { const tT = wt(2, "Tenochtitlan"), tY = wt(2, "1325"), tC = wt(2, "centuries");
-    S2(2, { bg: "lake", draw: (g, t) => { if (t < tC - 0.2) { const k = clamp((t - tT) / 2); g.save(); g.globalAlpha = Math.max(0.2, k); stepTemple(g, 540, 1700, 500); g.restore(); for (let i = 0; i < 3; i++) guy(g, C.aztec(i), { x: 200 + i * 340, y: 1860, h: 460, expr: "happy", blink: blinkAt(t, i), t }); } else { timeline(g, 150, 930, 1500, 1050, 1400, [{ y: 1096, label: "OXFORD" }, { y: 1325, label: "TENOCHTITLAN", up: true }], 1); } },
+    S2(2, { bg: "lake", draw: (g, t) => { rect(g, -400, 1640, 1900, 700, "#c9a06a", 6); if (t < tC - 0.2) { const k = clamp((t - tT) / 2); g.save(); g.globalAlpha = Math.max(0.2, k); stepTemple(g, 540, 1700, 500); g.restore(); for (let i = 0; i < 3; i++) guy(g, C.aztec(i), { x: 200 + i * 340, y: 1860, h: 460, expr: "happy", blink: blinkAt(t, i), t }); } else { timeline(g, 150, 930, 1500, 1050, 1400, [{ y: 1096, label: "OXFORD" }, { y: 1325, label: "TENOCHTITLAN", up: true }], 1); } },
       titles: [[tT, "TENOCHTITLAN FOUNDED...", "label"], [tY, "1325", "stamp", { size: 150 }], [tC, "OXFORD: CENTURIES AHEAD", "label", { fill: "#ffe08a" }]] });
     ev(tY, "drums"); ev(tC, "ding"); }
 }
