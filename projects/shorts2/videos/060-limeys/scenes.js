@@ -20,7 +20,7 @@ function buildShots() {
     ev(tY, "boom", 0.4); ev(tL, "pour"); }
   // 3 scurvy vanishes → endurance → "Limeys"
   { const tV = wt(3, "vanished"), tE = wt(3, "endurance"), tL = wt(3, "Limeys");
-    S2(3, { bg: "sea", draw: (g, t) => { sea(g, 1300, t, -900, 2000, "#2fa0c8", "#1f6f9a"); if (t < tL - 0.2) { sailShip(g, { x: 540, y: 1500, h: 480, t, hull: "#3a2a1a", sail: "#f6f3ea", flag: ["#c0392b", "#fff", "#2f4f9f"], seed: 1 }); } else { for (let i = 0; i < 3; i++) guy(g, SAIL(i), { x: 220 + i * 320, y: 1840, h: 560, expr: "laugh", armR: [2.8, 0], blink: blinkAt(t, i), t }); for (let i = 0; i < 4; i++) lime(g, 160 + i * 250, 1100 + Math.sin(t * 3 + i) * 30, 50); } },
+    S2(3, { bg: "sea", draw: (g, t) => { sea(g, 1300, t, -900, 2000, "#2fa0c8", "#1f6f9a"); if (t < tL - 0.2) { sailShip(g, { x: 540, y: 1500, h: 480, t, hull: "#3a2a1a", sail: "#f6f3ea", flag: ["#c0392b"], seed: 1 }); } else { for (let i = 0; i < 3; i++) guy(g, SAIL(i), { x: 220 + i * 320, y: 1840, h: 560, expr: "laugh", armR: [2.8, 0], blink: blinkAt(t, i), t }); for (let i = 0; i < 4; i++) lime(g, 160 + i * 250, 1100 + Math.sin(t * 3 + i) * 30, 50); } },
       titles: [[tV, "SCURVY VANISHED", "stamp", { size: 110, fill: "#c8ffb0" }], [tE, "HUGE ENDURANCE AT SEA", "label"], [tL, "“LIMEYS”", "stamp", { size: 150, fill: "#c8ff8a" }]] });
     ev(tV, "ding"); ev(tL, "cheer", 0.6); }
 }

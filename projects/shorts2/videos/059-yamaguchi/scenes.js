@@ -7,7 +7,7 @@ function buildShots() {
   const light = (g, t, t0) => { const k = clamp(1 - Math.abs(t - t0 - 0.3) / 0.6); if (k > 0) { g.save(); g.globalAlpha = k * 0.9; g.fillStyle = "#fffbe8"; g.fillRect(-500, -500, 2200, 3000); g.restore(); } };
   const train = (g, x, y, t) => { for (let i = 0; i < 3; i++) { rect(g, x + i * 330, y - 200, 310, 180, ["#3a4a5a", "#4a5a6a", "#4a5a6a"][i], 6, 12); for (let w = 0; w < 4; w++) rect(g, x + i * 330 + 20 + w * 72, y - 170, 54, 60, "#f6f0d0", 4, 4); ell(g, x + i * 330 + 60, y - 10, 26, 26, "#2a2a32", 4); ell(g, x + i * 330 + 250, y - 10, 26, 26, "#2a2a32", 4); } };
   // 0 hook
-  S2(0, { bg: "americanTown", blur: true, draw: (g, t) => { guy(g, TY, { x: 540, y: 1840, h: 680, expr: "calm", blink: blinkAt(t, 1), t }); },
+  S2(0, { bg: "americanTown", blur: true, draw: (g, t) => { guy(g, TY, { x: 540, y: 1840, h: 680, expr: "neutral", blink: blinkAt(t, 1), t }); },
     titles: [["engineer", "A JAPANESE ENGINEER", "label"], ["both", "SURVIVED BOTH ATOMIC BOMBINGS", "stamp", { size: 70 }]] }, muted);
   ev(wt(0, "both"), "drone");
   // 1 Aug 6 1945, Hiroshima, business trip, < 2 miles away
@@ -22,12 +22,12 @@ function buildShots() {
     ev(tTr, "rumble", 0.4); ev(tN, "drone"); }
   // 3 three days later, describing the blast — the second bomb
   { const tTh = wt(3, "Three"), tBo = wt(3, "boss"), tSe = wt(3, "second");
-    S2(3, { bg: "victorianRoom", draw: (g, t) => { rect(g, 620, 820, 360, 440, "#cfe0f0", 8, 6); guy(g, TY, { x: 300, y: 1840, h: 600, expr: "talk", mouthOpen: t < tSe ? talk(t) : 0, armR: [2.4, -0.3], blink: blinkAt(t, 1), t }); guy(g, C.suit(2), { x: 700, y: 1840, h: 600, dir: -1, expr: "neutral", blink: blinkAt(t, 2), t }); light(g, t, tSe); },
+    S2(3, { bg: "victorianRoom", draw: (g, t) => { rect(g, 620, 820, 360, 440, "#cfe0f0", 8, 6); guy(g, TY, { x: 300, y: 1840, h: 600, expr: "neutral", mouthOpen: t < tSe ? talk(t) : 0, armR: [2.4, -0.3], blink: blinkAt(t, 1), t }); guy(g, C.suit(2), { x: 700, y: 1840, h: 600, dir: -1, expr: "neutral", blink: blinkAt(t, 2), t }); light(g, t, tSe); },
       titles: [[tTh, "THREE DAYS LATER", "label"], [tBo, "DESCRIBING IT TO HIS BOSS", "label"], [tSe, "THE SECOND BOMB FELL", "stamp", { size: 92 }]] }, muted);
     ev(tSe, "rumble", 0.5); }
   // 4 survived; lived to 93
   { const tA = wt(4, "again"), tN = wt(4, "93");
-    S2(4, { bg: "japanVillage", draw: (g, t) => { guy(g, { ...TY, hair: "#d9d9d9" }, { x: 540, y: 1840, h: 640, expr: "calm", blink: blinkAt(t, 1), t }); for (let i = 0; i < 6; i++) { const q = (t * 0.25 + i / 6) % 1; ell(g, 100 + i * 180 + Math.sin(t + i) * 30, 600 + q * 1300, 12, 9, "#f6c0d0", 2); } },
+    S2(4, { bg: "japanVillage", draw: (g, t) => { guy(g, { ...TY, hair: "#d9d9d9" }, { x: 540, y: 1840, h: 640, expr: "neutral", blink: blinkAt(t, 1), t }); for (let i = 0; i < 6; i++) { const q = (t * 0.25 + i / 6) % 1; ell(g, 100 + i * 180 + Math.sin(t + i) * 30, 600 + q * 1300, 12, 9, "#f6c0d0", 2); } },
       titles: [[tA, "HE SURVIVED AGAIN", "stamp", { size: 100 }], [tN, "AND LIVED TO 93", "label", { fill: "#ffe0f0" }]] }, muted);
     ev(tN, "choir", 0.4); }
 }
