@@ -11,7 +11,7 @@ function buildShots() {
   ev(wt(0, "volcanic"), "rumble");
   // 1 1883 Krakatoa, heard 3,000 miles away
   { const tY = wt(1, "1883"), tK = wt(1, "Krakatoa"), tT = wt(1, "3,000");
-    S2(1, { bg: "sea", keys: [[0, 540, 1300, 1.0, 0], [10, 540, 1250, 0.9, 0]], draw: (g, t) => { sea(g, 1800, t, -900, 2000, "#2f6f94", "#1f4f74"); volc(g, 540, 1820, clamp((t - tK + 0.2) / 1.2), t); if (t > tT - 0.2) for (let i = 0; i < 3; i++) { const q = ((t - tT) * 0.8 + i / 3) % 1; g.save(); g.globalAlpha = 1 - q; g.beginPath(); g.arc(540, 1260, 100 + q * 700, 0, TAU); g.lineWidth = 10; g.strokeStyle = "#ffe08a"; g.stroke(); g.restore(); } },
+    S2(1, { bg: "sea", keys: [[0, 540, 1300, 1.0, 0], [10, 540, 1250, 0.9, 0]], draw: (g, t) => { sea(g, 1150, t, -900, 2000, "#2f6f94", "#1f4f74"); volc(g, 540, 1820, clamp((t - tK + 0.2) / 1.2), t); if (t > tT - 0.2) for (let i = 0; i < 3; i++) { const q = ((t - tT) * 0.8 + i / 3) % 1; g.save(); g.globalAlpha = 1 - q; g.beginPath(); g.arc(540, 1260, 100 + q * 700, 0, TAU); g.lineWidth = 10; g.strokeStyle = "#ffe08a"; g.stroke(); g.restore(); } },
       titles: [[tY, "1883", "stamp", { size: 160 }], [tK, "KRAKATOA, INDONESIA", "label", { font: "Cinzel" }], [tT, "HEARD 3,000 MILES AWAY", "stamp", { size: 86 }]] });
     ev(tK, "boom"); ev(tK + 0.3, "rumble"); }
   // 2 dust circles the globe → red Norwegian sunsets → "blood and tongues of fire"
