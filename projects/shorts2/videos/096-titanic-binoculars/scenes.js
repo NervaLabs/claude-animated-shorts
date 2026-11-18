@@ -6,7 +6,7 @@ function buildShots() {
   const key = (g, x, y, s, rot = 0) => { g.save(); g.translate(x, y); g.rotate(rot); g.beginPath(); g.arc(0, 0, 40 * s, 0, TAU); g.lineWidth = 16 * s; g.strokeStyle = "#c9a35a"; g.stroke(); rect(g, 30 * s, -10 * s, 160 * s, 20 * s, "#c9a35a", 4, 4); rect(g, 150 * s, 10 * s, 18 * s, 30 * s, "#c9a35a", 4, 2); rect(g, 116 * s, 10 * s, 18 * s, 22 * s, "#c9a35a", 4, 2); g.restore(); };
   const nest = (g, x, y) => { line(g, [[x, y + 200], [x, 2200]], 24, "#6b4024"); rect(g, x - 130, y, 260, 200, "#f6f3ea", 7, 10); };
   // 0 hook
-  S2(0, { bg: "seaNight", draw: (g, t) => { sea(g, 1600, t, -900, 2000, "#1f2f4a", "#0f1f34"); nest(g, 540, 1000); for (let i = 0; i < 2; i++) guy(g, LOOK(i), { x: 490 + i * 100, y: 1010, h: 260, expr: "scared", blink: 0, t, shadow: false }); poly(g, [[900, 1620], [960, 1400], [1060, 1620]], "#e9f6ff", 6); },
+  S2(0, { bg: "seaNight", draw: (g, t) => { sea(g, 1150, t, -900, 2000, "#1f2f4a", "#0f1f34"); nest(g, 540, 1000); for (let i = 0; i < 2; i++) guy(g, LOOK(i), { x: 490 + i * 100, y: 1010, h: 260, expr: "scared", blink: 0, t, shadow: false }); poly(g, [[900, 1620], [960, 1400], [1060, 1620]], "#e9f6ff", 6); },
     titles: [["lookouts", "TITANIC'S LOOKOUTS", "label"], ["binoculars", "HAD NO BINOCULARS", "stamp", { size: 110 }]] }, night(0.2));
   ev(wt(0, "binoculars"), "sting", 0.6);
   // 1 David Blair reassigned, walks off with the locker key
