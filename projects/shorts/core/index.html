@@ -6,14 +6,14 @@
 @font-face{font-family:Cinzel;font-weight:700;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-700-normal.woff2)}
 html,body{margin:0;background:#000}
 </style></head><body><canvas id="c" width="1080" height="1920"></canvas>
-<script src="../out/cur/words.js"></script>
-<script src="lib.js"></script><script src="engine.js"></script><script src="map.js"></script><script src="helpers.js"></script><script src="props.js"></script>
-<script src="../out/cur/scenes.js"></script>
+<script>window.CUR=(new URLSearchParams(location.search).get("cur")||"cur");document.write('<script src="../out/'+CUR+'/words.js"><\/script>');</script>
+<script src="lib.js"></script><script src="engine.js"></script><script src="map.js"></script><script src="helpers.js"></script><script src="props.js"></script><script src="kit.js"></script>
+<script>document.write('<script src="../out/'+CUR+'/scenes.js"><\/script>');</script>
 <script>
 window.READY = (async () => {
   await Promise.all(["900 40px Montserrat","800 40px Montserrat","900 40px Cinzel","700 40px Cinzel"].map(f=>document.fonts.load(f)));
   buildShots();
-  window.EVENTS_OUT = EVENTS; window.SHOTS_OUT = SHOTS.map(s=>s.t0); window.DUR = DUR; window.MOOD_OUT = window.MOOD || "comic";
+  window.EVENTS_OUT = EVENTS; window.SHOTS_OUT = SHOTS.map(s=>s.t0); window.DUR = DUR; window.MOOD_OUT = window.MOOD || (window.WORDS && window.WORDS.mood) || "comic";
   return true;
 })();
 window.frame = (t, q=0.92) => { const c=document.getElementById("c"); renderFrame(c, t); return c.toDataURL("image/jpeg", q); };

@@ -7,7 +7,9 @@ const S = (i) => SENT[i].s, E = (i) => SENT[i].e;
 /** time of the n-th word in sentence i that starts with `w` (case-insensitive) */
 function wt(i, w, n = 0) {
   const ws = WORDS.filter((x) => x.s >= SENT[i].s - 0.01 && x.e <= SENT[i].e + 0.01);
-  const hits = ws.filter((x) => x.w.toLowerCase().replace(/[^a-z0-9']/g, "").startsWith(w.toLowerCase().replace(/[^a-z0-9']/g, "")));
+  const norm = (z) => z.toLowerCase().replace(/[^a-z0-9']/g, ""), q = norm(w);
+  let hits = ws.filter((x) => norm(x.w) === q || norm(x.w) === q + "s" || norm(x.w).replace(/'s$/, "") === q);
+  if (!hits.length) hits = ws.filter((x) => norm(x.w).startsWith(q));
   if (!hits.length) throw new Error(`word ${w} not in sentence ${i}`);
   return hits[Math.min(n, hits.length - 1)].s;
 }

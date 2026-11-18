@@ -1,0 +1,19 @@
+// 049 — The Navigator Who Mapped the Pacific Without Instruments
+"use strict";
+function buildShots() {
+  const NAV = (i) => ({ tunic: ["#c0392b", "#e2b64b", "#2f6f5a"][i % 3], trim: "#f6f3ea", skin: ["#a0643a", "#8a5a32"][i % 2], hair: "#1a1012", sarong: true });
+  const canoe = (g, x, y, s, t) => { g.save(); g.translate(x, y + Math.sin(t * 1.6) * 8); g.rotate(Math.sin(t * 1.2) * 0.03); for (const dy of [0, 70]) { g.beginPath(); g.moveTo(-320 * s, -10 * s + dy * s); g.quadraticCurveTo(0, 50 * s + dy * s, 320 * s, -10 * s + dy * s); g.lineTo(300 * s, 20 * s + dy * s); g.quadraticCurveTo(0, 70 * s + dy * s, -300 * s, 20 * s + dy * s); g.closePath(); g.fillStyle = "#8a5a32"; g.fill(); g.lineWidth = 6; g.strokeStyle = INK; g.stroke(); } rect(g, -200 * s, 0, 400 * s, 30 * s, "#c9a35a", 5); line(g, [[0, 0], [0, -460 * s]], 10 * s); g.beginPath(); g.moveTo(0, -440 * s); g.quadraticCurveTo(200 * s, -300 * s, 20 * s, -40 * s); g.lineTo(0, -60 * s); g.closePath(); g.fillStyle = "#e9d4a0"; g.fill(); g.lineWidth = 6; g.stroke(); g.restore(); };
+  const stars = (g, t, n = 60) => { for (let i = 0; i < n; i++) { const x = rnd(i) * 1080, y = 120 + rnd(i * 7) * 900; ell(g, x, y, 3 + rnd(i * 3) * 4, 3 + rnd(i * 3) * 4, "#fff6d0", 0); } };
+  // 0 hook: no compass, no map, no metal
+  S2(0, { bg: "seaNight", draw: (g, t) => { stars(g, t); sea(g, 1300, t, -900, 2000, "#1f4f74", "#0f2f4a"); canoe(g, 540, 1350, 1.0, t); for (let i = 0; i < 2; i++) guy(g, NAV(i), { x: 440 + i * 200, y: 1340, h: 280, expr: "calm", blink: blinkAt(t, i), t, shadow: false }); },
+    titles: [["Polynesian", "POLYNESIAN NAVIGATORS", "label"], ["thousands", "THOUSANDS OF MILES", "stamp", { size: 100 }], ["compasses", "NO COMPASS. NO MAP.", "label", { fill: "#ffd0c0" }], ["metal", "NO METAL TOOLS.", "label", { fill: "#ffd0c0" }]] });
+  ev(wt(0, "thousands"), "whoosh");
+  // 1 one long sentence: stars → swells → birds
+  { const tC = wt(1, "Centuries"), tSt = wt(1, "stars"), tSw = wt(1, "swells"), tB = wt(1, "seabirds"), tI = wt(1, "hidden");
+    S2(1, { bg: "seaNight", keys: [[0, 540, 1300, 1.0, 0], [24, 540, 1300, 1.06, 0]], draw: (g, t) => {
+      if (t < tSw - 0.3) { stars(g, t, 90); if (t > tSt - 0.2) { const k = clamp((t - tSt) / 1.5); g.save(); g.globalAlpha = 0.7; for (let i = 0; i < 6; i++) { const x = 160 + i * 150; line(g, [[x, 1180], [x + 60, 1180 - 600 * k]], 4, "#ffe08a"); } g.restore(); } sea(g, 1250, t, -900, 2000, "#1f4f74", "#0f2f4a"); guy(g, NAV(0), { x: 540, y: 1840, h: 640, expr: "calm", armR: [2.8, -0.2], blink: blinkAt(t, 1), t }); }
+      else if (t < tB - 0.3) { sea(g, 1100, t, -900, 2000, "#2f6f94", "#1f4f74"); canoe(g, 540, 1300, 1.2, t * 2); for (let i = 0; i < 4; i++) { const q = ((t * 0.5 + i / 4) % 1); g.beginPath(); g.arc(lerp(-200, 1300, q), 1500, 200, Math.PI, 0); g.lineWidth = 8; g.strokeStyle = "rgba(220,240,255,0.6)"; g.stroke(); } guy(g, NAV(1), { x: 540, y: 1290, h: 300, sit: true, expr: "closed", hideArms: true, t, shadow: false }); }
+      else { g.fillStyle = "rgba(255,150,90,0.35)"; g.fillRect(-400, 0, 1900, 1400); sunStar(g, 540, 1180, 110, "#ff9a4a"); sea(g, 1200, t, -900, 2000, "#2f6f94", "#1f4f74"); for (let i = 0; i < 3; i++) flyBird(g, lerp(200 + i * 80, 900, clamp((t - tB) / 3)), 800 + i * 60, 40, t + i); if (t > tI - 0.2) { g.save(); g.globalAlpha = clamp((t - tI) / 0.8); ell(g, 960, 1205, 140, 30, "#4a8a3a", 5); palm(g, 960, 1190, 160, 4, t); g.restore(); } canoe(g, 320, 1350, 0.8, t); }
+    }, titles: [[tC, "CENTURIES BEFORE EUROPEANS", "label", { size: 60 }], [tSt, "200+ STARS MEMORIZED", "stamp", { size: 92 }], [tSw, "READING OCEAN SWELLS", "label", { fill: "#cfe9ff" }], [tB, "FOLLOWING SEABIRDS", "label", { fill: "#ffe08a" }], [tI, "TO HIDDEN ISLANDS", "stamp", { size: 96 }]] });
+    ev(tSt, "sparkle"); ev(tSw, "splash", 0.6); ev(tB, "birds"); ev(tI, "choir", 0.5); }
+}

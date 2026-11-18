@@ -1,0 +1,8 @@
+node_modules
+out/
+final/
+voice/*.onnx
+voice/*.bin
+videos/*/out/
+videos/*/*.wav
+videos/*/*.mp4

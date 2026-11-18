@@ -57,33 +57,84 @@ def snare(g=1.0):
 def noise(d): return rng.normal(size=int(d * SR))
 
 
-# ---------------- score (one mood per short; loops cleanly: same chord at start and end) ----------------
+# ---------------- score: topic-matched (scale, instruments, rhythm, melody) ----------------
 music = np.zeros(N)
+def flute(m, d):
+    t = t_(d); f = midi(m) * (1 + 0.004 * np.sin(2 * np.pi * 5 * t) * np.minimum(1, t / 0.3))
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.25 * np.sin(4 * np.pi * np.cumsum(f) / SR) + 0.08 * bp(noise(d), 1000, 6000)
+    return x * env(len(t), 0.06, 0.15) * 0.35
+def bell(m, d=1.6):
+    t = t_(d); f = midi(m); return sum(a * np.sin(2 * np.pi * f * r * t) * np.exp(-t * k) for r, a, k in [(1, 1, 2.5), (2.76, 0.5, 4), (5.4, 0.25, 7)]) * 0.3
+def organ(m, d):
+    t = t_(d); f = midi(m); return sum(np.sin(2 * np.pi * f * k * t) / k for k in (1, 2, 3, 4, 6)) * env(len(t), 0.03, 0.2) * 0.22
+def synth(m, d):
+    return lp(saw(midi(m), d), 1800) * env(int(d * SR), 0.01, 0.15) * 0.4
+def koto(m, d=1.2):
+    return pluck(m, d) * 1.1
+SCALES = {"major": [0, 2, 4, 5, 7, 9, 11], "minor": [0, 2, 3, 5, 7, 8, 10], "dorian": [0, 2, 3, 5, 7, 9, 10], "phrygdom": [0, 1, 4, 5, 7, 8, 10],
+          "penta": [0, 2, 4, 7, 9], "minpenta": [0, 3, 5, 7, 10], "japan": [0, 1, 5, 7, 8], "mixo": [0, 2, 4, 5, 7, 9, 10], "harm": [0, 2, 3, 5, 7, 8, 11]}
+# mood: bpm, root, scale, chord degrees per bar, lead instrument, drum style, pad level
 CFG = {
-  "comic": dict(bpm=118, prog=[(48, 1), (53, 1), (55, 1), (48, 1)], pluck=True, drums="bounce", brassCall=False, pad=0.18),
-  "war":   dict(bpm=96, prog=[(50, 0), (46, 1), (48, 1), (45, 0)], pluck=False, drums="taiko", brassCall=True, pad=0.35),
-  "eerie": dict(bpm=72, prog=[(45, 0), (41, 1), (43, 1), (40, 0)], pluck=True, drums="pulse", brassCall=False, pad=0.4),
-  "epic":  dict(bpm=92, prog=[(50, 0), (46, 1), (53, 1), (48, 1)], pluck=True, drums="taiko", brassCall=True, pad=0.35),
-}[MOOD]
-beat = 60 / CFG["bpm"]; bar = 4 * beat; t = 0.0; k = 0
-def triad(r, maj): return [r, r + (4 if maj else 3), r + 7]
+  "comic":    (118, 48, "major", [0, 3, 4, 0], "pluck", "bounce", 0.18),
+  "war":      (96, 50, "minor", [0, 5, 6, 4], "brass", "taiko", 0.35),
+  "eerie":    (72, 45, "minor", [0, 5, 6, 4], "bell", "pulse", 0.4),
+  "epic":     (92, 50, "minor", [0, 5, 2, 6], "brass", "taiko", 0.35),
+  "rome":     (100, 50, "dorian", [0, 6, 3, 4], "brass", "taiko", 0.32),
+  "greek":    (96, 52, "dorian", [0, 3, 6, 4], "pluck", "frame", 0.3),
+  "egypt":    (92, 52, "phrygdom", [0, 1, 0, 6], "flute", "frame", 0.32),
+  "aztec":    (104, 48, "minpenta", [0, 3, 1, 4], "flute", "tom", 0.25),
+  "china":    (84, 50, "penta", [0, 3, 2, 4], "koto", "gong", 0.3),
+  "japan":    (80, 52, "japan", [0, 3, 0, 4], "koto", "taiko", 0.28),
+  "viking":   (90, 45, "dorian", [0, 6, 5, 6], "brass", "taiko", 0.4),
+  "mongol":   (128, 47, "minpenta", [0, 2, 3, 1], "flute", "gallop", 0.25),
+  "africa":   (112, 50, "penta", [0, 3, 4, 3], "pluck", "tom", 0.22),
+  "medieval": (100, 50, "dorian", [0, 6, 3, 0], "flute", "frame", 0.3),
+  "renaissance": (96, 48, "major", [0, 3, 4, 5], "pluck", "frame", 0.28),
+  "pirate":   (124, 50, "minor", [0, 3, 4, 0], "flute", "bounce", 0.25),
+  "pacific":  (88, 50, "penta", [0, 3, 4, 0], "flute", "tom", 0.3),
+  "spooky":   (70, 45, "harm", [0, 5, 4, 0], "bell", "pulse", 0.42),
+  "victorian": (108, 48, "major", [0, 5, 3, 4], "bell", "waltz", 0.25),
+  "americana": (112, 50, "mixo", [0, 3, 6, 0], "pluck", "bounce", 0.24),
+  "naval":    (104, 50, "dorian", [0, 3, 6, 4], "flute", "march", 0.3),
+  "sober":    (66, 45, "minor", [0, 5, 3, 4], "bell", "none", 0.42),
+  "ww1":      (88, 50, "minor", [0, 5, 6, 4], "brass", "march", 0.35),
+  "ww2":      (104, 50, "minor", [0, 3, 6, 4], "brass", "march", 0.33),
+  "space":    (84, 48, "mixo", [0, 6, 3, 4], "synth", "pulse", 0.4),
+  "coldwar":  (96, 45, "minor", [0, 5, 6, 4], "synth", "pulse", 0.38),
+}
+MOOD = MOOD if MOOD in CFG else "comic"
+bpm, ROOT, SC, DEG, LEAD, DR, PADLV = CFG[MOOD]
+scale = SCALES[SC]
+def note(deg, octv=0): return ROOT + scale[deg % len(scale)] + 12 * (deg // len(scale) + octv)
+def chord(deg): return [note(deg), note(deg + 2), note(deg + 4)]
+LEADF = {"pluck": lambda m, d: pluckc(m), "brass": brass, "flute": flute, "bell": lambda m, d: bell(m), "organ": organ, "synth": synth, "koto": lambda m, d: koto(m)}[LEAD]
+beat = 60 / bpm; bar = 4 * beat
+mrng = np.random.default_rng(abs(hash(MOOD + D)) % 2**32)
+motif = [int(x) for x in np.cumsum(mrng.integers(-2, 3, 8))]; motif = [m - min(motif) for m in motif]
+t = 0.0; k = 0
 while t < DUR:
-    r, maj = CFG["prog"][k % 4]; ch = triad(r, maj); d = bar
-    for m in ch: add(music, pad(m + 12, d + 0.5, 1500), t, CFG["pad"] * 0.35)
-    add(music, pad(r - 12, d + 0.5, 380), t, CFG["pad"] * 0.45)
-    if CFG["pluck"]:
-        pat = [0, 2, 1, 2, 0, 2, 1, 2] if MOOD != "eerie" else [0, 1, 2, 1]
-        st = bar / len(pat)
-        for j, p in enumerate(pat): add(music, pluckc(ch[p] + (24 if MOOD == "comic" else 19)), t + j * st, 0.33)
+    deg = DEG[k % 4]; ch = chord(deg); d = bar
+    for m in ch: add(music, pad(m + 12, d + 0.5, 1400), t, PADLV * 0.35)
+    add(music, pad(note(deg) - 12, d + 0.5, 380), t, PADLV * 0.45)
+    # melody: the motif, transposed to the chord, every other bar (sparser under narration)
+    if k % 2 == 0 and LEAD != "brass":
+        for j, mv in enumerate(motif):
+            if mrng.random() < 0.25: continue
+            add(music, LEADF(note(deg + mv, 1) + 12 * (LEAD in ("bell", "koto")), beat * 0.6), t + j * beat / 2, 0.22 if LEAD in ("flute", "synth") else 0.3)
+    elif LEAD == "brass" and k % 2 == 1:
+        for j, m in enumerate([ch[0] + 12, ch[1] + 12, ch[2] + 12]): add(music, brass(m, beat * (1.2 if j < 2 else 2)), t + j * beat, 0.2)
+    # rhythm section
     for j in range(4):
         tb = t + j * beat
-        if CFG["drums"] == "taiko": add(music, taiko(1.0 if j % 2 == 0 else 0.55), tb, 0.5); add(music, taiko(0.35, 110), tb + beat / 2, 0.4)
-        elif CFG["drums"] == "bounce":
-            add(music, taiko(0.6, 75) if j % 2 == 0 else snare(0.35), tb, 0.45)
-            if MOOD == "comic": add(music, pluckc(r + 12 - 12 * (j % 2)), tb, 0.35)  # tuba-ish bass hop
-        elif CFG["drums"] == "pulse" and j == 0: add(music, taiko(0.45, 50), tb, 0.45)
-    if CFG["brassCall"] and k % 2 == 1:
-        for j, m in enumerate([ch[0] + 12, ch[1] + 12, ch[2] + 12]): add(music, brass(m, beat * (1.2 if j < 2 else 2)), t + j * beat, 0.2)
+        if DR == "taiko": add(music, taiko(1.0 if j % 2 == 0 else 0.55), tb, 0.5); add(music, taiko(0.35, 110), tb + beat / 2, 0.4)
+        elif DR == "bounce": add(music, taiko(0.6, 75) if j % 2 == 0 else snare(0.35), tb, 0.45); add(music, pluckc(note(deg, -1) + 12 * (j % 2)), tb, 0.3)
+        elif DR == "frame": add(music, taiko(0.45, 140), tb, 0.35); add(music, hp(snare(0.25), 3000), tb + beat / 2, 0.3) if j % 2 else None
+        elif DR == "tom": add(music, taiko(0.5, 120 + 30 * (j % 2)), tb, 0.4); add(music, taiko(0.3, 160), tb + beat * 0.75, 0.3)
+        elif DR == "gong": (add(music, bell(note(deg, -1), 2.5), tb, 0.35) if j == 0 else add(music, taiko(0.3, 130), tb, 0.3))
+        elif DR == "gallop": add(music, taiko(0.5, 90), tb, 0.35); add(music, taiko(0.3, 110), tb + beat / 3, 0.3); add(music, taiko(0.3, 110), tb + 2 * beat / 3, 0.3)
+        elif DR == "waltz": add(music, pluckc(note(deg, -1)) if j % 3 == 0 else pluckc(note(deg + 2)), tb, 0.28)
+        elif DR == "march": add(music, snare(0.5), tb, 0.35); add(music, snare(0.25), tb + beat / 2, 0.25); add(music, taiko(0.6, 70), tb, 0.35) if j % 2 == 0 else None
+        elif DR == "pulse" and j == 0: add(music, taiko(0.45, 50), tb, 0.45)
     t += bar; k += 1
 music = lp(music, 7000)
 sfx = np.zeros(N)
@@ -200,7 +251,8 @@ for e in EV["e"]:
 v, vsr = sf.read(f"{D}/voice.wav")
 if v.ndim > 1: v = v.mean(1)
 v = resample_poly(v, SR, vsr)[:N]; v = np.pad(v, (0, N - len(v)))
-act = np.convolve(np.abs(v) > 0.02, np.ones(int(0.25 * SR)) / int(0.25 * SR), "same")
+_m = (np.abs(v) > 0.02).astype(np.float64); _L = int(0.25 * SR); _c = np.concatenate([[0.0], np.cumsum(_m)])
+_i = np.arange(N); act = (_c[np.clip(_i + _L // 2, 0, N)] - _c[np.clip(_i - _L // 2, 0, N)]) / _L
 duck = 1 - 0.55 * np.clip(act * 3, 0, 1)
 def norm(x, peak=1.0): return x / (np.abs(x).max() + 1e-9) * peak
 music = norm(music, 0.5) * duck; sfx = norm(sfx, 0.7)
