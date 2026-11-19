@@ -1,5 +1,5 @@
-"""Soundtrack of "Alexander the Great: The Boy Who Conquered an Empire" - all original, synthesised with numpy/scipy.
-  music:  per-scene cues in a D Dorian / Aeolian colour: lyre (plucked string), string pad, horns, frame drums, timpani
+"""Soundtrack of "Napoleon Bonaparte: The Man Who Conquered Europe" - all original, synthesised with numpy/scipy.
+  music:  per-scene cues in D minor / D major: plucked strings, string pad, horns, fife, field snare, timpani
   sfx:    every cue in out/cues.json (stamps, pops, whooshes, hooves, crowds, clashes, ...) + ambience beds per shot
   mix:    voice (gain only) on top; music ducked under speech; master to -14 LUFS integrated, <= -1 dBTP
 Writes out/mix.wav (48 kHz, stereo, 24-bit), exactly TOTAL/30 s, plus out/stem_{voice,music,sfx}.wav.
@@ -59,6 +59,8 @@ def section(buf, a, b, mood, r):
         "hopeful": dict(bpm=92, prog=["F", "C", "Dm", "Bb"], bars=1, lyre="arp", drum="light", pad=0.45, horn=False),
         "sad": dict(bpm=60, prog=["Dm", "Bb", "Gm", "A"], bars=2, lyre="sparse", drum=None, pad=0.6, horn=False),
         "finale": dict(bpm=84, prog=["Dm", "Bb", "F", "C"], bars=1, lyre="arp", drum="swell", pad=0.6, horn=True),
+        "regal": dict(bpm=72, prog=["D", "G", "A", "D"], bars=1, lyre="arp", drum="swell", pad=0.65, horn=True),
+        "winter": dict(bpm=52, prog=["Dm", "Gm", "Bb", "A"], bars=2, lyre="sparse", drum=None, pad=0.7, horn=False),
     }[mood]
     beat = 60.0 / plan["bpm"]; bar = 4 * beat * plan["bars"]
     t, k = a, 0
@@ -87,19 +89,21 @@ def section(buf, a, b, mood, r):
             if d == "light" and i % 2 == 0: add(buf, frame_drum(0.5, r), tb, 1.0); add(buf, frame_drum(0.25, r, low=False), tb + beat * 1.5, 1.0)
             if d == "pulse" and i % 4 == 0: add(buf, I.timpani(m2f(38), 0.55, r, dur=1.6), tb, 1.0)
             if d == "battle":
-                add(buf, frame_drum(0.85, r), tb, 1.0); add(buf, frame_drum(0.35, r, low=False), tb + beat * 0.5, 1.0)
+                add(buf, I.snare(0.8, r), tb, 0.8); add(buf, I.snare(0.35, r), tb + beat * 0.5, 0.8); add(buf, frame_drum(0.6, r), tb, 1.0)
                 if i % 4 == 0: add(buf, I.timpani(m2f(38), 0.8, r, dur=1.4), tb, 1.0)
                 if i % 4 == 3: add(buf, frame_drum(0.5, r), tb + beat * 0.75, 1.0)
             if d == "march":
-                add(buf, frame_drum(0.7 if i % 2 == 0 else 0.45, r), tb, 1.0)
+                add(buf, I.snare(0.7 if i % 2 == 0 else 0.45, r), tb, 0.8)
+                if i % 4 == 3: [add(buf, I.snare(0.3, r, buzz=True), tb + beat * (0.5 + j / 8), 0.7) for j in range(4)]
+                if mood == "march": add(buf, I.fife(m2f([ch[1], ch[2], ch[3], ch[2]][i % 4] + 12), beat * 0.85, 0.45, r), tb, 0.35)
                 if i % 4 == 0: add(buf, I.timpani(m2f(38), 0.6, r, dur=1.2), tb, 1.0)
             if d == "swell" and i % 2 == 0: add(buf, I.timpani(m2f(38 if i % 4 == 0 else 45), 0.45 + 0.4 * (t - a) / max(1, b - a), r, dur=1.6), tb, 1.0)
         if plan["horn"] and k % 2 == 0:
             for j, m in enumerate([ch[1], ch[2]]): add(buf, I.brass(m2f(m - 12 + (12 if j else 0)), min(bar, b - t) * 0.9, 0.55, r, kind="horn", scoop=-14), t, 0.55)
         t += bar; k += 1
 
-MOOD = {1: "wonder", 2: "playful", 3: "tension", 4: "battle", 5: "march", 6: "hopeful", 7: "sad", 8: "finale"}
-LEVEL = {1: -3.0, 2: -4.0, 3: -3.0, 4: -1.5, 5: -2.0, 6: -3.0, 7: -4.0, 8: -1.0}
+MOOD = {1: "wonder", 2: "playful", 3: "tension", 4: "march", 5: "wonder", 6: "regal", 7: "battle", 8: "winter", 9: "tension", 10: "battle", 11: "sad", 12: "finale"}
+LEVEL = {1: 0.0, 2: -1.5, 3: -0.5, 4: -2.5, 5: -0.5, 6: -3.0, 7: -2.5, 8: 0.0, 9: -0.5, 10: -2.5, 11: 0.0, 12: -1.5}
 
 def music():
     buf = np.zeros((2, N + ns(4)))
@@ -110,10 +114,10 @@ def music():
         env = np.zeros(part.shape[1]); i0, i1 = ns(a), min(part.shape[1], ns(b + 0.6))
         env[i0:i1] = 1.0; fi = ns(0.4); env[i0:i0 + fi] = ramp(fi); env[max(i0, i1 - ns(1.0)):i1] *= ramp(i1 - max(i0, i1 - ns(1.0)))[::-1]
         buf += part * env[None, :] * dbg(LEVEL[k])
-    # musical dips at story beats: silence on the assassination, the lamp going out
-    for kind, depth, dur in (("drum_hit", -18, 1.6), ("blowout", -12, 2.5)):
+    # musical dips at story beats: the king's fall, the abdication, the death bell
+    for kind, shot, depth, dur in (("drum_hit", "king", -12, 1.6), ("drum_hit", "abdicate", -10, 1.8), ("bell", "death", -16, 3.2)):
         for q in CUES["cues"]:
-            if q["kind"] == kind and (kind != "drum_hit" or q["shot"] == "assassination"):
+            if q["kind"] == kind and q["shot"] == shot:
                 t0 = q["f"] / FPS; i0, i1 = ns(t0 - 0.05), ns(t0 + dur)
                 g = np.ones(buf.shape[1]); g[i0:i1] = dbg(depth); g = ndimage.uniform_filter1d(g, ns(0.25))
                 buf *= g[None, :]
@@ -238,9 +242,35 @@ def one(kind, r, dur):
     if kind == "blowout": return noise_burst(r, 400, 3000, 0.5, 0.12, 0.35)
     if kind == "bell": return bell(r)
     if kind == "crack": return S(X.wood_crack(r), thud(r, 50, 0.9, 0.8))
+    if kind == "flag": return X.flag_flutter(1.2, r) * 0.6
+    if kind == "page": return noise_burst(r, 1500, 7000, 0.25, 0.05, 0.4)
+    if kind == "snowball": return S(thud(r, 120, 0.15, 0.5), noise_burst(r, 500, 4000, 0.15, 0.02, 0.5))
+    if kind == "cannon": return S(thud(r, 38, 1.6, 1.0), noise_burst(r, 40, 900, 1.8, 0.35, 0.8), noise_burst(r, 1000, 6000, 0.2, 0.01, 0.6))
+    if kind == "explosion": return S(thud(r, 32, 2.5, 1.2), noise_burst(r, 30, 1500, 2.5, 0.6, 1.0), noise_burst(r, 800, 5000, 0.4, 0.05, 0.5))
+    if kind == "muskets":
+        out = np.zeros((2, ns(dur + 0.5))); t = 0.0
+        while t < dur: add(out, S(noise_burst(r, 700, 6000, 0.25, 0.015, r.uniform(0.3, 0.7)), thud(r, 90, 0.2, 0.3)) * pan_g(r), t, 1.0); t += r.uniform(0.05, 0.35)
+        return out
+    if kind == "waves": return ambience("sea", dur, r)
+    if kind == "organ": return st(I.pad([m2f(m) for m in (38, 45, 50, 54, 57, 62, 66)], min(dur, 12.0), 0.5, r, att=1.2, rel=1.5, warm=2600).mean(0)) * 0.45
+    if kind == "fire": return crackle(dur, r)
+    if kind == "clock":
+        out = np.zeros((2, ns(dur + 0.2))); t = 0.0
+        while t < dur: add(out, noise_burst(r, 2500, 9000, 0.04, 0.004, 0.5), t, 1.0); t += 0.5
+        return out
+    if kind == "steps": return march_steps(dur, r, rate=2.0, v=0.4)
     raise KeyError(kind)
 
-AMB = {"birds": -30, "wind": -32, "court": -31, "march": -30, "night": -31, "crowd_murmur": -27, "battle": -25, "battle_far": -29, "sea": -29, "map": -40}
+def pan_g(r):
+    p = r.uniform(-0.6, 0.6); return np.array([[np.sqrt(0.5 * (1 - p))], [np.sqrt(0.5 * (1 + p))]])
+def crackle(dur, r):
+    n = ns(dur); out = st(lp(r.standard_normal(n), 300) * 0.35 * (0.6 + 0.4 * smooth_noise(n, r, 0.8)))
+    t = 0.0
+    while t < dur - 0.1: add(out, noise_burst(r, 1200, 8000, 0.05, 0.006, r.uniform(0.15, 0.6)), t, 1.0); t += r.exponential(0.09)
+    return out
+
+AMB = {"birds": -30, "wind": -32, "court": -31, "march": -30, "night": -31, "crowd_murmur": -27, "battle": -25, "battle_far": -29, "sea": -29, "map": -40,
+       "cathedral": -33, "fire": -28, "blizzard": -25, "rain": -26}
 def ambience(kind, dur, r):
     if kind == "birds": return st(X.bird_chirps(dur, r, density=0.6)) + X.breeze(dur, r, level=0.4)
     if kind == "wind": return X.breeze(dur, r, level=1.0)
@@ -259,6 +289,14 @@ def ambience(kind, dur, r):
         n = ns(dur); sw = 0.5 + 0.5 * np.sin(TAU * 0.11 * np.arange(n) / SR) ** 2
         return st(lp(r.standard_normal(n), 900) * sw * 0.6) + X.breeze(dur, r, level=0.4)
     if kind == "map": return st(lp(r.standard_normal(ns(dur)), 400) * 0.05)
+    if kind == "cathedral": return babble_bed(dur, r, 6, 0.15) + st(lp(r.standard_normal(ns(dur)), 250) * 0.15)
+    if kind == "fire": return crackle(dur, r)
+    if kind == "blizzard": return X.breeze(dur, r, level=1.4, gust=0.35, bright=1500) + X.breeze(dur, r, level=0.8, gust=0.2, bright=500)
+    if kind == "rain":
+        n = ns(dur); out = np.stack([hp(r.standard_normal(n), 1800) * 0.25 + lp(r.standard_normal(n), 700) * 0.15 for _ in range(2)])
+        t = 0.0
+        while t < dur - 0.1: add(out, noise_burst(r, 2000, 9000, 0.03, 0.003, r.uniform(0.05, 0.25)) * pan_g(r), t, 1.0); t += r.exponential(0.02)
+        return out
     return np.zeros((2, ns(dur)))
 
 def rms_db(x):

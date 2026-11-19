@@ -45,7 +45,7 @@ const gun = (pos: V3, c: C, t0 = 0, period = 40, flip = false): CardDraw[] => {
   if (dt >= 0 && ph < 0.7) out.push(fxCard("smoke", [mx + (flip ? -0.6 : 0.6), pos[1] + 1.0, pos[2] + 0.2], 2.2, ph / 0.7, 4));
   return out;
 };
-const gunCues = (t0: number, n: number, period = 40): Cue[] => Array.from({ length: n }, (_, i) => ({ f: t0 + i * period, kind: "cannon", gain: 0.7 }));
+const gunCues = (t0: number, n: number, period = 40): Cue[] => Array.from({ length: n }, (_, i) => ({ f: t0 + i * period, kind: "cannon", gain: 0.55 }));
 let IDX: (cap: string, from: number) => number = () => 0;
 
 export const buildShots = (): { shots: Shot[]; total: number } => {
