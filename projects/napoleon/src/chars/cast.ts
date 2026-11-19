@@ -140,13 +140,14 @@ const drawFx = (g: CanvasRenderingContext2D, kind: FxKind, t: number, s: number)
 // ---------------- props (side view, facing screen-right unless flipped) ----------------
 type PropKind = "horse" | "horse_rear" | "chariot" | "elephant" | "ship" | "bird" | "scroll" | "dagger" | "flag_mac" | "flag_per" | "torch" | "wreath"
   | "token_m" | "token_p" | "geom" | "pillow" | "bed" | "lamp" | "crown_fall" | "tablet" | "sack" | "brazier" | "spear_beach" | "cradle" | "horse_shadow" | "throne"
-  | "cannon" | "warship" | "flag_fr" | "flag_uk" | "eagle" | "rosetta" | "sphinx" | "book" | "painting" | "snowball" | "desk" | "chair" | "bicorne_prop" | "coffin_cart";
+  | "height_chart" | "cartoon" | "flag_white" | "cannon" | "warship" | "flag_fr" | "flag_uk" | "eagle" | "rosetta" | "sphinx" | "book" | "painting" | "snowball" | "desk" | "chair" | "bicorne_prop" | "coffin_cart";
 export const PROP_SIZE: Record<PropKind, [number, number, number]> = { // canvas w, h, metres tall
   horse: [1100, 900, 2.3], horse_rear: [1100, 1000, 2.6], chariot: [1400, 900, 2.0], elephant: [1300, 1100, 3.6], ship: [1600, 1200, 9], bird: [300, 200, 0.45],
   scroll: [500, 300, 0.5], dagger: [300, 120, 0.35], flag_mac: [500, 1400, 4.2], flag_per: [500, 1400, 4.2], torch: [200, 900, 2.2], wreath: [300, 200, 0.4],
   token_m: [120, 160, 0.16], token_p: [120, 160, 0.16], geom: [1000, 1000, 2.2], pillow: [600, 240, 0.4], bed: [1400, 600, 1.1], lamp: [300, 400, 0.55],
   crown_fall: [320, 220, 0.42], tablet: [400, 300, 0.4], sack: [300, 360, 0.6], brazier: [400, 600, 1.2], spear_beach: [200, 1200, 3.4],
   cradle: [700, 500, 0.9], horse_shadow: [1100, 900, 2.3], throne: [500, 700, 1.6],
+  height_chart: [300, 1100, 2.2], cartoon: [700, 900, 1.3], flag_white: [500, 1400, 3.2],
   cannon: [1000, 600, 1.5], warship: [1800, 1500, 14], flag_fr: [500, 1400, 4.2], flag_uk: [500, 1400, 4.2], eagle: [400, 1300, 3.0], rosetta: [500, 640, 1.1],
   sphinx: [1400, 800, 9], book: [500, 380, 0.5], painting: [1200, 800, 3.2], snowball: [120, 120, 0.22], desk: [900, 600, 1.0], chair: [400, 700, 1.1], bicorne_prop: [400, 200, 0.4], coffin_cart: [1500, 900, 3.0],
 };
@@ -282,6 +283,13 @@ const drawProp = (g: CanvasRenderingContext2D, kind: PropKind, ph: number, an: n
       break;
     }
     case "horse_shadow": { g.globalAlpha = 0.55; const c2 = document.createElement("canvas"); c2.width = 1100; c2.height = 900; drawHorse(new Pen(c2.getContext("2d")!), ph, "#1a1226", 0); const cg = c2.getContext("2d")!; cg.globalCompositeOperation = "source-in"; cg.fillStyle = "#1a1226"; cg.fillRect(0, 0, 1100, 900); g.drawImage(c2, 0, 0); break; }
+    case "height_chart": { p.poly([[60, 40], [240, 40], [240, 1080], [60, 1080]], "#f3ead8", 8);
+      for (let i = 0; i <= 20; i++) { const y = 1080 - i * 50; p.stroke([[60, y], [i % 2 ? 120 : 170, y]], i % 2 ? 4 : 7); }
+      p.band([[40, 1080 - 0.775 * 1000], [260, 1080 - 0.775 * 1000]], "#c0272d", 12, 3); break; }
+    case "cartoon": { p.poly([[20, 20], [680, 20], [680, 880], [20, 880]], "#c9963f", 12); p.poly([[60, 60], [640, 60], [640, 840], [60, 840]], "#f6eedc", 5);
+      g.save(); g.translate(250, 460); g.scale(0.36, 0.36); bodyFront(new Pen(g), CAST.nap, { expr: "angry", mode: "stand", seed: 5 }); g.restore();
+      g.font = "900 64px Cinzel, serif"; g.textAlign = "center"; g.fillStyle = "#3a1e2a"; g.fillText("LITTLE", 350, 160); g.fillText("BONEY", 350, 230); break; }
+    case "flag_white": { p.band([[60, 40], [60, 1400]], "#7a4b2a", 22, 6); const pts: [number, number][] = []; for (let i = 0; i <= 8; i++) pts.push([70 + i * 50, 80 + 16 * Math.sin(two * (ph + i * 0.12))]); for (let i = 8; i >= 0; i--) pts.push([70 + i * 50, 400 + 16 * Math.sin(two * (ph + i * 0.12))]); p.poly(pts, "#f8f6f0", 7); break; }
     case "cannon": { // field gun, side view; anim = recoil 0..1
       const rc = -40 * Math.sin(Math.PI * Math.min(1, an * 2));
       g.translate(rc, 0);

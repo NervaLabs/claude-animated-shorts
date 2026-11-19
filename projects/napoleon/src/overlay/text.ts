@@ -56,15 +56,14 @@ export const drawLabel = (g: CanvasRenderingContext2D, text: string, t: number, 
 };
 
 /** title card: gold "ALEXANDER THE GREAT" popping word by word, subtitle rising; over a dark vignette */
-export const drawTitle = (g: CanvasRenderingContext2D, t: number, dur: number, W: number, H: number) => {
+export const drawTitle = (g: CanvasRenderingContext2D, t: number, dur: number, W: number, H: number, words = ["ALEXANDER", "THE", "GREAT"], sizes = [150, 80, 150], subtitle = "The Boy Who Conquered an Empire") => {
   if (t < 0 || t > dur + 10) return;
   const k = H / 1080, out = t > dur ? 1 - (t - dur) / 10 : 1;
   g.save(); g.globalAlpha *= clamp01(out);
   const vg = g.createRadialGradient(W / 2, H * 0.45, H * 0.15, W / 2, H * 0.45, H * 0.85); vg.addColorStop(0, "rgba(10,6,20,0.25)"); vg.addColorStop(1, "rgba(10,6,20,0.75)");
   g.fillStyle = vg; g.fillRect(0, 0, W, H);
-  const words = ["ALEXANDER", "THE", "GREAT"], sizes = [150, 80, 150];
   let y = H * 0.34;
-  const step = (i: number) => (i < 2 ? (sizes[i] + sizes[i + 1]) * 0.5 * k * 1.02 : sizes[i] * k * 0.6);
+  const step = (i: number) => (i < words.length - 1 ? (sizes[i] + sizes[i + 1]) * 0.5 * k * 1.02 : sizes[i] * k * 0.6);
   words.forEach((w, i) => {
     const s = pop(t - i * 5); if (s <= 0) { y += step(i); return; }
     g.save(); g.translate(W / 2, y); g.scale(s, s);
@@ -78,7 +77,7 @@ export const drawTitle = (g: CanvasRenderingContext2D, t: number, dur: number, W
   if (st > 0) {
     g.globalAlpha *= st; g.font = `700 ${50 * k}px Cinzel, serif`; g.textAlign = "center"; g.textBaseline = "middle";
     g.lineWidth = 9 * k; g.strokeStyle = INK; const yy = y + 30 * k + (1 - easeOut(st)) * 30 * k;
-    g.strokeText("The Boy Who Conquered an Empire", W / 2, yy); g.fillStyle = "#f6ecd2"; g.fillText("The Boy Who Conquered an Empire", W / 2, yy);
+    g.strokeText(subtitle, W / 2, yy); g.fillStyle = "#f6ecd2"; g.fillText(subtitle, W / 2, yy);
   }
   g.restore();
 };
@@ -91,4 +90,27 @@ export const drawTag = (g: CanvasRenderingContext2D, text: string, t: number, du
   const w = g.measureText(text).width;
   g.fillStyle = "rgba(22,15,28,0.8)"; g.beginPath(); g.roundRect(-w - 24 * k, -30 * k, w + 48 * k, 60 * k, 30 * k); g.fill();
   g.fillStyle = "#f2c94c"; g.fillText(text, 0, 2 * k); g.restore();
+};
+
+/** falling snow over the whole frame: n flakes, three depth layers, drifting with the wind */
+export const drawSnow = (g: CanvasRenderingContext2D, f: number, W: number, H: number, n = 260, wind = 0.6) => {
+  g.save();
+  for (let i = 0; i < n; i++) {
+    const layer = i % 3, sp = [0.6, 1.0, 1.6][layer], r = [1.6, 2.6, 4.2][layer] * (H / 1080);
+    const x0 = Math.sin(i * 12.9898) * 43758.5453, y0 = Math.sin(i * 78.233) * 12345.678;
+    const x = ((((x0 - Math.floor(x0)) * W + f * sp * wind * 3 + Math.sin(f / 20 + i) * 8) % W) + W) % W;
+    const y = ((((y0 - Math.floor(y0)) * H + f * sp * 3.2) % H) + H) % H;
+    g.fillStyle = `rgba(255,255,255,${0.55 + 0.15 * layer})`; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  }
+  g.restore();
+};
+/** rain streaks over the whole frame */
+export const drawRain = (g: CanvasRenderingContext2D, f: number, W: number, H: number, n = 220) => {
+  g.save(); g.strokeStyle = "rgba(210,220,235,0.45)"; g.lineWidth = 2 * (H / 1080); g.lineCap = "round";
+  for (let i = 0; i < n; i++) {
+    const x0 = Math.sin(i * 12.9898) * 43758.5453, y0 = Math.sin(i * 78.233) * 12345.678, sp = 26 + (i % 5) * 6;
+    const x = ((((x0 - Math.floor(x0)) * W - f * 6) % W) + W) % W, y = ((((y0 - Math.floor(y0)) * H + f * sp) % H) + H) % H;
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x - 8, y + 34 * (H / 1080)); g.stroke();
+  }
+  g.fillStyle = "rgba(60,70,90,0.12)"; g.fillRect(0, 0, W, H); g.restore();
 };

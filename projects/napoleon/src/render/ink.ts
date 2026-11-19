@@ -7,7 +7,7 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 
 export const INK_MATS: LineMaterial[] = [];
 export const inkMaterial = (width = 3) => {
-  const m = new LineMaterial({ color: 0x0b0a0c, linewidth: width * 1.2, worldUnits: false, depthTest: true, depthWrite: true });
+  const m = new LineMaterial({ color: 0x0b0a0c, linewidth: width * 1.2, worldUnits: false, depthTest: true, depthWrite: true }); (m as any).fog = true;
   m.resolution.set(1920, 1080); INK_MATS.push(m);
   return m;
 };

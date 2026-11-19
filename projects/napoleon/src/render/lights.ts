@@ -2,7 +2,7 @@
 // brighter horizon; golden = peach horizon + violet-blue shadows; night = violet fog #877aea, moonlight #b1ace7 and
 // warm torch pools; dawn = pink-gold; lamp = dark interior lit by oil lamps.
 import type { Grade } from "./post.ts";
-export type Light = "day" | "golden" | "night" | "dawn" | "lamp" | "dusk";
+export type Light = "day" | "golden" | "night" | "dawn" | "lamp" | "dusk" | "snow" | "fog" | "overcast" | "interior";
 export type LightPreset = {
   skyTop: string; skyHor: string; fog: string; fogNear: number; fogFar: number;
   hemiSky: string; hemiGround: string; hemiI: number; sun: string; sunI: number; sunDir: [number, number, number];
@@ -23,4 +23,12 @@ export const LIGHTS: Record<Light, LightPreset> = {
     sun: "#c4bff5", sunI: 1.6, sunDir: [-0.3, 0.8, -0.5], card: "#d6d2f8", cardMin: 0.85, grade: G(0.04, 1.02, 1.05, 1.1, 0.28), glow: 1.0, moon: true, stars: true },
   lamp: { skyTop: "#1d2360", skyHor: "#4c4aa0", fog: "#4a4280", fogNear: 14, fogFar: 160, hemiSky: "#8e88d8", hemiGround: "#433563", hemiI: 1.6,
     sun: "#a7a2ea", sunI: 0.8, sunDir: [0.4, 0.7, 0.6], card: "#d8c0b4", cardMin: 0.8, grade: G(0.03, 0.96, 1.04, 1.05, 0.38, [1.03, 0.99, 0.96]), glow: 1.1 },
+  snow: { skyTop: "#8a98b8", skyHor: "#dfe6f0", fog: "#d6dde8", fogNear: 20, fogFar: 380, hemiSky: "#e8eef8", hemiGround: "#9aa4b8", hemiI: 2.2,
+    sun: "#e8eef8", sunI: 0.9, sunDir: [-0.3, 0.7, 0.4], card: "#e6ecf6", cardMin: 0.9, grade: G(0.04, 1.05, 1.0, 0.82, 0.24, [0.97, 1.0, 1.06]), glow: 0.6 },
+  fog: { skyTop: "#b8bccc", skyHor: "#e6e2dc", fog: "#dcd8d2", fogNear: 6, fogFar: 140, hemiSky: "#f0ece6", hemiGround: "#a8a49c", hemiI: 2.1,
+    sun: "#fff0d8", sunI: 0.9, sunDir: [-0.6, 0.35, 0.5], card: "#f2eee8", cardMin: 0.9, grade: G(0.05, 1.05, 1.0, 0.85, 0.2), glow: 0.5 },
+  overcast: { skyTop: "#6f7a8c", skyHor: "#b8bec6", fog: "#a8aeb6", fogNear: 25, fogFar: 450, hemiSky: "#c8ced8", hemiGround: "#7a7a6e", hemiI: 2.0,
+    sun: "#d8dce4", sunI: 0.9, sunDir: [-0.4, 0.8, 0.3], card: "#e6e8ec", cardMin: 0.9, grade: G(0.035, 1.03, 1.0, 0.9, 0.26), glow: 0.4 },
+  interior: { skyTop: "#5a6a8a", skyHor: "#a8b4c8", fog: "#6a5a4a", fogNear: 30, fogFar: 160, hemiSky: "#f6e6cc", hemiGround: "#8a6a4a", hemiI: 2.2,
+    sun: "#ffe8c8", sunI: 1.4, sunDir: [0.5, 0.8, 0.6], card: "#fff0dc", cardMin: 0.95, grade: G(0.03, 1.04, 1.0, 1.02, 0.3), glow: 0.9 },
 };
