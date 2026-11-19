@@ -56,7 +56,7 @@ visual joke or punch.
 | C | Everything in 3D, maps included | Risky label and border animation for no visible gain | Dropped |
 
 Format decided by the user: **C — landscape 16:9, 3–4 minutes** (vertical options A/B rejected).
-Voice decided by the user: **a young male narrator who sounds like he's in his 20s.**
+Voice decided by the user: **a young male narrator in his 20s — the ElevenLabs voice `c6SfcYrb2t09NHXiT80T`.**
 
 ## 4. Reference style breakdown (summary; full version is deliverable `docs/alexander/STYLE_BREAKDOWN.md`)
 Measured numbers come from `references/STYLE_BIBLE.md` and `references/reports/*.md`. Reference px are given at 720x1280.
@@ -207,7 +207,7 @@ thirteen years. People have been talking about him for more than two thousand ye
 - **Map labels and place labels** ("PELLA", "ISSUS · 333 BC", "GAUGAMELA · 331 BC") type or ink in.
 
 ### 5.6 Sound
-- **Voice:** a local open text-to-speech model (Kokoro-82M, Apache-2.0; Piper as fallback). A young-sounding male voice (in his 20s): three test clips go to the user first, and the user picks one. One steady tone, ~3.4 words/s. Word timings come from the TTS timestamps (whisper word alignment as fallback), hand-checked.
+- **Voice:** the user's chosen ElevenLabs voice (`c6SfcYrb2t09NHXiT80T`), via the ElevenLabs API `text-to-speech/{voice}/with-timestamps` endpoint. That endpoint returns per-character alignment, which gives exact word timings for captions and mouths. Generated one scene at a time (8 requests, ~4,500 characters total). One steady tone, ~3.4 words/s. A 30 s test clip goes to the user before the full narration.
 - **Music:** an original score synthesised in numpy (`instruments.py` style). Plucked lyre (Karplus-Strong), frame drum, low string drones, horn swells in the D Dorian/Phrygian colour. The cues:
   - S1 wonder
   - S2 light and playful
@@ -241,13 +241,12 @@ thirteen years. People have been talking about him for more than two thousand ye
 4. `alexander_the_great_1080p.mp4`: the final cut. Plus `…_720p.mp4` as a preview, and a contact sheet of stills per scene. Sent to the user as files, not committed.
 
 ## 7. Decided by the user vs. my calls
-- **User:** the 8 scenes and the title; non-graphic battles; historically accurate; captions and text effects; animated maps; 16:9 at 3-4 min; Approach A; a narrator voice in his 20s.
+- **User:** the 8 scenes and the title; non-graphic battles; historically accurate; captions and text effects; animated maps; 16:9 at 3-4 min; Approach A; a narrator voice in his 20s, using their ElevenLabs voice.
 - **My calls (correct any):**
   - the script wording above;
   - including the Bucephalus, Iliad/dagger, Parmenion and barley-flour anecdotes (all ancient-sourced, labelled as legend or Plutarch);
   - Chaeronea in S2 as the "military strategy" beat;
   - keeping the user's scene order and phrasing Alexandria as "earlier, in 331 BC" (it was founded before Gaugamela);
-  - a TTS narrator rather than a human recording;
   - original synthesised music and SFX;
   - approximate map borders;
   - break-up kingdoms named as Ptolemaic, Seleucid and Antigonid.
@@ -256,7 +255,7 @@ thirteen years. People have been talking about him for more than two thousand ye
 - **Render speed.** First task: render one bridge-template frame at 1920x1080 in this container and time it.
   - Under 2 s/frame: render the final at 1080p.
   - Slower: cut lens-blur quality and MSAA, render scenes in parallel chunks, and stitch them with ffmpeg.
-- **TTS download blocked:** fall back to Piper (pip). If both fail, stop and tell the user.
+- **ElevenLabs fails** (key, credits or voice access): stop and tell the user. No silent fallback to another voice.
 - **Scope.** About 6 sets plus maps is a lot. Each set is built to the camera: only what its shots see. Stills of every shot get reviewed against the reference frames before the full render.
 
 ## 9. Left to the builder
