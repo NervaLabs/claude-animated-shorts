@@ -162,7 +162,7 @@ export const buildShots = (): { shots: Shot[]; total: number } => {
     cams: (c) => [K(0, [-11, 1.6, 7.5], [-14.4, 0.7, 3], 40), K(c.w(w("pillow...", sIliad)) - 10, [-13, 1.25, 5], [-14.6, 0.8, 3], 34, { dur: 20 })], dof: { cInf: 12, focus: 3 },
     actors: (c) => [...propCard("bed", bedAt, c.f), ...ch("alex_boy", [bedAt[0] - 0.1, 0.62, bedAt[2] + 0.05], c, { expr: "smile_closed", blinkOff: true }, { shadow: false }).map((d) => ({ ...d, roll: -Math.PI / 2, pos: [bedAt[0] + 0.15, 0.9, bedAt[2] + 0.06] as V3, anchor: 0.5, z: 1 })),
       ...propCard("pillow", [bedAt[0] - 0.95, 0.68, bedAt[2] + 0.08], c.f, { z: 2 }), ...(st(c, w("Iliad", sIliad)) > 0 ? propCard("scroll", [bedAt[0] - 0.75, 0.64, bedAt[2] + 0.12], c.f, { scale: 0.6, z: 3 }) : []),
-      ...propCard("lamp", [bedAt[0] + 1.6, 0, bedAt[2] - 0.3], c.f), fxCard("flame", [bedAt[0] + 1.62, 0.55, bedAt[2] - 0.28], 0.25, (c.f / 10) % 1, 2), fxCard("glow", [bedAt[0] + 1.62, 0.55, bedAt[2] - 0.28], 1.6, 0, 2)],
+      ...propCard("lamp", [bedAt[0] + 1.6, 0, bedAt[2] - 0.3], c.f), fxCard("flame", [bedAt[0] + 1.75, 0.17, bedAt[2] - 0.26], 0.22, (c.f / 10) % 1, 2), fxCard("glow", [bedAt[0] + 1.75, 0.17, bedAt[2] - 0.26], 1.4, 0, 2)],
     points: (c) => [{ pos: [bedAt[0] + 1.6, 1.2, bedAt[2]], color: "#ffb060", i: 5 * (0.92 + 0.08 * Math.sin(c.f * 0.5)), d: 12 }],
     over: (c, g, Wd, H) => drawLabel(g, "THE ILIAD", st(c, w("Iliad", sIliad)), 60, Wd, H, 0.5, 0.18, { sub: "by Homer" }),
     cues: (c) => [{ f: c.w(w("Iliad", sIliad)), kind: "pop" }] });
@@ -500,7 +500,7 @@ export const buildShots = (): { shots: Shot[]; total: number } => {
     cues: (c) => [{ f: c.w(w("323 BC,", sIll)), kind: "stamp", gain: 0.6 }] });
   const bedB: V3 = [398.5, 0, -3.5];
   const lampB: V3 = [400.4, 0, -3.9];
-  const room = (c: C, flame = 1, extra: CardDraw[] = []): CardDraw[] => [...propCard("bed", bedB, c.f), ...propCard("lamp", lampB, c.f), ...(flame > 0 ? [fxCard("flame", [lampB[0] + 0.02, 0.55, lampB[2] + 0.02], 0.25 * flame, (c.f / 10) % 1, 2), fxCard("glow", [lampB[0], 0.55, lampB[2]], 1.6 * flame, 0, 2)] : []), ...extra];
+  const room = (c: C, flame = 1, extra: CardDraw[] = []): CardDraw[] => [...propCard("bed", bedB, c.f), ...propCard("lamp", lampB, c.f), ...(flame > 0 ? [fxCard("flame", [lampB[0] + 0.15, 0.17, lampB[2] + 0.04], 0.22 * flame, (c.f / 10) % 1, 2), fxCard("glow", [lampB[0] + 0.15, 0.17, lampB[2] + 0.04], 1.4 * flame, 0, 2)] : []), ...extra];
   const lampPts = (c: C, k = 1): PointL[] => [{ pos: [lampB[0], 1.3, lampB[2] + 0.6], color: "#ffb060", i: 6 * k * (0.92 + 0.08 * Math.sin(c.f * 0.5)), d: 14 }];
   const sFever = w("he", w("Babylon,", sIll));
   add({ id: "fever", from: sFever, scene: 7, set: "babylon", light: "lamp", amb: "night", xin: 8,
@@ -509,8 +509,8 @@ export const buildShots = (): { shots: Shot[]; total: number } => {
     points: (c) => lampPts(c), cues: (c) => [{ f: c.w(w("fever.", sFever)), kind: "drone_low" }] });
   const sDead = w("Days", sFever);
   add({ id: "lamp_out", from: sDead, scene: 7, set: "babylon", light: "lamp", amb: "night",
-    cams: () => [K(0, [lampB[0] + 1.3, 1.0, lampB[2] + 2.2], [lampB[0], 0.55, lampB[2]], 32, { creep: 0.002 })], dof: { cInf: 14, focus: 2.5 },
-    actors: (c) => { const td = c.w(w("dead,", sDead)), fl = c.t < td ? 1 : Math.max(0, 1 - (c.t - td) / 6); return room(c, fl, [...(c.t > td && c.t - td < 50 ? [fxCard("smoke", [lampB[0], 0.75 + (c.t - td) * 0.01, lampB[2]], 0.8, (c.t - td) / 50, 3)] : [])]); },
+    cams: () => [K(0, [lampB[0] + 1.3, 0.85, lampB[2] + 2.2], [lampB[0] + 0.1, 0.3, lampB[2]], 32, { creep: 0.002 })], dof: { cInf: 14, focus: 2.5 },
+    actors: (c) => { const td = c.w(w("dead,", sDead)), fl = c.t < td ? 1 : Math.max(0, 1 - (c.t - td) / 6); return room(c, fl, [...(c.t > td && c.t - td < 50 ? [fxCard("smoke", [lampB[0] + 0.15, 0.4 + (c.t - td) * 0.01, lampB[2] + 0.04], 0.8, (c.t - td) / 50, 3)] : [])]); },
     points: (c) => lampPts(c, st(c, w("dead,", sDead)) < 0 ? 1 : Math.max(0.15, 1 - st(c, w("dead,", sDead)) / 6)),
     over: (c, g, Wd, H) => drawLabel(g, "356 – 323 BC", st(c, w("thirty-two", sDead)), 80, Wd, H, 0.5, 0.18, { sub: "aged 32" }),
     cues: (c) => [{ f: c.w(w("dead,", sDead)), kind: "blowout" }, { f: c.w(w("dead,", sDead)), kind: "bell" }] });
@@ -534,12 +534,12 @@ export const buildShots = (): { shots: Shot[]; total: number } => {
     cues: (c) => [{ f: c.w(w("strongest.\"", sStrong)), kind: "sting" }] });
   const sBreak = w("His", sStrong);
   add({ id: "breakup", from: sBreak, scene: 8, xin: 8, amb: "map",
-    map: (c) => { const tb = c.w(w("broke", sBreak)); return { f: c.f, view: [48, 32.5, 1.05], full: 1, breakup: smooth(u01(c, tb, tb + 24)),
+    map: (c) => { const tb = c.w(w("broke", sBreak)); return { f: c.f, view: [48 + 2.5 * u01(c, 0, c.d), 32.5 - 0.6 * u01(c, 0, c.d), 1.05 + 0.08 * u01(c, 0, c.d)], full: 1, breakup: smooth(u01(c, tb, tb + 24)),
       labels: [{ text: "PTOLEMIES", at: [30, 26], t: st(c, w("Ptolemies", sBreak)), sub: "Egypt", col: "#7a5a10", dy: 0 }, { text: "SELEUCIDS", at: [55, 33.5], t: st(c, w("Seleucids", sBreak)), sub: "Asia", col: "#1f4a7a", dy: 0 }, { text: "ANTIGONIDS", at: [22.2, 43.2], t: st(c, w("Antigonids", sBreak)), sub: "Macedonia", col: "#7a1f24", dy: 0 }] }; },
     cues: (c) => [{ f: c.w(w("fought", sBreak)), kind: "clash", gain: 0.5 }, { f: c.w(w("broke", sBreak)), kind: "crack" }, ...["Ptolemies", "Seleucids", "Antigonids"].map((x) => ({ f: c.w(w(x, sBreak)), kind: "pop" }))] });
   const sLeg = w("But", sBreak);
   add({ id: "not_land", from: sLeg, scene: 8, amb: "map",
-    map: (c) => ({ f: c.f, view: [48, 32.5, 1.05], full: 1, breakup: 1 - 0.7 * smooth(u01(c, 0, c.d)) }) });
+    map: (c) => ({ f: c.f, view: [50.5 - 2.5 * u01(c, 0, c.d), 31.9 + 0.6 * u01(c, 0, c.d), 1.13 - 0.08 * u01(c, 0, c.d)], full: 1, breakup: 1 - 0.7 * smooth(u01(c, 0, c.d)) }) });
   const sCult = w("Greek", sLeg);
   add({ id: "culture", from: sCult, scene: 8, amb: "map",
     map: (c) => ({ f: c.f, view: [48 + 4 * u01(c, 0, c.d), 32.5, 1.05], full: 0.3, culture: smooth(u01(c, 0, c.w(w("blending", sCult)))),

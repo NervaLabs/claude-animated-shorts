@@ -56,7 +56,7 @@ visual joke or punch.
 | C | Everything in 3D, maps included | Risky label and border animation for no visible gain | Dropped |
 
 Format decided by the user: **C — landscape 16:9, 3–4 minutes** (vertical options A/B rejected).
-Voice decided by the user: **a young male narrator in his 20s — the ElevenLabs voice `c6SfcYrb2t09NHXiT80T`.**
+Voice decided by the user: **a young male narrator in his 20s.** Their first pick, ElevenLabs voice `c6SfcYrb2t09NHXiT80T`, needs the Creator plan. On the free plan the user chose ElevenLabs "Liam" (`TX3LPaxmHKxFdv7VOQHJ`) instead.
 
 ## 4. Reference style breakdown (summary; full version is deliverable `docs/alexander/STYLE_BREAKDOWN.md`)
 Measured numbers come from `references/STYLE_BIBLE.md` and `references/reports/*.md`. Reference px are given at 720x1280.
