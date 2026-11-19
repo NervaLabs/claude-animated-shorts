@@ -1,48 +1,50 @@
 // Our cast for the Alexander documentary, effect sprites and prop cards. Every card's texture key carries every
 // input of its drawing (quantised), so a cached texture never depends on which frame drew it first.
-import { Pen, bodyFront, bodySide, fxBurst, INK, mix, shade, type Outfit, type Expr, type Prop } from "./toon.ts";
+import { Pen, bodyFront, bodySide, fxBurst, INK, mix, shade, townsfolk, type Outfit, type Expr, type Prop } from "./toon.ts";
 import type { CardDraw } from "../render/cards.ts";
 import { hash, type V3 } from "../core/time.ts";
 
-export type Who = "alex_boy" | "alex" | "alex_helm" | "alex_king" | "alex_sick" | "philip" | "aristotle" | "darius" | "parmenion" | "porus"
-  | "phalangite" | "persian" | "courtier" | "seer" | "builder" | "physician" | "general" | "guard" | "student";
+export type Who = "nap_boy" | "cadet" | "nap_young" | "nap" | "nap_crown" | "nap_coat" | "josephine" | "pope" | "king" | "sans" | "fr_soldier" | "guard"
+  | "redcoat" | "wellington" | "blucher" | "prussian" | "russian" | "austrian" | "mamluk" | "scholar" | "nelson" | "townsman" | "physician" | "general" | "builder";
 
-const LEGS = "#3a2a2a", SANDAL = "#7a4b2a";
-const HAIR_A = "#b5793a";
-const CUIRASS = "#d8a845", LINEN = "#efe8d6", CRIMSON = "#b8312f";
+const BOOT = "#141216", WHITE = "#f1ece0", BLUE = "#26386e", GOLD = "#e2b64a", HAIR_N = "#3a2a20";
 export const CAST: Record<Who, Outfit> = {
-  alex_boy: { jacket: "#f3efe6", pants: LEGS, boots: SANDAL, hat: "hair", hair: HAIR_A, sash: CRIMSON, build: "kid", skin: "#ffe2c2" },
-  alex: { jacket: CUIRASS, pants: LEGS, boots: SANDAL, hat: "hair", hair: HAIR_A, skirt: LINEN, cloak: CRIMSON, skin: "#ffe2c2" },
-  alex_helm: { jacket: CUIRASS, pants: LEGS, boots: SANDAL, hat: "attic", helmet: "#d4a24a", plume: "#f6f3ea", skirt: LINEN, cloak: CRIMSON, skin: "#ffe2c2" },
-  alex_king: { jacket: CUIRASS, pants: LEGS, boots: SANDAL, hat: "hair", hair: HAIR_A, crown: "diadem", skirt: LINEN, cloak: "#7a3aa8", skin: "#ffe2c2" },
-  alex_sick: { jacket: "#f3efe6", pants: LEGS, boots: SANDAL, hat: "hair", hair: HAIR_A, crown: "diadem", skin: "#efe0cc" },
-  philip: { jacket: "#6b3fa0", pants: LEGS, boots: SANDAL, hat: "hair", hair: "#2c211c", beard: "#2c211c", crown: "wreath", scarEye: true, cloak: "#3d2a6e", build: "stout", skirt: "#e9dfc6", skin: "#f5c9a0" },
-  aristotle: { jacket: "#8aa0b8", pants: LEGS, boots: SANDAL, hat: "bald", hair: "#ece8e0", beard: "#ece8e0", beardLong: true, dress: "#8aa0b8", skin: "#f5d3b0" },
-  darius: { jacket: "#5b2d8c", pants: LEGS, boots: "#c9963f", hat: "kidaris", beard: "#1d1a2a", beardLong: true, dress: "#5b2d8c", robeTrim: "#e2b64a", build: "stout", skin: "#e8b88a" },
-  parmenion: { jacket: "#c9a14a", pants: LEGS, boots: SANDAL, hat: "attic", helmet: "#b98a3e", plume: "#c0353a", beard: "#9a9590", skirt: LINEN, cloak: "#7a2a2a", build: "stout", skin: "#f0c8a0" },
-  porus: { jacket: "#d07a2a", pants: LEGS, boots: SANDAL, hat: "turban", cap: "#f4f0e6", beard: "#1d1a1a", skirt: "#f4f0e6", skin: "#c99067" },
-  phalangite: { jacket: "#e6dcc2", pants: LEGS, boots: SANDAL, hat: "pilos", helmet: "#c0903f", skirt: "#d8cdb0", shield: "#c99a3e", spear: true, rifle: true },
-  persian: { jacket: "#3f6fb5", pants: "#5a3b7a", boots: "#7a4b2a", hat: "felt", cap: "#d9a441", shield: "#b58a52", shieldKind: "wicker", spear: true, rifle: true },
-  courtier: { jacket: "#c25a7a", pants: LEGS, boots: SANDAL, hat: "hair", hair: "#5a3b2a", dress: "#c25a7a" },
-  seer: { jacket: "#f1ece0", pants: LEGS, boots: SANDAL, hat: "bald", hair: "#bdb8ae", beard: "#bdb8ae", beardLong: true, dress: "#f1ece0", robeTrim: "#7a3aa8" },
-  builder: { jacket: "#c98a4a", pants: LEGS, boots: SANDAL, hat: "hair", hair: "#3a2a20", skirt: "#a8703a" },
-  physician: { jacket: "#4f6a5a", pants: LEGS, boots: SANDAL, hat: "bald", hair: "#6a6058", beard: "#6a6058", dress: "#4f6a5a" },
-  general: { jacket: "#c9a14a", pants: LEGS, boots: SANDAL, hat: "attic", helmet: "#a9823a", plume: "#3b4fb0", beard: "#4a3020", skirt: LINEN, cloak: "#2f5f6a", skin: "#f0c8a0" },
-  guard: { jacket: "#b0a48a", pants: LEGS, boots: SANDAL, hat: "pilos", helmet: "#9a7a3a", skirt: "#c8bc9e", cloak: "#5a4a3a" },
-  student: { jacket: "#e8e0cc", pants: LEGS, boots: SANDAL, hat: "hair", hair: "#3a2a20", build: "kid" },
+  nap_boy: { jacket: "#2f4a8a", pants: "#2a2a3a", boots: BOOT, hat: "hair", hair: HAIR_N, forelock: true, lapels: "#b8312f", build: "kid", skin: "#f3d2b0" },
+  cadet: { jacket: "#2f4a8a", pants: "#2a2a3a", boots: BOOT, hat: "hair", hair: "#7a5a3a", lapels: "#b8312f", build: "kid" },
+  nap_young: { jacket: BLUE, pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: WHITE, epaulettes: GOLD, lapels: "#1f2d5a", skin: "#f3d2b0" },
+  nap: { jacket: BLUE, pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: WHITE, epaulettes: GOLD, lapels: WHITE, skin: "#f3d2b0" },
+  nap_crown: { jacket: "#a3182a", pants: "#2a2a3a", boots: GOLD, hat: "hair", hair: HAIR_N, forelock: true, crown: "wreath", cloak: "#a3182a", ermine: true, breeches: WHITE, skin: "#f3d2b0" },
+  nap_coat: { jacket: "#7d7f86", pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: WHITE, lapels: "#6a6c73", skin: "#efcdb0", build: "stout" },
+  josephine: { jacket: "#f6f2ea", pants: "#2a2a3a", boots: "#d8c8a8", hat: "hair", hair: "#2a1d18", dress: "#f6f2ea", crown: "gold", robeTrim: GOLD },
+  pope: { jacket: "#f6f2ea", pants: "#2a2a3a", boots: "#c0272d", hat: "mitre", dress: "#f6f2ea", robeTrim: GOLD, skin: "#f0d0b0" },
+  king: { jacket: "#2c3f8f", pants: "#2a2a3a", boots: BOOT, hat: "hair", hair: "#e8e4dc", crown: "gold", cloak: "#2c3f8f", ermine: true, breeches: WHITE, build: "stout" },
+  sans: { jacket: "#8a5a3a", pants: "#2a2a3a", boots: "#5a3b2a", hat: "cap", cap: "#c0272d", breeches: "#e8dcc4", sash: "#27408b" },
+  fr_soldier: { jacket: "#27408b", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: "#c0272d", belt: WHITE, lapels: WHITE, breeches: WHITE, rifle: true },
+  guard: { jacket: "#1f2d5a", pants: "#2a2a3a", boots: BOOT, hat: "bearskin", tuft: "#c0272d", belt: WHITE, lapels: WHITE, breeches: WHITE, rifle: true, moustache: "#2a1d18" },
+  redcoat: { jacket: "#c0272d", pants: "#5a5a64", boots: BOOT, hat: "shako", tuft: WHITE, belt: WHITE, breeches: "#5a5a64", rifle: true },
+  wellington: { jacket: "#2a3550", pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: "#e9dfc4", cloak: "#3a4560", skin: "#f3d6bc" },
+  blucher: { jacket: "#1f2a4a", pants: "#2a2a3a", boots: BOOT, hat: "cap", cap: "#1c1a22", moustache: "#ece8e0", lapels: "#b8312f", breeches: "#8a8c94", build: "stout", skin: "#efcbb0" },
+  prussian: { jacket: "#1f2a4a", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: WHITE, belt: WHITE, breeches: "#8a8c94", rifle: true },
+  russian: { jacket: "#2f5a3a", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: "#2f5a3a", belt: WHITE, breeches: "#e8e4dc", rifle: true },
+  austrian: { jacket: "#ece6d8", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: "#1c1a22", belt: "#c9c2b0", breeches: "#8a9ab8", rifle: true },
+  mamluk: { jacket: "#c2563a", pants: "#2a2a3a", boots: "#c9963f", hat: "turban", cap: "#f4f0e6", dress: "#c2563a", robeTrim: GOLD, sword: true, moustache: "#1d1a1a", skin: "#d9a47a" },
+  scholar: { jacket: "#6a4a3a", pants: "#2a2a3a", boots: BOOT, hat: "tophat", breeches: "#d8ccb0" },
+  nelson: { jacket: "#1f2a4a", pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: WHITE, epaulettes: GOLD, lapels: WHITE },
+  townsman: { jacket: "#3f6fb5", pants: "#3b3f52", boots: "#4a3426", hat: "tophat" },
+  physician: { jacket: "#2a2a30", pants: "#2a2a3a", boots: BOOT, hat: "hair", hair: "#9a958e", breeches: "#2a2a30" },
+  general: { jacket: BLUE, pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: WHITE, epaulettes: GOLD, lapels: "#b8312f", moustache: "#4a3020" },
+  builder: { jacket: "#8a6a4a", pants: "#2a2a3a", boots: BOOT, hat: "cap", cap: "#5a4a3a" },
 };
-for (const w of Object.keys(CAST) as Who[]) CAST[w].buttons = "none";
+for (const w of Object.keys(CAST) as Who[]) if (CAST[w].buttons === undefined && !CAST[w].belt) CAST[w].buttons = "none";
 const SKINS = ["#ffe2c2", "#f5c9a0", "#ecd0b6", "#c99067"];
-/** crowd variants: same design, varied skin / tunic / beard */
+/** crowd variants: same design, varied skin / details */
 export const variant = (who: Who, v: number): Outfit => {
   const o: Outfit = { ...CAST[who], skin: CAST[who].skin ?? SKINS[v % 4] };
-  if (who === "phalangite") { if (v % 3 === 1) o.beard = "#4a3426"; if (v % 4 === 2) o.shield = "#b8873a"; o.skin = SKINS[v % 4]; }
-  if (who === "persian") {
-    o.jacket = ["#3f6fb5", "#c2563a", "#2f8a6a", "#d9a441", "#7b5ac9"][v % 5]; o.pants = ["#5a3b7a", "#c0353a", "#2f5f6a"][v % 3];
-    o.cap = ["#d9a441", "#f1ece0", "#c0353a"][v % 3]; if (v % 2) o.beard = "#1d1a1a"; o.skin = ["#e8b88a", "#d9a47a", "#f0c8a0"][v % 3];
-  }
-  if (who === "courtier") { o.dress = o.jacket = ["#c25a7a", "#5a8fc2", "#d9a441", "#5d7a3a", "#f1ece0"][v % 5]; o.skin = SKINS[v % 4]; if (v % 2) { o.dress = undefined; o.skirt = "#f1ece0"; o.beard = "#4a3020"; } }
-  if (who === "builder") { o.skin = SKINS[(v + 1) % 4]; o.jacket = ["#c98a4a", "#8a6a4a", "#b5653f"][v % 3]; }
+  if (["fr_soldier", "redcoat", "prussian", "russian", "austrian", "guard"].includes(who)) { o.skin = SKINS[v % 3]; if (v % 3 === 1) o.moustache = "#3a2a20"; }
+  if (who === "townsman") { const t = townsfolk(v); Object.assign(o, t); }
+  if (who === "cadet") { o.hair = ["#7a5a3a", "#c9a46a", "#3a2a20", "#a8552a"][v % 4]; o.skin = SKINS[v % 3]; }
+  if (who === "sans") { o.cap = v % 3 === 2 ? "#3a3a46" : "#c0272d"; o.jacket = ["#8a5a3a", "#5d7a3a", "#6a4a7a"][v % 3]; o.skin = SKINS[v % 4]; }
+  if (who === "mamluk") { o.dress = o.jacket = ["#c2563a", "#2f8a6a", "#d9a441", "#7b5ac9"][v % 4]; o.cap = ["#f4f0e6", "#e2b64a", "#c0272d"][v % 3]; }
   return o;
 };
 
@@ -60,7 +62,7 @@ const q = (x: number, n: number) => Math.round(x * n) / n;
 export type Pose = {
   who: Who; v?: number; view?: "front" | "side"; facing?: -1 | 0 | 1; expr?: Expr;
   mode?: "march" | "stroll" | "stand" | "sit" | "fall" | "push"; phase?: number; wave?: number; tilt?: number; headTilt?: number;
-  look?: number; prop?: Prop; stomp?: number; seed?: number; blinkOff?: boolean; stride?: number; pose?: number;
+  look?: number; prop?: Prop; stomp?: number; seed?: number; blinkOff?: boolean; stride?: number; pose?: number; vest?: boolean;
 };
 const CH_W = 600, CH_H = 1000, CH_M = 2.16; // design canvas + its height in metres (SU = 0.00216)
 
@@ -71,12 +73,12 @@ export const charCard = (P: Pose, pos: V3, f: number, o: { flip?: boolean; scale
   const mode = P.mode ?? "stand", phase = q(P.phase ?? 0, 12);
   const outfit = variant(P.who, P.v ?? 0);
   const k = [P.who, P.v ?? 0, view, P.facing ?? 0, P.expr ?? "neutral", mode, phase, blink, q(P.wave ?? -9, 8), q(P.tilt ?? 0, 2), q(P.headTilt ?? 0, 2),
-    q(P.look ?? 0, 4), JSON.stringify(P.prop ?? null), q(P.stomp ?? 1, 10), seed, q(P.stride ?? 1, 10), q(P.pose ?? 0, 10)].join("|");
+    q(P.look ?? 0, 4), JSON.stringify(P.prop ?? null), q(P.stomp ?? 1, 10), seed, q(P.stride ?? 1, 10), q(P.pose ?? 0, 10), P.vest ? 1 : 0].join("|");
   const sc = o.scale ?? 1;
   const draw = (g: CanvasRenderingContext2D) => {
     const p = new Pen(g);
     if (view === "side") bodySide(p, outfit, { phase, expr: P.expr, mode: mode === "stroll" ? "march" : (mode as any), blink, stomp: P.stomp, seed, stride: P.stride, pose: P.pose });
-    else bodyFront(p, outfit, { phase, expr: P.expr, mode: mode as any, blink, facing: P.facing ?? 0, wave: P.wave, tilt: P.tilt, headTilt: P.headTilt, look: P.look, prop: P.prop ?? null, seed });
+    else bodyFront(p, outfit, { phase, expr: P.expr, mode: mode as any, blink, facing: P.facing ?? 0, wave: P.wave, tilt: P.tilt, headTilt: P.headTilt, look: P.look, prop: P.prop ?? null, seed, vest: P.vest });
   };
   const out: CardDraw[] = [{ key: "ch:" + k, cw: CH_W, ch: CH_H, h: CH_M * sc, pos, draw, flip: o.flip, alpha: o.alpha, lit: o.lit, z: o.z }];
   if (o.shadow !== false) out.push(shadowCard(pos, 0.55 * sc));
@@ -137,13 +139,16 @@ const drawFx = (g: CanvasRenderingContext2D, kind: FxKind, t: number, s: number)
 
 // ---------------- props (side view, facing screen-right unless flipped) ----------------
 type PropKind = "horse" | "horse_rear" | "chariot" | "elephant" | "ship" | "bird" | "scroll" | "dagger" | "flag_mac" | "flag_per" | "torch" | "wreath"
-  | "token_m" | "token_p" | "geom" | "pillow" | "bed" | "lamp" | "crown_fall" | "tablet" | "sack" | "brazier" | "spear_beach" | "cradle" | "horse_shadow" | "throne";
+  | "token_m" | "token_p" | "geom" | "pillow" | "bed" | "lamp" | "crown_fall" | "tablet" | "sack" | "brazier" | "spear_beach" | "cradle" | "horse_shadow" | "throne"
+  | "cannon" | "warship" | "flag_fr" | "flag_uk" | "eagle" | "rosetta" | "sphinx" | "book" | "painting" | "snowball" | "desk" | "chair" | "bicorne_prop" | "coffin_cart";
 export const PROP_SIZE: Record<PropKind, [number, number, number]> = { // canvas w, h, metres tall
   horse: [1100, 900, 2.3], horse_rear: [1100, 1000, 2.6], chariot: [1400, 900, 2.0], elephant: [1300, 1100, 3.6], ship: [1600, 1200, 9], bird: [300, 200, 0.45],
   scroll: [500, 300, 0.5], dagger: [300, 120, 0.35], flag_mac: [500, 1400, 4.2], flag_per: [500, 1400, 4.2], torch: [200, 900, 2.2], wreath: [300, 200, 0.4],
   token_m: [120, 160, 0.16], token_p: [120, 160, 0.16], geom: [1000, 1000, 2.2], pillow: [600, 240, 0.4], bed: [1400, 600, 1.1], lamp: [300, 400, 0.55],
   crown_fall: [320, 220, 0.42], tablet: [400, 300, 0.4], sack: [300, 360, 0.6], brazier: [400, 600, 1.2], spear_beach: [200, 1200, 3.4],
   cradle: [700, 500, 0.9], horse_shadow: [1100, 900, 2.3], throne: [500, 700, 1.6],
+  cannon: [1000, 600, 1.5], warship: [1800, 1500, 14], flag_fr: [500, 1400, 4.2], flag_uk: [500, 1400, 4.2], eagle: [400, 1300, 3.0], rosetta: [500, 640, 1.1],
+  sphinx: [1400, 800, 9], book: [500, 380, 0.5], painting: [1200, 800, 3.2], snowball: [120, 120, 0.22], desk: [900, 600, 1.0], chair: [400, 700, 1.1], bicorne_prop: [400, 200, 0.4], coffin_cart: [1500, 900, 3.0],
 };
 export const propCard = (kind: PropKind, pos: V3, f: number, o: { flip?: boolean; phase?: number; scale?: number; rider?: Who; roll?: number; flat?: boolean; yaw?: number; anim?: number; z?: number; alpha?: number } = {}): CardDraw[] => {
   const [cw, ch, hm] = PROP_SIZE[kind];
@@ -277,6 +282,54 @@ const drawProp = (g: CanvasRenderingContext2D, kind: PropKind, ph: number, an: n
       break;
     }
     case "horse_shadow": { g.globalAlpha = 0.55; const c2 = document.createElement("canvas"); c2.width = 1100; c2.height = 900; drawHorse(new Pen(c2.getContext("2d")!), ph, "#1a1226", 0); const cg = c2.getContext("2d")!; cg.globalCompositeOperation = "source-in"; cg.fillStyle = "#1a1226"; cg.fillRect(0, 0, 1100, 900); g.drawImage(c2, 0, 0); break; }
+    case "cannon": { // field gun, side view; anim = recoil 0..1
+      const rc = -40 * Math.sin(Math.PI * Math.min(1, an * 2));
+      g.translate(rc, 0);
+      p.band([[120, 520], [520, 330]], "#6a4a2a", 34, 8); // trail
+      p.poly([[300, 300], [880, 250], [900, 300], [320, 360]], "#3a3a40", 9); p.ell(880, 275, 22, 30, "#2a2a30", 7);
+      p.band([[300, 330], [320, 300]], "#2a2a30", 30, 7);
+      const wr = 150, wx = 420, wy = 430; p.ell(wx, wy, wr, wr, "#8a5a34", 9); p.ell(wx, wy, wr * 0.8, wr * 0.8, null, 6);
+      for (let i = 0; i < 10; i++) { const a = (i * Math.PI) / 5; p.stroke([[wx, wy], [wx + Math.cos(a) * wr * 0.8, wy + Math.sin(a) * wr * 0.8]], 8); }
+      p.ell(wx, wy, 22, 22, "#3a3a40", 6);
+      break;
+    }
+    case "warship": { // three-masted ship of the line; rider = flag nation ("redcoat" = British, else French)
+      const sway = 10 * Math.sin(two * ph); g.translate(0, sway);
+      const brit = rider === "redcoat", fl = brit ? "#c0272d" : "#27408b";
+      for (const [x, h] of [[520, 820], [900, 980], [1260, 760]] as const) { p.band([[x, 1180], [x, 1180 - h]], "#6a4a2a", 18, 5); for (let k = 0; k < 3; k++) { const y = 1180 - h + 80 + k * (h / 3.4); p.poly([[x - 150 + k * 10, y], [x + 150 - k * 10, y], [x + 130 - k * 10, y + h / 4.2], [x - 130 + k * 10, y + h / 4.2]], "#f3ece0", 7); } }
+      p.poly([[100, 1160], [1720, 1160], [1560, 1440], [260, 1440]], "#5a3a24", 10);
+      p.band([[100, 1220], [1720, 1220]], "#d9a441", 20, 4); for (let i = 0; i < 12; i++) p.poly([[260 + i * 110, 1250], [310 + i * 110, 1250], [310 + i * 110, 1290], [260 + i * 110, 1290]], "#1c1a22", 3);
+      if (brit) { p.poly([[900, 40], [1080, 40], [1080, 140], [900, 140]], "#27408b", 5); p.band([[900, 40], [1080, 140]], "#f3ece0", 16, 0); p.band([[1080, 40], [900, 140]], "#f3ece0", 16, 0); p.band([[900, 40], [1080, 140]], "#c0272d", 6, 0); p.band([[1080, 40], [900, 140]], "#c0272d", 6, 0); p.band([[900, 90], [1080, 90]], "#f3ece0", 26, 0); p.band([[990, 40], [990, 140]], "#f3ece0", 26, 0); p.band([[900, 90], [1080, 90]], "#c0272d", 12, 0); p.band([[990, 40], [990, 140]], "#c0272d", 12, 0); }
+      else for (let k = 0; k < 3; k++) p.poly([[900 + k * 60, 40], [960 + k * 60, 40], [960 + k * 60, 140], [900 + k * 60, 140]], ["#27408b", "#f3ece0", "#c0272d"][k], 4);
+      void fl;
+      break;
+    }
+    case "flag_fr": case "flag_uk": {
+      p.band([[60, 40], [60, 1400]], "#7a4b2a", 22, 6);
+      const wave = (i: number) => 16 * Math.sin(two * (ph + i * 0.12));
+      const quad = (x0: number, x1: number, col: string) => { const pts: [number, number][] = []; for (let i = 0; i <= 3; i++) pts.push([x0 + ((x1 - x0) * i) / 3, 80 + wave(x0 / 50 + i)]); for (let i = 3; i >= 0; i--) pts.push([x0 + ((x1 - x0) * i) / 3, 400 + wave(x0 / 50 + i)]); p.poly(pts, col, 6); };
+      if (kind === "flag_fr") { quad(70, 207, "#27408b"); quad(207, 344, "#f3ece0"); quad(344, 480, "#c0272d"); }
+      else { quad(70, 480, "#27408b"); const w4 = wave(4); p.band([[70, 85 + w4], [480, 395 + w4]], "#f3ece0", 46, 0); p.band([[480, 85 + w4], [70, 395 + w4]], "#f3ece0", 46, 0); p.band([[70, 85 + w4], [480, 395 + w4]], "#c0272d", 14, 0); p.band([[480, 85 + w4], [70, 395 + w4]], "#c0272d", 14, 0); p.band([[70, 240 + wave(4)], [480, 240 + wave(4)]], "#f3ece0", 60, 0); p.band([[275, 85 + wave(4)], [275, 395 + wave(4)]], "#f3ece0", 60, 0); p.band([[70, 240 + wave(4)], [480, 240 + wave(4)]], "#c0272d", 30, 0); p.band([[275, 85 + wave(4)], [275, 395 + wave(4)]], "#c0272d", 30, 0); }
+      break;
+    }
+    case "eagle": { // imperial eagle standard
+      p.band([[200, 260], [200, 1290]], "#27408b", 20, 5);
+      p.poly([[200, 60], [120, 120], [40, 90], [100, 190], [170, 210], [150, 260], [250, 260], [230, 210], [300, 190], [360, 90], [280, 120]], "#e2b64a", 8);
+      p.poly([[90, 280], [310, 280], [310, 330], [90, 330]], "#e2b64a", 6);
+      for (let k = 0; k < 3; k++) p.poly([[100 + k * 70, 340], [170 + k * 70, 340], [170 + k * 70, 560], [100 + k * 70, 560]], ["#27408b", "#f3ece0", "#c0272d"][k], 5);
+      break;
+    }
+    case "rosetta": p.poly([[60, 120], [200, 40], [440, 70], [460, 620], [40, 620]], "#4a4650", 9); for (let i = 0; i < 18; i++) p.stroke([[90, 140 + i * 26], [410 - (i % 4) * 12, 140 + i * 26]], 4, i < 5 ? "#a8a4b0" : i < 11 ? "#8a8690" : "#9a96a2"); break;
+    case "sphinx": p.poly([[80, 760], [80, 560], [300, 470], [900, 470], [1000, 380], [1000, 200], [1080, 120], [1220, 130], [1280, 220], [1290, 520], [1340, 760]], "#d9b77a", 10); p.poly([[1020, 220], [1000, 420], [1060, 420], [1080, 260]], "#c9a46a", 6); p.ell(1200, 260, 12, 10, INK, 0); p.stroke([[1170, 330], [1230, 330]], 7); break;
+    case "book": p.poly([[40, 60], [460, 40], [470, 330], [50, 350]], "#27408b", 9); p.band([[60, 70], [70, 340]], "#e2b64a", 18, 4); g.font = "900 54px Cinzel, serif"; g.fillStyle = "#e2b64a"; g.textAlign = "center"; g.fillText("CODE", 270, 170); g.fillText("CIVIL", 270, 245); break;
+    case "painting": { p.poly([[20, 20], [1180, 20], [1180, 780], [20, 780]], "#c9963f", 14); p.poly([[70, 70], [1130, 70], [1130, 730], [70, 730]], "#6a3a2a", 6);
+      for (let i = 0; i < 14; i++) { const x = 130 + i * 72, y = 470 + (i % 3) * 20; p.ell(x, y, 26, 30, "#f0d0b0", 4); p.poly([[x - 30, y + 30], [x + 30, y + 30], [x + 36, y + 200], [x - 36, y + 200]], ["#a3182a", "#f6f2ea", "#27408b", "#2a2a30"][i % 4], 4); }
+      p.ell(600, 340, 30, 34, "#f0d0b0", 4); p.poly([[560, 380], [640, 380], [660, 600], [540, 600]], "#a3182a", 4); p.ell(600, 300, 34, 12, "#e2b64a", 3); break; }
+    case "snowball": p.ell(60, 60, 50, 50, "#f6f8ff", 7); break;
+    case "desk": p.poly([[60, 220], [840, 220], [840, 280], [60, 280]], "#6a4a2a", 9); for (const x of [100, 800]) p.band([[x, 280], [x, 580]], "#5a3a20", 24, 6); p.poly([[300, 160], [560, 150], [580, 220], [290, 220]], "#f3ead8", 6); p.stroke([[600, 210], [690, 80]], 8, "#f6f3ea"); p.ell(620, 205, 20, 12, "#2a2a30", 5); break;
+    case "chair": p.band([[90, 680], [90, 60]], "#6a4a2a", 26, 6); p.band([[90, 360], [330, 360]], "#6a4a2a", 30, 6); p.band([[330, 360], [330, 680]], "#6a4a2a", 24, 6); p.poly([[90, 60], [140, 60], [140, 340], [90, 340]], "#7a2a2a", 5); break;
+    case "bicorne_prop": { const pts: [number, number][] = [[20, 170], [80, 70], [200, 30], [320, 70], [380, 170], [200, 140]]; p.poly(pts, "#1c1a22", 8); p.ell(260, 95, 18, 18, "#c8283a", 4); p.ell(260, 95, 11, 11, "#f4f1ea", 0); p.ell(260, 95, 5, 5, "#27408b", 0); break; }
+    case "coffin_cart": { p.poly([[200, 380], [1300, 380], [1260, 620], [240, 620]], "#1c1a22", 9); p.poly([[380, 160], [1120, 160], [1180, 380], [320, 380]], "#e2b64a", 8); p.poly([[640, 40], [860, 40], [900, 160], [600, 160]], "#a3182a", 7); for (const x of [380, 1120]) { p.ell(x, 700, 140, 140, "#6a4a2a", 9); p.ell(x, 700, 100, 100, null, 6); } break; }
     case "throne": p.poly([[100, 680], [400, 680], [400, 380], [100, 380]], "#8a5a34", 9); p.poly([[120, 380], [380, 380], [360, 60], [140, 60]], "#b8312f", 9); p.poly([[80, 400], [420, 400], [420, 350], [80, 350]], "#e2b64a", 8); break;
   }
 };

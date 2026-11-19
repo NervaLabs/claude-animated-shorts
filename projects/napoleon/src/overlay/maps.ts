@@ -146,7 +146,7 @@ export const drawMap = (g: CanvasRenderingContext2D, st: MapState, W: number, H:
   });
   // token at the route head
   if (st.token && st.route !== undefined) {
-    const pts = routePts(st.route), [x, y] = P(pts[pts.length - 1]), img = token(st.tokenWho ?? "alex_helm");
+    const pts = routePts(st.route), [x, y] = P(pts[pts.length - 1]), img = token(st.tokenWho ?? "nap");
     const h = 150 * k, w = h * 0.6, b = Math.abs(Math.sin(f / 4)) * 6 * k;
     g.save(); g.fillStyle = "rgba(30,20,40,0.35)"; g.beginPath(); g.ellipse(x, y + 2 * k, 26 * k, 8 * k, 0, 0, Math.PI * 2); g.fill();
     g.drawImage(img, x - w / 2, y - h * 0.97 - b, w, h); g.restore();
