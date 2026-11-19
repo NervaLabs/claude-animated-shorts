@@ -1,0 +1,7 @@
+node_modules/
+out/
+dist/
+voice/*.wav
+voice/*.mp3
+!voice/take1.mp3
+!voice/take2.mp3

@@ -1,0 +1,24 @@
+{
+  "name": "alexander-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --format=esm --loader:.woff2=dataurl --outfile=dist/bundle.js --log-level=warning",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --no-warnings --test tests/*.test.ts",
+    "test:shots": "esbuild tests/shots.test.ts --bundle --platform=node --format=esm --loader:.woff2=dataurl --outfile=dist/tests/shots.test.mjs --log-level=warning && node --test dist/tests/shots.test.mjs"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "three": "^0.170.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.0",
+    "@types/three": "^0.170.0",
+    "@types/topojson-client": "^3.1.5",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.3"
+  }
+}

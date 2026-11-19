@@ -1,0 +1,7618 @@
+[
+{
+"cap": "One",
+"spoken": [
+"One"
+],
+"s": 0.0,
+"e": 0.182,
+"para": 0
+},
+{
+"cap": "man",
+"spoken": [
+"man"
+],
+"s": 0.182,
+"e": 0.418,
+"para": 0
+},
+{
+"cap": "went",
+"spoken": [
+"went"
+],
+"s": 0.418,
+"e": 0.636,
+"para": 0
+},
+{
+"cap": "from",
+"spoken": [
+"from"
+],
+"s": 0.636,
+"e": 0.818,
+"para": 0
+},
+{
+"cap": "being",
+"spoken": [
+"being"
+],
+"s": 0.818,
+"e": 1.0,
+"para": 0
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 1.0,
+"e": 1.164,
+"para": 0
+},
+{
+"cap": "relatively",
+"spoken": [
+"relatively"
+],
+"s": 1.164,
+"e": 1.527,
+"para": 0
+},
+{
+"cap": "unknown",
+"spoken": [
+"unknown"
+],
+"s": 1.527,
+"e": 1.945,
+"para": 0
+},
+{
+"cap": "army",
+"spoken": [
+"army"
+],
+"s": 1.945,
+"e": 2.436,
+"para": 0
+},
+{
+"cap": "officer",
+"spoken": [
+"officer"
+],
+"s": 2.436,
+"e": 2.836,
+"para": 0
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 2.836,
+"e": 3.164,
+"para": 0
+},
+{
+"cap": "ruling",
+"spoken": [
+"ruling"
+],
+"s": 3.164,
+"e": 3.418,
+"para": 0
+},
+{
+"cap": "one",
+"spoken": [
+"one"
+],
+"s": 3.418,
+"e": 3.673,
+"para": 0
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 3.673,
+"e": 3.782,
+"para": 0
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 3.782,
+"e": 3.855,
+"para": 0
+},
+{
+"cap": "most",
+"spoken": [
+"most"
+],
+"s": 3.855,
+"e": 4.0,
+"para": 0
+},
+{
+"cap": "powerful",
+"spoken": [
+"powerful"
+],
+"s": 4.0,
+"e": 4.455,
+"para": 0
+},
+{
+"cap": "empires",
+"spoken": [
+"empires"
+],
+"s": 4.455,
+"e": 4.855,
+"para": 0
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 4.855,
+"e": 5.364,
+"para": 0
+},
+{
+"cap": "European",
+"spoken": [
+"European"
+],
+"s": 5.364,
+"e": 5.636,
+"para": 0
+},
+{
+"cap": "history.",
+"spoken": [
+"history."
+],
+"s": 5.636,
+"e": 6.182,
+"para": 0
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 6.728,
+"e": 6.746,
+"para": 0
+},
+{
+"cap": "crowned",
+"spoken": [
+"crowned"
+],
+"s": 6.746,
+"e": 6.928,
+"para": 0
+},
+{
+"cap": "himself",
+"spoken": [
+"himself"
+],
+"s": 6.928,
+"e": 7.201,
+"para": 0
+},
+{
+"cap": "emperor,",
+"spoken": [
+"emperor,"
+],
+"s": 7.201,
+"e": 7.656,
+"para": 0
+},
+{
+"cap": "redrew",
+"spoken": [
+"redrew"
+],
+"s": 8.001,
+"e": 8.456,
+"para": 0
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 8.456,
+"e": 8.583,
+"para": 0
+},
+{
+"cap": "map",
+"spoken": [
+"map"
+],
+"s": 8.583,
+"e": 8.71,
+"para": 0
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 8.71,
+"e": 8.892,
+"para": 0
+},
+{
+"cap": "Europe,",
+"spoken": [
+"Europe,"
+],
+"s": 8.892,
+"e": 9.092,
+"para": 0
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 9.51,
+"e": 9.601,
+"para": 0
+},
+{
+"cap": "then",
+"spoken": [
+"then"
+],
+"s": 9.601,
+"e": 9.71,
+"para": 0
+},
+{
+"cap": "lost",
+"spoken": [
+"lost"
+],
+"s": 9.71,
+"e": 9.928,
+"para": 0
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 9.928,
+"e": 10.128,
+"para": 0
+},
+{
+"cap": "all,",
+"spoken": [
+"all,"
+],
+"s": 10.128,
+"e": 10.383,
+"para": 0
+},
+{
+"cap": "twice.",
+"spoken": [
+"twice."
+],
+"s": 10.548,
+"e": 10.764,
+"para": 0
+},
+{
+"cap": "His",
+"spoken": [
+"His"
+],
+"s": 11.292,
+"e": 11.451,
+"para": 0
+},
+{
+"cap": "name",
+"spoken": [
+"name"
+],
+"s": 11.451,
+"e": 11.705,
+"para": 0
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 11.705,
+"e": 12.014,
+"para": 0
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 12.014,
+"e": 12.414,
+"para": 0
+},
+{
+"cap": "Bonaparte.",
+"spoken": [
+"Bonaparte."
+],
+"s": 12.414,
+"e": 13.032,
+"para": 0
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 13.373,
+"e": 13.628,
+"para": 1
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 13.628,
+"e": 13.719,
+"para": 1
+},
+{
+"cap": "born",
+"spoken": [
+"born"
+],
+"s": 13.719,
+"e": 13.955,
+"para": 1
+},
+{
+"cap": "on",
+"spoken": [
+"on"
+],
+"s": 13.955,
+"e": 14.137,
+"para": 1
+},
+{
+"cap": "August",
+"spoken": [
+"August"
+],
+"s": 14.137,
+"e": 14.464,
+"para": 1
+},
+{
+"cap": "fifteenth,",
+"spoken": [
+"fifteenth,"
+],
+"s": 14.464,
+"e": 15.106,
+"para": 1
+},
+{
+"cap": "1769,",
+"spoken": [
+"seventeen",
+"sixty-nine,"
+],
+"s": 15.106,
+"e": 16.391,
+"para": 1
+},
+{
+"cap": "on",
+"spoken": [
+"on"
+],
+"s": 16.391,
+"e": 16.464,
+"para": 1
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 16.464,
+"e": 16.555,
+"para": 1
+},
+{
+"cap": "island",
+"spoken": [
+"island"
+],
+"s": 16.555,
+"e": 16.809,
+"para": 1
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 16.809,
+"e": 16.955,
+"para": 1
+},
+{
+"cap": "Corsica,",
+"spoken": [
+"Corsica,"
+],
+"s": 16.955,
+"e": 17.373,
+"para": 1
+},
+{
+"cap": "which",
+"spoken": [
+"which"
+],
+"s": 17.737,
+"e": 17.828,
+"para": 1
+},
+{
+"cap": "had",
+"spoken": [
+"had"
+],
+"s": 17.828,
+"e": 17.919,
+"para": 1
+},
+{
+"cap": "become",
+"spoken": [
+"become"
+],
+"s": 17.919,
+"e": 18.119,
+"para": 1
+},
+{
+"cap": "French",
+"spoken": [
+"French"
+],
+"s": 18.119,
+"e": 18.373,
+"para": 1
+},
+{
+"cap": "only",
+"spoken": [
+"only"
+],
+"s": 18.373,
+"e": 18.755,
+"para": 1
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 18.755,
+"e": 18.937,
+"para": 1
+},
+{
+"cap": "year",
+"spoken": [
+"year"
+],
+"s": 18.937,
+"e": 19.1,
+"para": 1
+},
+{
+"cap": "before.",
+"spoken": [
+"before."
+],
+"s": 19.1,
+"e": 19.355,
+"para": 1
+},
+{
+"cap": "His",
+"spoken": [
+"His"
+],
+"s": 19.694,
+"e": 19.844,
+"para": 1
+},
+{
+"cap": "father",
+"spoken": [
+"father"
+],
+"s": 19.844,
+"e": 20.171,
+"para": 1
+},
+{
+"cap": "had",
+"spoken": [
+"had"
+],
+"s": 20.171,
+"e": 20.371,
+"para": 1
+},
+{
+"cap": "actually",
+"spoken": [
+"actually"
+],
+"s": 20.371,
+"e": 20.608,
+"para": 1
+},
+{
+"cap": "fought",
+"spoken": [
+"fought"
+],
+"s": 20.608,
+"e": 20.881,
+"para": 1
+},
+{
+"cap": "against",
+"spoken": [
+"against"
+],
+"s": 20.881,
+"e": 21.153,
+"para": 1
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 21.153,
+"e": 21.499,
+"para": 1
+},
+{
+"cap": "French.",
+"spoken": [
+"French."
+],
+"s": 21.499,
+"e": 21.699,
+"para": 1
+},
+{
+"cap": "At",
+"spoken": [
+"At"
+],
+"s": 21.99,
+"e": 22.157,
+"para": 1
+},
+{
+"cap": "nine,",
+"spoken": [
+"nine,"
+],
+"s": 22.157,
+"e": 22.357,
+"para": 1
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 22.776,
+"e": 23.012,
+"para": 1
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 23.012,
+"e": 23.267,
+"para": 1
+},
+{
+"cap": "sent",
+"spoken": [
+"sent"
+],
+"s": 23.267,
+"e": 23.43,
+"para": 1
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 23.43,
+"e": 23.576,
+"para": 1
+},
+{
+"cap": "school",
+"spoken": [
+"school"
+],
+"s": 23.576,
+"e": 23.739,
+"para": 1
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 23.739,
+"e": 23.939,
+"para": 1
+},
+{
+"cap": "France,",
+"spoken": [
+"France,"
+],
+"s": 23.939,
+"e": 24.212,
+"para": 1
+},
+{
+"cap": "where",
+"spoken": [
+"where"
+],
+"s": 24.539,
+"e": 24.63,
+"para": 1
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 24.63,
+"e": 24.739,
+"para": 1
+},
+{
+"cap": "other",
+"spoken": [
+"other"
+],
+"s": 24.739,
+"e": 24.867,
+"para": 1
+},
+{
+"cap": "boys",
+"spoken": [
+"boys"
+],
+"s": 24.867,
+"e": 25.121,
+"para": 1
+},
+{
+"cap": "mocked",
+"spoken": [
+"mocked"
+],
+"s": 25.121,
+"e": 25.394,
+"para": 1
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 25.394,
+"e": 25.721,
+"para": 1
+},
+{
+"cap": "thick",
+"spoken": [
+"thick"
+],
+"s": 25.721,
+"e": 25.994,
+"para": 1
+},
+{
+"cap": "Corsican",
+"spoken": [
+"Corsican"
+],
+"s": 25.994,
+"e": 26.448,
+"para": 1
+},
+{
+"cap": "accent.",
+"spoken": [
+"accent."
+],
+"s": 26.448,
+"e": 26.667,
+"para": 1
+},
+{
+"cap": "So",
+"spoken": [
+"So"
+],
+"s": 27.175,
+"e": 27.338,
+"para": 1
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 27.338,
+"e": 27.593,
+"para": 1
+},
+{
+"cap": "buried",
+"spoken": [
+"buried"
+],
+"s": 27.593,
+"e": 27.902,
+"para": 1
+},
+{
+"cap": "himself",
+"spoken": [
+"himself"
+],
+"s": 27.902,
+"e": 28.266,
+"para": 1
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 28.266,
+"e": 28.429,
+"para": 1
+},
+{
+"cap": "books",
+"spoken": [
+"books"
+],
+"s": 28.429,
+"e": 28.629,
+"para": 1
+},
+{
+"cap": "about",
+"spoken": [
+"about"
+],
+"s": 28.629,
+"e": 28.938,
+"para": 1
+},
+{
+"cap": "history",
+"spoken": [
+"history"
+],
+"s": 28.938,
+"e": 29.338,
+"para": 1
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 29.338,
+"e": 29.593,
+"para": 1
+},
+{
+"cap": "mathematics.",
+"spoken": [
+"mathematics."
+],
+"s": 29.593,
+"e": 29.847,
+"para": 1
+},
+{
+"cap": "Legend",
+"spoken": [
+"Legend"
+],
+"s": 30.397,
+"e": 30.629,
+"para": 1
+},
+{
+"cap": "says",
+"spoken": [
+"says"
+],
+"s": 30.629,
+"e": 30.92,
+"para": 1
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 30.92,
+"e": 31.138,
+"para": 1
+},
+{
+"cap": "once",
+"spoken": [
+"once"
+],
+"s": 31.138,
+"e": 31.302,
+"para": 1
+},
+{
+"cap": "even",
+"spoken": [
+"even"
+],
+"s": 31.302,
+"e": 31.52,
+"para": 1
+},
+{
+"cap": "led",
+"spoken": [
+"led"
+],
+"s": 31.52,
+"e": 31.72,
+"para": 1
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 31.72,
+"e": 31.829,
+"para": 1
+},
+{
+"cap": "schoolboy",
+"spoken": [
+"schoolboy"
+],
+"s": 31.829,
+"e": 32.357,
+"para": 1
+},
+{
+"cap": "snowball",
+"spoken": [
+"snowball"
+],
+"s": 32.357,
+"e": 32.611,
+"para": 1
+},
+{
+"cap": "fight",
+"spoken": [
+"fight"
+],
+"s": 32.611,
+"e": 33.102,
+"para": 1
+},
+{
+"cap": "like",
+"spoken": [
+"like"
+],
+"s": 33.102,
+"e": 33.302,
+"para": 1
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 33.302,
+"e": 33.393,
+"para": 1
+},
+{
+"cap": "real",
+"spoken": [
+"real"
+],
+"s": 33.393,
+"e": 33.593,
+"para": 1
+},
+{
+"cap": "battle.",
+"spoken": [
+"battle."
+],
+"s": 33.593,
+"e": 34.011,
+"para": 1
+},
+{
+"cap": "At",
+"spoken": [
+"At"
+],
+"s": 34.299,
+"e": 34.427,
+"para": 1
+},
+{
+"cap": "military",
+"spoken": [
+"military"
+],
+"s": 34.427,
+"e": 34.609,
+"para": 1
+},
+{
+"cap": "school",
+"spoken": [
+"school"
+],
+"s": 34.609,
+"e": 35.027,
+"para": 1
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 35.027,
+"e": 35.209,
+"para": 1
+},
+{
+"cap": "Paris,",
+"spoken": [
+"Paris,"
+],
+"s": 35.209,
+"e": 35.499,
+"para": 1
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 35.754,
+"e": 35.863,
+"para": 1
+},
+{
+"cap": "finished",
+"spoken": [
+"finished"
+],
+"s": 35.863,
+"e": 36.099,
+"para": 1
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 36.099,
+"e": 36.281,
+"para": 1
+},
+{
+"cap": "course",
+"spoken": [
+"course"
+],
+"s": 36.281,
+"e": 36.499,
+"para": 1
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 36.499,
+"e": 36.699,
+"para": 1
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 36.699,
+"e": 36.772,
+"para": 1
+},
+{
+"cap": "single",
+"spoken": [
+"single"
+],
+"s": 36.772,
+"e": 37.081,
+"para": 1
+},
+{
+"cap": "year,",
+"spoken": [
+"year,"
+],
+"s": 37.081,
+"e": 37.518,
+"para": 1
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 37.698,
+"e": 37.812,
+"para": 1
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 37.812,
+"e": 37.903,
+"para": 1
+},
+{
+"cap": "sixteen,",
+"spoken": [
+"sixteen,"
+],
+"s": 37.903,
+"e": 38.648,
+"para": 1
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 38.648,
+"e": 38.666,
+"para": 1
+},
+{
+"cap": "became",
+"spoken": [
+"became"
+],
+"s": 38.666,
+"e": 38.921,
+"para": 1
+},
+{
+"cap": "an",
+"spoken": [
+"an"
+],
+"s": 38.921,
+"e": 39.048,
+"para": 1
+},
+{
+"cap": "artillery",
+"spoken": [
+"artillery"
+],
+"s": 39.048,
+"e": 39.212,
+"para": 1
+},
+{
+"cap": "officer.",
+"spoken": [
+"officer."
+],
+"s": 39.212,
+"e": 39.739,
+"para": 1
+},
+{
+"cap": "Then,",
+"spoken": [
+"Then,"
+],
+"s": 40.303,
+"e": 40.576,
+"para": 2
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 40.74,
+"e": 40.903,
+"para": 2
+},
+{
+"cap": "1789,",
+"spoken": [
+"seventeen",
+"eighty-nine,"
+],
+"s": 40.903,
+"e": 42.103,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 42.103,
+"e": 42.194,
+"para": 2
+},
+{
+"cap": "French",
+"spoken": [
+"French"
+],
+"s": 42.194,
+"e": 42.431,
+"para": 2
+},
+{
+"cap": "Revolution",
+"spoken": [
+"Revolution"
+],
+"s": 42.431,
+"e": 42.776,
+"para": 2
+},
+{
+"cap": "turned",
+"spoken": [
+"turned"
+],
+"s": 42.776,
+"e": 43.267,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 43.267,
+"e": 43.485,
+"para": 2
+},
+{
+"cap": "country",
+"spoken": [
+"country"
+],
+"s": 43.485,
+"e": 43.794,
+"para": 2
+},
+{
+"cap": "upside",
+"spoken": [
+"upside"
+],
+"s": 43.794,
+"e": 44.103,
+"para": 2
+},
+{
+"cap": "down.",
+"spoken": [
+"down."
+],
+"s": 44.103,
+"e": 44.703,
+"para": 2
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 44.956,
+"e": 45.047,
+"para": 2
+},
+{
+"cap": "king",
+"spoken": [
+"king"
+],
+"s": 45.047,
+"e": 45.211,
+"para": 2
+},
+{
+"cap": "lost",
+"spoken": [
+"lost"
+],
+"s": 45.211,
+"e": 45.502,
+"para": 2
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 45.502,
+"e": 45.702,
+"para": 2
+},
+{
+"cap": "throne,",
+"spoken": [
+"throne,"
+],
+"s": 45.702,
+"e": 45.956,
+"para": 2
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 46.247,
+"e": 46.429,
+"para": 2
+},
+{
+"cap": "later",
+"spoken": [
+"later"
+],
+"s": 46.429,
+"e": 46.665,
+"para": 2
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 46.665,
+"e": 47.011,
+"para": 2
+},
+{
+"cap": "life.",
+"spoken": [
+"life."
+],
+"s": 47.011,
+"e": 47.247,
+"para": 2
+},
+{
+"cap": "Suddenly,",
+"spoken": [
+"Suddenly,"
+],
+"s": 47.563,
+"e": 47.983,
+"para": 2
+},
+{
+"cap": "talent",
+"spoken": [
+"talent"
+],
+"s": 48.292,
+"e": 48.492,
+"para": 2
+},
+{
+"cap": "mattered",
+"spoken": [
+"mattered"
+],
+"s": 48.492,
+"e": 48.983,
+"para": 2
+},
+{
+"cap": "more",
+"spoken": [
+"more"
+],
+"s": 48.983,
+"e": 49.274,
+"para": 2
+},
+{
+"cap": "than",
+"spoken": [
+"than"
+],
+"s": 49.274,
+"e": 49.51,
+"para": 2
+},
+{
+"cap": "noble",
+"spoken": [
+"noble"
+],
+"s": 49.51,
+"e": 49.692,
+"para": 2
+},
+{
+"cap": "birth.",
+"spoken": [
+"birth."
+],
+"s": 49.692,
+"e": 50.019,
+"para": 2
+},
+{
+"cap": "In",
+"spoken": [
+"In"
+],
+"s": 50.019,
+"e": 50.278,
+"para": 2
+},
+{
+"cap": "1793,",
+"spoken": [
+"seventeen",
+"ninety-three,"
+],
+"s": 50.278,
+"e": 51.664,
+"para": 2
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 51.664,
+"e": 51.737,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 51.737,
+"e": 51.791,
+"para": 2
+},
+{
+"cap": "Siege",
+"spoken": [
+"Siege"
+],
+"s": 51.791,
+"e": 52.01,
+"para": 2
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 52.01,
+"e": 52.155,
+"para": 2
+},
+{
+"cap": "Toulon,",
+"spoken": [
+"Toulon,"
+],
+"s": 52.155,
+"e": 52.5,
+"para": 2
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 52.719,
+"e": 52.955,
+"para": 2
+},
+{
+"cap": "young",
+"spoken": [
+"young"
+],
+"s": 52.955,
+"e": 53.137,
+"para": 2
+},
+{
+"cap": "captain",
+"spoken": [
+"captain"
+],
+"s": 53.137,
+"e": 53.5,
+"para": 2
+},
+{
+"cap": "named",
+"spoken": [
+"named"
+],
+"s": 53.5,
+"e": 53.791,
+"para": 2
+},
+{
+"cap": "Bonaparte",
+"spoken": [
+"Bonaparte"
+],
+"s": 53.791,
+"e": 54.319,
+"para": 2
+},
+{
+"cap": "placed",
+"spoken": [
+"placed"
+],
+"s": 54.319,
+"e": 54.61,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 54.61,
+"e": 54.846,
+"para": 2
+},
+{
+"cap": "cannons",
+"spoken": [
+"cannons"
+],
+"s": 54.846,
+"e": 55.119,
+"para": 2
+},
+{
+"cap": "that",
+"spoken": [
+"that"
+],
+"s": 55.119,
+"e": 55.373,
+"para": 2
+},
+{
+"cap": "drove",
+"spoken": [
+"drove"
+],
+"s": 55.373,
+"e": 55.628,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 55.628,
+"e": 55.864,
+"para": 2
+},
+{
+"cap": "British",
+"spoken": [
+"British"
+],
+"s": 55.864,
+"e": 56.1,
+"para": 2
+},
+{
+"cap": "fleet",
+"spoken": [
+"fleet"
+],
+"s": 56.1,
+"e": 56.355,
+"para": 2
+},
+{
+"cap": "out",
+"spoken": [
+"out"
+],
+"s": 56.355,
+"e": 56.682,
+"para": 2
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 56.682,
+"e": 56.791,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 56.791,
+"e": 56.882,
+"para": 2
+},
+{
+"cap": "harbor.",
+"spoken": [
+"harbor."
+],
+"s": 56.882,
+"e": 57.064,
+"para": 2
+},
+{
+"cap": "At",
+"spoken": [
+"At"
+],
+"s": 57.426,
+"e": 57.553,
+"para": 2
+},
+{
+"cap": "just",
+"spoken": [
+"just"
+],
+"s": 57.553,
+"e": 57.699,
+"para": 2
+},
+{
+"cap": "24,",
+"spoken": [
+"twenty-four,"
+],
+"s": 57.699,
+"e": 58.59,
+"para": 2
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 58.59,
+"e": 58.699,
+"para": 2
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 58.699,
+"e": 58.808,
+"para": 2
+},
+{
+"cap": "made",
+"spoken": [
+"made"
+],
+"s": 58.808,
+"e": 59.026,
+"para": 2
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 59.026,
+"e": 59.135,
+"para": 2
+},
+{
+"cap": "general.",
+"spoken": [
+"general."
+],
+"s": 59.135,
+"e": 59.462,
+"para": 2
+},
+{
+"cap": "Two",
+"spoken": [
+"Two"
+],
+"s": 59.707,
+"e": 59.904,
+"para": 2
+},
+{
+"cap": "years",
+"spoken": [
+"years"
+],
+"s": 59.904,
+"e": 60.086,
+"para": 2
+},
+{
+"cap": "later,",
+"spoken": [
+"later,"
+],
+"s": 60.086,
+"e": 60.359,
+"para": 2
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 60.595,
+"e": 60.686,
+"para": 2
+},
+{
+"cap": "defended",
+"spoken": [
+"defended"
+],
+"s": 60.686,
+"e": 60.995,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 60.995,
+"e": 61.195,
+"para": 2
+},
+{
+"cap": "government",
+"spoken": [
+"government"
+],
+"s": 61.195,
+"e": 61.45,
+"para": 2
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 61.45,
+"e": 61.65,
+"para": 2
+},
+{
+"cap": "Paris",
+"spoken": [
+"Paris"
+],
+"s": 61.65,
+"e": 61.959,
+"para": 2
+},
+{
+"cap": "against",
+"spoken": [
+"against"
+],
+"s": 61.959,
+"e": 62.286,
+"para": 2
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 62.286,
+"e": 62.468,
+"para": 2
+},
+{
+"cap": "royalist",
+"spoken": [
+"royalist"
+],
+"s": 62.468,
+"e": 62.904,
+"para": 2
+},
+{
+"cap": "uprising,",
+"spoken": [
+"uprising,"
+],
+"s": 62.904,
+"e": 63.086,
+"para": 2
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 63.704,
+"e": 63.777,
+"para": 2
+},
+{
+"cap": "became",
+"spoken": [
+"became"
+],
+"s": 63.777,
+"e": 63.923,
+"para": 2
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 63.923,
+"e": 64.123,
+"para": 2
+},
+{
+"cap": "hero",
+"spoken": [
+"hero"
+],
+"s": 64.123,
+"e": 64.468,
+"para": 2
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 64.468,
+"e": 64.668,
+"para": 2
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 64.668,
+"e": 64.759,
+"para": 2
+},
+{
+"cap": "Revolution.",
+"spoken": [
+"Revolution."
+],
+"s": 64.759,
+"e": 64.977,
+"para": 2
+},
+{
+"cap": "Soon",
+"spoken": [
+"Soon"
+],
+"s": 65.517,
+"e": 65.68,
+"para": 2
+},
+{
+"cap": "after,",
+"spoken": [
+"after,"
+],
+"s": 65.68,
+"e": 65.953,
+"para": 2
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 66.262,
+"e": 66.39,
+"para": 2
+},
+{
+"cap": "married",
+"spoken": [
+"married"
+],
+"s": 66.39,
+"e": 66.626,
+"para": 2
+},
+{
+"cap": "Josephine.",
+"spoken": [
+"Josephine."
+],
+"s": 66.626,
+"e": 67.208,
+"para": 2
+},
+{
+"cap": "In",
+"spoken": [
+"In"
+],
+"s": 67.68,
+"e": 67.79,
+"para": 3
+},
+{
+"cap": "1796,",
+"spoken": [
+"seventeen",
+"ninety-six,"
+],
+"s": 67.79,
+"e": 69.008,
+"para": 3
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 69.008,
+"e": 69.099,
+"para": 3
+},
+{
+"cap": "took",
+"spoken": [
+"took"
+],
+"s": 69.099,
+"e": 69.262,
+"para": 3
+},
+{
+"cap": "command",
+"spoken": [
+"command"
+],
+"s": 69.262,
+"e": 69.517,
+"para": 3
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 69.517,
+"e": 69.771,
+"para": 3
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 69.771,
+"e": 69.844,
+"para": 3
+},
+{
+"cap": "hungry,",
+"spoken": [
+"hungry,"
+],
+"s": 69.844,
+"e": 70.19,
+"para": 3
+},
+{
+"cap": "ragged",
+"spoken": [
+"ragged"
+],
+"s": 70.19,
+"e": 70.735,
+"para": 3
+},
+{
+"cap": "army",
+"spoken": [
+"army"
+],
+"s": 70.735,
+"e": 71.008,
+"para": 3
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 71.008,
+"e": 71.226,
+"para": 3
+},
+{
+"cap": "Italy,",
+"spoken": [
+"Italy,"
+],
+"s": 71.226,
+"e": 71.444,
+"para": 3
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 71.444,
+"e": 71.88,
+"para": 3
+},
+{
+"cap": "turned",
+"spoken": [
+"turned"
+],
+"s": 71.88,
+"e": 72.099,
+"para": 3
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 72.099,
+"e": 72.262,
+"para": 3
+},
+{
+"cap": "into",
+"spoken": [
+"into"
+],
+"s": 72.262,
+"e": 72.48,
+"para": 3
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 72.48,
+"e": 72.608,
+"para": 3
+},
+{
+"cap": "winning",
+"spoken": [
+"winning"
+],
+"s": 72.608,
+"e": 72.844,
+"para": 3
+},
+{
+"cap": "machine.",
+"spoken": [
+"machine."
+],
+"s": 72.844,
+"e": 73.244,
+"para": 3
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 73.642,
+"e": 73.81,
+"para": 3
+},
+{
+"cap": "moved",
+"spoken": [
+"moved"
+],
+"s": 73.81,
+"e": 73.937,
+"para": 3
+},
+{
+"cap": "so",
+"spoken": [
+"so"
+],
+"s": 73.937,
+"e": 74.228,
+"para": 3
+},
+{
+"cap": "fast",
+"spoken": [
+"fast"
+],
+"s": 74.228,
+"e": 74.664,
+"para": 3
+},
+{
+"cap": "that",
+"spoken": [
+"that"
+],
+"s": 74.664,
+"e": 74.828,
+"para": 3
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 74.828,
+"e": 74.937,
+"para": 3
+},
+{
+"cap": "enemies",
+"spoken": [
+"enemies"
+],
+"s": 74.937,
+"e": 75.283,
+"para": 3
+},
+{
+"cap": "could",
+"spoken": [
+"could"
+],
+"s": 75.283,
+"e": 75.483,
+"para": 3
+},
+{
+"cap": "barely",
+"spoken": [
+"barely"
+],
+"s": 75.483,
+"e": 75.883,
+"para": 3
+},
+{
+"cap": "keep",
+"spoken": [
+"keep"
+],
+"s": 75.883,
+"e": 76.064,
+"para": 3
+},
+{
+"cap": "up.",
+"spoken": [
+"up."
+],
+"s": 76.064,
+"e": 76.301,
+"para": 3
+},
+{
+"cap": "Lodi,",
+"spoken": [
+"Lodi,"
+],
+"s": 76.576,
+"e": 76.922,
+"para": 3
+},
+{
+"cap": "Arcole,",
+"spoken": [
+"Arcole,"
+],
+"s": 76.922,
+"e": 77.849,
+"para": 3
+},
+{
+"cap": "Rivoli:",
+"spoken": [
+"Rivoli:"
+],
+"s": 77.849,
+"e": 78.285,
+"para": 3
+},
+{
+"cap": "victory",
+"spoken": [
+"victory"
+],
+"s": 78.636,
+"e": 78.818,
+"para": 3
+},
+{
+"cap": "after",
+"spoken": [
+"after"
+],
+"s": 78.818,
+"e": 79.345,
+"para": 3
+},
+{
+"cap": "victory,",
+"spoken": [
+"victory,"
+],
+"s": 79.345,
+"e": 79.872,
+"para": 3
+},
+{
+"cap": "until",
+"spoken": [
+"until"
+],
+"s": 80.199,
+"e": 80.436,
+"para": 3
+},
+{
+"cap": "Austria",
+"spoken": [
+"Austria"
+],
+"s": 80.436,
+"e": 80.709,
+"para": 3
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 80.709,
+"e": 81.09,
+"para": 3
+},
+{
+"cap": "forced",
+"spoken": [
+"forced"
+],
+"s": 81.09,
+"e": 81.345,
+"para": 3
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 81.345,
+"e": 81.618,
+"para": 3
+},
+{
+"cap": "make",
+"spoken": [
+"make"
+],
+"s": 81.618,
+"e": 81.745,
+"para": 3
+},
+{
+"cap": "peace.",
+"spoken": [
+"peace."
+],
+"s": 81.745,
+"e": 81.999,
+"para": 3
+},
+{
+"cap": "His",
+"spoken": [
+"His"
+],
+"s": 82.383,
+"e": 82.529,
+"para": 3
+},
+{
+"cap": "soldiers",
+"spoken": [
+"soldiers"
+],
+"s": 82.529,
+"e": 82.856,
+"para": 3
+},
+{
+"cap": "nicknamed",
+"spoken": [
+"nicknamed"
+],
+"s": 82.856,
+"e": 83.11,
+"para": 3
+},
+{
+"cap": "him",
+"spoken": [
+"him"
+],
+"s": 83.11,
+"e": 83.529,
+"para": 3
+},
+{
+"cap": "\"the",
+"spoken": [
+"\"the"
+],
+"s": 83.529,
+"e": 83.819,
+"para": 3
+},
+{
+"cap": "little",
+"spoken": [
+"little"
+],
+"s": 83.819,
+"e": 84.038,
+"para": 3
+},
+{
+"cap": "corporal.\"",
+"spoken": [
+"corporal.\""
+],
+"s": 84.038,
+"e": 84.619,
+"para": 3
+},
+{
+"cap": "And",
+"spoken": [
+"And"
+],
+"s": 84.815,
+"e": 84.942,
+"para": 3
+},
+{
+"cap": "no,",
+"spoken": [
+"no,"
+],
+"s": 84.942,
+"e": 85.197,
+"para": 3
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 85.36,
+"e": 85.451,
+"para": 3
+},
+{
+"cap": "wasn't",
+"spoken": [
+"wasn't"
+],
+"s": 85.451,
+"e": 85.724,
+"para": 3
+},
+{
+"cap": "actually",
+"spoken": [
+"actually"
+],
+"s": 85.724,
+"e": 86.033,
+"para": 3
+},
+{
+"cap": "short.",
+"spoken": [
+"short."
+],
+"s": 86.033,
+"e": 86.287,
+"para": 3
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 86.633,
+"e": 86.687,
+"para": 3
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 86.687,
+"e": 86.76,
+"para": 3
+},
+{
+"cap": "about",
+"spoken": [
+"about"
+],
+"s": 86.76,
+"e": 86.906,
+"para": 3
+},
+{
+"cap": "five",
+"spoken": [
+"five"
+],
+"s": 86.906,
+"e": 87.251,
+"para": 3
+},
+{
+"cap": "foot",
+"spoken": [
+"foot"
+],
+"s": 87.251,
+"e": 87.597,
+"para": 3
+},
+{
+"cap": "seven,",
+"spoken": [
+"seven,"
+],
+"s": 87.597,
+"e": 87.942,
+"para": 3
+},
+{
+"cap": "average",
+"spoken": [
+"average"
+],
+"s": 87.942,
+"e": 88.178,
+"para": 3
+},
+{
+"cap": "for",
+"spoken": [
+"for"
+],
+"s": 88.178,
+"e": 88.433,
+"para": 3
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 88.433,
+"e": 88.524,
+"para": 3
+},
+{
+"cap": "time.",
+"spoken": [
+"time."
+],
+"s": 88.524,
+"e": 88.76,
+"para": 3
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 89.026,
+"e": 89.117,
+"para": 3
+},
+{
+"cap": "myth",
+"spoken": [
+"myth"
+],
+"s": 89.117,
+"e": 89.28,
+"para": 3
+},
+{
+"cap": "came",
+"spoken": [
+"came"
+],
+"s": 89.28,
+"e": 89.535,
+"para": 3
+},
+{
+"cap": "partly",
+"spoken": [
+"partly"
+],
+"s": 89.535,
+"e": 89.862,
+"para": 3
+},
+{
+"cap": "from",
+"spoken": [
+"from"
+],
+"s": 89.862,
+"e": 90.117,
+"para": 3
+},
+{
+"cap": "British",
+"spoken": [
+"British"
+],
+"s": 90.117,
+"e": 90.335,
+"para": 3
+},
+{
+"cap": "cartoonists.",
+"spoken": [
+"cartoonists."
+],
+"s": 90.335,
+"e": 90.935,
+"para": 3
+},
+{
+"cap": "In",
+"spoken": [
+"In"
+],
+"s": 91.51,
+"e": 91.619,
+"para": 4
+},
+{
+"cap": "1798,",
+"spoken": [
+"seventeen",
+"ninety-eight,"
+],
+"s": 91.619,
+"e": 92.783,
+"para": 4
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 92.783,
+"e": 92.801,
+"para": 4
+},
+{
+"cap": "sailed",
+"spoken": [
+"sailed"
+],
+"s": 92.801,
+"e": 93.037,
+"para": 4
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 93.037,
+"e": 93.256,
+"para": 4
+},
+{
+"cap": "Egypt,",
+"spoken": [
+"Egypt,"
+],
+"s": 93.256,
+"e": 93.565,
+"para": 4
+},
+{
+"cap": "hoping",
+"spoken": [
+"hoping"
+],
+"s": 93.892,
+"e": 94.074,
+"para": 4
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 94.074,
+"e": 94.256,
+"para": 4
+},
+{
+"cap": "threaten",
+"spoken": [
+"threaten"
+],
+"s": 94.256,
+"e": 94.51,
+"para": 4
+},
+{
+"cap": "Britain's",
+"spoken": [
+"Britain's"
+],
+"s": 94.51,
+"e": 94.947,
+"para": 4
+},
+{
+"cap": "route",
+"spoken": [
+"route"
+],
+"s": 94.947,
+"e": 95.074,
+"para": 4
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 95.074,
+"e": 95.292,
+"para": 4
+},
+{
+"cap": "India.",
+"spoken": [
+"India."
+],
+"s": 95.292,
+"e": 95.547,
+"para": 4
+},
+{
+"cap": "Legend",
+"spoken": [
+"Legend"
+],
+"s": 95.887,
+"e": 96.05,
+"para": 4
+},
+{
+"cap": "says",
+"spoken": [
+"says"
+],
+"s": 96.05,
+"e": 96.359,
+"para": 4
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 96.359,
+"e": 96.577,
+"para": 4
+},
+{
+"cap": "told",
+"spoken": [
+"told"
+],
+"s": 96.577,
+"e": 96.759,
+"para": 4
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 96.759,
+"e": 96.959,
+"para": 4
+},
+{
+"cap": "men",
+"spoken": [
+"men"
+],
+"s": 96.959,
+"e": 97.177,
+"para": 4
+},
+{
+"cap": "that",
+"spoken": [
+"that"
+],
+"s": 97.177,
+"e": 97.359,
+"para": 4
+},
+{
+"cap": "forty",
+"spoken": [
+"forty"
+],
+"s": 97.359,
+"e": 97.668,
+"para": 4
+},
+{
+"cap": "centuries",
+"spoken": [
+"centuries"
+],
+"s": 97.668,
+"e": 98.196,
+"para": 4
+},
+{
+"cap": "were",
+"spoken": [
+"were"
+],
+"s": 98.196,
+"e": 98.523,
+"para": 4
+},
+{
+"cap": "looking",
+"spoken": [
+"looking"
+],
+"s": 98.523,
+"e": 98.723,
+"para": 4
+},
+{
+"cap": "down",
+"spoken": [
+"down"
+],
+"s": 98.723,
+"e": 99.014,
+"para": 4
+},
+{
+"cap": "on",
+"spoken": [
+"on"
+],
+"s": 99.014,
+"e": 99.196,
+"para": 4
+},
+{
+"cap": "them",
+"spoken": [
+"them"
+],
+"s": 99.196,
+"e": 99.323,
+"para": 4
+},
+{
+"cap": "from",
+"spoken": [
+"from"
+],
+"s": 99.323,
+"e": 99.468,
+"para": 4
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 99.468,
+"e": 99.577,
+"para": 4
+},
+{
+"cap": "pyramids.",
+"spoken": [
+"pyramids."
+],
+"s": 99.577,
+"e": 99.905,
+"para": 4
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 100.266,
+"e": 100.45,
+"para": 4
+},
+{
+"cap": "won",
+"spoken": [
+"won"
+],
+"s": 100.45,
+"e": 100.668,
+"para": 4
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 100.668,
+"e": 100.85,
+"para": 4
+},
+{
+"cap": "Battle",
+"spoken": [
+"Battle"
+],
+"s": 100.85,
+"e": 101.105,
+"para": 4
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 101.105,
+"e": 101.214,
+"para": 4
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 101.214,
+"e": 101.287,
+"para": 4
+},
+{
+"cap": "Pyramids,",
+"spoken": [
+"Pyramids,"
+],
+"s": 101.287,
+"e": 101.632,
+"para": 4
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 101.977,
+"e": 102.032,
+"para": 4
+},
+{
+"cap": "brought",
+"spoken": [
+"brought"
+],
+"s": 102.032,
+"e": 102.196,
+"para": 4
+},
+{
+"cap": "along",
+"spoken": [
+"along"
+],
+"s": 102.196,
+"e": 102.377,
+"para": 4
+},
+{
+"cap": "more",
+"spoken": [
+"more"
+],
+"s": 102.377,
+"e": 102.705,
+"para": 4
+},
+{
+"cap": "than",
+"spoken": [
+"than"
+],
+"s": 102.705,
+"e": 102.832,
+"para": 4
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 102.832,
+"e": 102.932,
+"para": 4
+},
+{
+"cap": "hundred",
+"spoken": [
+"hundred"
+],
+"s": 102.932,
+"e": 103.032,
+"para": 4
+},
+{
+"cap": "scholars,",
+"spoken": [
+"scholars,"
+],
+"s": 103.032,
+"e": 103.559,
+"para": 4
+},
+{
+"cap": "whose",
+"spoken": [
+"whose"
+],
+"s": 103.559,
+"e": 104.05,
+"para": 4
+},
+{
+"cap": "expedition",
+"spoken": [
+"expedition"
+],
+"s": 104.05,
+"e": 104.377,
+"para": 4
+},
+{
+"cap": "uncovered",
+"spoken": [
+"uncovered"
+],
+"s": 104.377,
+"e": 104.887,
+"para": 4
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 104.887,
+"e": 105.214,
+"para": 4
+},
+{
+"cap": "Rosetta",
+"spoken": [
+"Rosetta"
+],
+"s": 105.214,
+"e": 105.559,
+"para": 4
+},
+{
+"cap": "Stone.",
+"spoken": [
+"Stone."
+],
+"s": 105.559,
+"e": 105.868,
+"para": 4
+},
+{
+"cap": "But",
+"spoken": [
+"But"
+],
+"s": 106.047,
+"e": 106.202,
+"para": 4
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 106.202,
+"e": 106.275,
+"para": 4
+},
+{
+"cap": "British",
+"spoken": [
+"British"
+],
+"s": 106.275,
+"e": 106.511,
+"para": 4
+},
+{
+"cap": "admiral",
+"spoken": [
+"admiral"
+],
+"s": 106.511,
+"e": 106.802,
+"para": 4
+},
+{
+"cap": "Nelson",
+"spoken": [
+"Nelson"
+],
+"s": 106.802,
+"e": 107.111,
+"para": 4
+},
+{
+"cap": "destroyed",
+"spoken": [
+"destroyed"
+],
+"s": 107.111,
+"e": 107.747,
+"para": 4
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 107.747,
+"e": 108.075,
+"para": 4
+},
+{
+"cap": "fleet,",
+"spoken": [
+"fleet,"
+],
+"s": 108.075,
+"e": 108.311,
+"para": 4
+},
+{
+"cap": "leaving",
+"spoken": [
+"leaving"
+],
+"s": 108.638,
+"e": 108.784,
+"para": 4
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 108.784,
+"e": 109.002,
+"para": 4
+},
+{
+"cap": "army",
+"spoken": [
+"army"
+],
+"s": 109.002,
+"e": 109.238,
+"para": 4
+},
+{
+"cap": "stranded.",
+"spoken": [
+"stranded."
+],
+"s": 109.238,
+"e": 109.675,
+"para": 4
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 110.139,
+"e": 110.23,
+"para": 4
+},
+{
+"cap": "campaign",
+"spoken": [
+"campaign"
+],
+"s": 110.23,
+"e": 110.394,
+"para": 4
+},
+{
+"cap": "made",
+"spoken": [
+"made"
+],
+"s": 110.394,
+"e": 110.794,
+"para": 4
+},
+{
+"cap": "him",
+"spoken": [
+"him"
+],
+"s": 110.794,
+"e": 110.939,
+"para": 4
+},
+{
+"cap": "famous,",
+"spoken": [
+"famous,"
+],
+"s": 110.939,
+"e": 111.285,
+"para": 4
+},
+{
+"cap": "but",
+"spoken": [
+"but"
+],
+"s": 111.594,
+"e": 111.757,
+"para": 4
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 111.757,
+"e": 111.921,
+"para": 4
+},
+{
+"cap": "never",
+"spoken": [
+"never"
+],
+"s": 111.921,
+"e": 112.121,
+"para": 4
+},
+{
+"cap": "achieved",
+"spoken": [
+"achieved"
+],
+"s": 112.121,
+"e": 112.448,
+"para": 4
+},
+{
+"cap": "its",
+"spoken": [
+"its"
+],
+"s": 112.448,
+"e": 112.721,
+"para": 4
+},
+{
+"cap": "goals.",
+"spoken": [
+"goals."
+],
+"s": 112.721,
+"e": 112.903,
+"para": 4
+},
+{
+"cap": "So",
+"spoken": [
+"So"
+],
+"s": 113.648,
+"e": 113.757,
+"para": 5
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 113.757,
+"e": 114.048,
+"para": 5
+},
+{
+"cap": "slipped",
+"spoken": [
+"slipped"
+],
+"s": 114.048,
+"e": 114.612,
+"para": 5
+},
+{
+"cap": "back",
+"spoken": [
+"back"
+],
+"s": 114.612,
+"e": 114.885,
+"para": 5
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 114.885,
+"e": 115.048,
+"para": 5
+},
+{
+"cap": "France.",
+"spoken": [
+"France."
+],
+"s": 115.048,
+"e": 115.267,
+"para": 5
+},
+{
+"cap": "In",
+"spoken": [
+"In"
+],
+"s": 115.671,
+"e": 115.762,
+"para": 5
+},
+{
+"cap": "November",
+"spoken": [
+"November"
+],
+"s": 115.762,
+"e": 115.907,
+"para": 5
+},
+{
+"cap": "1799,",
+"spoken": [
+"seventeen",
+"ninety-nine,"
+],
+"s": 115.907,
+"e": 117.453,
+"para": 5
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 117.453,
+"e": 117.507,
+"para": 5
+},
+{
+"cap": "seized",
+"spoken": [
+"seized"
+],
+"s": 117.507,
+"e": 117.78,
+"para": 5
+},
+{
+"cap": "power",
+"spoken": [
+"power"
+],
+"s": 117.78,
+"e": 118.071,
+"para": 5
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 118.071,
+"e": 118.362,
+"para": 5
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 118.362,
+"e": 118.435,
+"para": 5
+},
+{
+"cap": "coup,",
+"spoken": [
+"coup,"
+],
+"s": 118.435,
+"e": 118.653,
+"para": 5
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 118.653,
+"e": 119.017,
+"para": 5
+},
+{
+"cap": "became",
+"spoken": [
+"became"
+],
+"s": 119.017,
+"e": 119.253,
+"para": 5
+},
+{
+"cap": "First",
+"spoken": [
+"First"
+],
+"s": 119.253,
+"e": 119.653,
+"para": 5
+},
+{
+"cap": "Consul.",
+"spoken": [
+"Consul."
+],
+"s": 119.653,
+"e": 120.198,
+"para": 5
+},
+{
+"cap": "Five",
+"spoken": [
+"Five"
+],
+"s": 120.394,
+"e": 120.612,
+"para": 5
+},
+{
+"cap": "years",
+"spoken": [
+"years"
+],
+"s": 120.612,
+"e": 120.776,
+"para": 5
+},
+{
+"cap": "later,",
+"spoken": [
+"later,"
+],
+"s": 120.776,
+"e": 121.048,
+"para": 5
+},
+{
+"cap": "on",
+"spoken": [
+"on"
+],
+"s": 121.248,
+"e": 121.376,
+"para": 5
+},
+{
+"cap": "December",
+"spoken": [
+"December"
+],
+"s": 121.376,
+"e": 121.467,
+"para": 5
+},
+{
+"cap": "second,",
+"spoken": [
+"second,"
+],
+"s": 121.467,
+"e": 122.312,
+"para": 5
+},
+{
+"cap": "1804,",
+"spoken": [
+"eighteen-oh-four,"
+],
+"s": 122.312,
+"e": 123.157,
+"para": 5
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 123.157,
+"e": 123.194,
+"para": 5
+},
+{
+"cap": "Notre-Dame,",
+"spoken": [
+"Notre-Dame,"
+],
+"s": 123.194,
+"e": 123.939,
+"para": 5
+},
+{
+"cap": "with",
+"spoken": [
+"with"
+],
+"s": 123.939,
+"e": 124.103,
+"para": 5
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 124.103,
+"e": 124.267,
+"para": 5
+},
+{
+"cap": "Pope",
+"spoken": [
+"Pope"
+],
+"s": 124.267,
+"e": 124.485,
+"para": 5
+},
+{
+"cap": "watching,",
+"spoken": [
+"watching,"
+],
+"s": 124.485,
+"e": 124.848,
+"para": 5
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 125.247,
+"e": 125.375,
+"para": 5
+},
+{
+"cap": "took",
+"spoken": [
+"took"
+],
+"s": 125.375,
+"e": 125.538,
+"para": 5
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 125.538,
+"e": 125.702,
+"para": 5
+},
+{
+"cap": "crown",
+"spoken": [
+"crown"
+],
+"s": 125.702,
+"e": 125.92,
+"para": 5
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 125.92,
+"e": 126.266,
+"para": 5
+},
+{
+"cap": "placed",
+"spoken": [
+"placed"
+],
+"s": 126.266,
+"e": 126.557,
+"para": 5
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 126.557,
+"e": 126.775,
+"para": 5
+},
+{
+"cap": "on",
+"spoken": [
+"on"
+],
+"s": 126.775,
+"e": 126.938,
+"para": 5
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 126.938,
+"e": 127.084,
+"para": 5
+},
+{
+"cap": "own",
+"spoken": [
+"own"
+],
+"s": 127.084,
+"e": 127.32,
+"para": 5
+},
+{
+"cap": "head.",
+"spoken": [
+"head."
+],
+"s": 127.32,
+"e": 127.647,
+"para": 5
+},
+{
+"cap": "Emperor",
+"spoken": [
+"Emperor"
+],
+"s": 127.872,
+"e": 128.254,
+"para": 5
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 128.254,
+"e": 128.599,
+"para": 5
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 128.599,
+"e": 128.69,
+"para": 5
+},
+{
+"cap": "French.",
+"spoken": [
+"French."
+],
+"s": 128.69,
+"e": 128.908,
+"para": 5
+},
+{
+"cap": "Then",
+"spoken": [
+"Then"
+],
+"s": 129.345,
+"e": 129.581,
+"para": 5
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 129.763,
+"e": 129.836,
+"para": 5
+},
+{
+"cap": "crowned",
+"spoken": [
+"crowned"
+],
+"s": 129.836,
+"e": 130.163,
+"para": 5
+},
+{
+"cap": "Josephine",
+"spoken": [
+"Josephine"
+],
+"s": 130.163,
+"e": 130.89,
+"para": 5
+},
+{
+"cap": "as",
+"spoken": [
+"as"
+],
+"s": 130.89,
+"e": 131.09,
+"para": 5
+},
+{
+"cap": "empress.",
+"spoken": [
+"empress."
+],
+"s": 131.09,
+"e": 131.399,
+"para": 5
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 131.942,
+"e": 132.033,
+"para": 5
+},
+{
+"cap": "ceremony",
+"spoken": [
+"ceremony"
+],
+"s": 132.033,
+"e": 132.342,
+"para": 5
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 132.342,
+"e": 132.651,
+"para": 5
+},
+{
+"cap": "so",
+"spoken": [
+"so"
+],
+"s": 132.651,
+"e": 132.96,
+"para": 5
+},
+{
+"cap": "grand",
+"spoken": [
+"grand"
+],
+"s": 132.96,
+"e": 133.324,
+"para": 5
+},
+{
+"cap": "that",
+"spoken": [
+"that"
+],
+"s": 133.324,
+"e": 133.724,
+"para": 5
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 133.724,
+"e": 133.833,
+"para": 5
+},
+{
+"cap": "painting",
+"spoken": [
+"painting"
+],
+"s": 133.833,
+"e": 134.106,
+"para": 5
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 134.106,
+"e": 134.378,
+"para": 5
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 134.378,
+"e": 134.469,
+"para": 5
+},
+{
+"cap": "took",
+"spoken": [
+"took"
+],
+"s": 134.469,
+"e": 134.615,
+"para": 5
+},
+{
+"cap": "almost",
+"spoken": [
+"almost"
+],
+"s": 134.615,
+"e": 134.851,
+"para": 5
+},
+{
+"cap": "three",
+"spoken": [
+"three"
+],
+"s": 134.851,
+"e": 135.342,
+"para": 5
+},
+{
+"cap": "years",
+"spoken": [
+"years"
+],
+"s": 135.342,
+"e": 135.778,
+"para": 5
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 135.778,
+"e": 136.033,
+"para": 5
+},
+{
+"cap": "finish.",
+"spoken": [
+"finish."
+],
+"s": 136.033,
+"e": 136.269,
+"para": 5
+},
+{
+"cap": "Exactly",
+"spoken": [
+"Exactly"
+],
+"s": 136.825,
+"e": 137.225,
+"para": 6
+},
+{
+"cap": "one",
+"spoken": [
+"one"
+],
+"s": 137.225,
+"e": 137.625,
+"para": 6
+},
+{
+"cap": "year",
+"spoken": [
+"year"
+],
+"s": 137.625,
+"e": 137.897,
+"para": 6
+},
+{
+"cap": "later,",
+"spoken": [
+"later,"
+],
+"s": 137.897,
+"e": 138.225,
+"para": 6
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 138.443,
+"e": 138.57,
+"para": 6
+},
+{
+"cap": "Austerlitz,",
+"spoken": [
+"Austerlitz,"
+],
+"s": 138.57,
+"e": 139.134,
+"para": 6
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 139.425,
+"e": 139.516,
+"para": 6
+},
+{
+"cap": "faced",
+"spoken": [
+"faced"
+],
+"s": 139.516,
+"e": 139.697,
+"para": 6
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 139.697,
+"e": 139.916,
+"para": 6
+},
+{
+"cap": "emperors",
+"spoken": [
+"emperors"
+],
+"s": 139.916,
+"e": 140.207,
+"para": 6
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 140.207,
+"e": 140.461,
+"para": 6
+},
+{
+"cap": "Austria",
+"spoken": [
+"Austria"
+],
+"s": 140.461,
+"e": 140.843,
+"para": 6
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 140.843,
+"e": 141.116,
+"para": 6
+},
+{
+"cap": "Russia",
+"spoken": [
+"Russia"
+],
+"s": 141.116,
+"e": 141.388,
+"para": 6
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 141.388,
+"e": 141.697,
+"para": 6
+},
+{
+"cap": "once.",
+"spoken": [
+"once."
+],
+"s": 141.697,
+"e": 141.97,
+"para": 6
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 142.416,
+"e": 142.507,
+"para": 6
+},
+{
+"cap": "pretended",
+"spoken": [
+"pretended"
+],
+"s": 142.507,
+"e": 142.725,
+"para": 6
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 142.725,
+"e": 143.016,
+"para": 6
+},
+{
+"cap": "be",
+"spoken": [
+"be"
+],
+"s": 143.016,
+"e": 143.143,
+"para": 6
+},
+{
+"cap": "weak,",
+"spoken": [
+"weak,"
+],
+"s": 143.143,
+"e": 143.361,
+"para": 6
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 143.361,
+"e": 143.725,
+"para": 6
+},
+{
+"cap": "lured",
+"spoken": [
+"lured"
+],
+"s": 143.725,
+"e": 143.943,
+"para": 6
+},
+{
+"cap": "them",
+"spoken": [
+"them"
+],
+"s": 143.943,
+"e": 144.179,
+"para": 6
+},
+{
+"cap": "off",
+"spoken": [
+"off"
+],
+"s": 144.179,
+"e": 144.307,
+"para": 6
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 144.307,
+"e": 144.452,
+"para": 6
+},
+{
+"cap": "high",
+"spoken": [
+"high"
+],
+"s": 144.452,
+"e": 144.597,
+"para": 6
+},
+{
+"cap": "ground.",
+"spoken": [
+"ground."
+],
+"s": 144.597,
+"e": 144.816,
+"para": 6
+},
+{
+"cap": "Then,",
+"spoken": [
+"Then,"
+],
+"s": 145.216,
+"e": 145.397,
+"para": 6
+},
+{
+"cap": "as",
+"spoken": [
+"as"
+],
+"s": 145.579,
+"e": 145.761,
+"para": 6
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 145.761,
+"e": 145.87,
+"para": 6
+},
+{
+"cap": "sun",
+"spoken": [
+"sun"
+],
+"s": 145.87,
+"e": 146.07,
+"para": 6
+},
+{
+"cap": "broke",
+"spoken": [
+"broke"
+],
+"s": 146.07,
+"e": 146.361,
+"para": 6
+},
+{
+"cap": "through",
+"spoken": [
+"through"
+],
+"s": 146.361,
+"e": 146.597,
+"para": 6
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 146.597,
+"e": 146.725,
+"para": 6
+},
+{
+"cap": "morning",
+"spoken": [
+"morning"
+],
+"s": 146.725,
+"e": 146.943,
+"para": 6
+},
+{
+"cap": "fog,",
+"spoken": [
+"fog,"
+],
+"s": 146.943,
+"e": 147.234,
+"para": 6
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 147.5,
+"e": 147.634,
+"para": 6
+},
+{
+"cap": "smashed",
+"spoken": [
+"smashed"
+],
+"s": 147.634,
+"e": 147.888,
+"para": 6
+},
+{
+"cap": "their",
+"spoken": [
+"their"
+],
+"s": 147.888,
+"e": 148.325,
+"para": 6
+},
+{
+"cap": "center.",
+"spoken": [
+"center."
+],
+"s": 148.325,
+"e": 148.579,
+"para": 6
+},
+{
+"cap": "It",
+"spoken": [
+"It"
+],
+"s": 148.947,
+"e": 149.056,
+"para": 6
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 149.056,
+"e": 149.183,
+"para": 6
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 149.183,
+"e": 149.365,
+"para": 6
+},
+{
+"cap": "masterpiece.",
+"spoken": [
+"masterpiece."
+],
+"s": 149.365,
+"e": 149.71,
+"para": 6
+},
+{
+"cap": "Then",
+"spoken": [
+"Then"
+],
+"s": 150.292,
+"e": 150.584,
+"para": 6
+},
+{
+"cap": "came",
+"spoken": [
+"came"
+],
+"s": 150.584,
+"e": 150.857,
+"para": 6
+},
+{
+"cap": "Jena",
+"spoken": [
+"Jena"
+],
+"s": 150.857,
+"e": 151.184,
+"para": 6
+},
+{
+"cap": "against",
+"spoken": [
+"against"
+],
+"s": 151.184,
+"e": 151.566,
+"para": 6
+},
+{
+"cap": "Prussia,",
+"spoken": [
+"Prussia,"
+],
+"s": 151.566,
+"e": 151.947,
+"para": 6
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 151.947,
+"e": 152.347,
+"para": 6
+},
+{
+"cap": "Friedland",
+"spoken": [
+"Friedland"
+],
+"s": 152.347,
+"e": 152.766,
+"para": 6
+},
+{
+"cap": "against",
+"spoken": [
+"against"
+],
+"s": 152.766,
+"e": 152.984,
+"para": 6
+},
+{
+"cap": "Russia.",
+"spoken": [
+"Russia."
+],
+"s": 152.984,
+"e": 153.275,
+"para": 6
+},
+{
+"cap": "Much",
+"spoken": [
+"Much"
+],
+"s": 153.725,
+"e": 153.888,
+"para": 6
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 153.888,
+"e": 154.034,
+"para": 6
+},
+{
+"cap": "Europe",
+"spoken": [
+"Europe"
+],
+"s": 154.034,
+"e": 154.288,
+"para": 6
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 154.288,
+"e": 154.507,
+"para": 6
+},
+{
+"cap": "now",
+"spoken": [
+"now"
+],
+"s": 154.507,
+"e": 154.761,
+"para": 6
+},
+{
+"cap": "under",
+"spoken": [
+"under"
+],
+"s": 154.761,
+"e": 155.034,
+"para": 6
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 155.034,
+"e": 155.197,
+"para": 6
+},
+{
+"cap": "control.",
+"spoken": [
+"control."
+],
+"s": 155.197,
+"e": 155.507,
+"para": 6
+},
+{
+"cap": "At",
+"spoken": [
+"At"
+],
+"s": 155.911,
+"e": 156.038,
+"para": 6
+},
+{
+"cap": "home,",
+"spoken": [
+"home,"
+],
+"s": 156.038,
+"e": 156.257,
+"para": 6
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 156.62,
+"e": 156.693,
+"para": 6
+},
+{
+"cap": "Napoleonic",
+"spoken": [
+"Napoleonic"
+],
+"s": 156.693,
+"e": 157.257,
+"para": 6
+},
+{
+"cap": "Code",
+"spoken": [
+"Code"
+],
+"s": 157.257,
+"e": 157.529,
+"para": 6
+},
+{
+"cap": "made",
+"spoken": [
+"made"
+],
+"s": 157.529,
+"e": 157.82,
+"para": 6
+},
+{
+"cap": "all",
+"spoken": [
+"all"
+],
+"s": 157.82,
+"e": 158.111,
+"para": 6
+},
+{
+"cap": "men",
+"spoken": [
+"men"
+],
+"s": 158.111,
+"e": 158.329,
+"para": 6
+},
+{
+"cap": "equal",
+"spoken": [
+"equal"
+],
+"s": 158.329,
+"e": 158.747,
+"para": 6
+},
+{
+"cap": "before",
+"spoken": [
+"before"
+],
+"s": 158.747,
+"e": 159.02,
+"para": 6
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 159.02,
+"e": 159.202,
+"para": 6
+},
+{
+"cap": "law,",
+"spoken": [
+"law,"
+],
+"s": 159.202,
+"e": 159.402,
+"para": 6
+},
+{
+"cap": "though",
+"spoken": [
+"though"
+],
+"s": 159.613,
+"e": 159.777,
+"para": 6
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 159.777,
+"e": 159.995,
+"para": 6
+},
+{
+"cap": "gave",
+"spoken": [
+"gave"
+],
+"s": 159.995,
+"e": 160.14,
+"para": 6
+},
+{
+"cap": "women",
+"spoken": [
+"women"
+],
+"s": 160.14,
+"e": 160.467,
+"para": 6
+},
+{
+"cap": "far",
+"spoken": [
+"far"
+],
+"s": 160.467,
+"e": 160.722,
+"para": 6
+},
+{
+"cap": "fewer",
+"spoken": [
+"fewer"
+],
+"s": 160.722,
+"e": 161.013,
+"para": 6
+},
+{
+"cap": "rights.",
+"spoken": [
+"rights."
+],
+"s": 161.013,
+"e": 161.34,
+"para": 6
+},
+{
+"cap": "Versions",
+"spoken": [
+"Versions"
+],
+"s": 161.718,
+"e": 162.064,
+"para": 6
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 162.064,
+"e": 162.227,
+"para": 6
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 162.227,
+"e": 162.3,
+"para": 6
+},
+{
+"cap": "still",
+"spoken": [
+"still"
+],
+"s": 162.3,
+"e": 162.518,
+"para": 6
+},
+{
+"cap": "shape",
+"spoken": [
+"shape"
+],
+"s": 162.518,
+"e": 162.864,
+"para": 6
+},
+{
+"cap": "legal",
+"spoken": [
+"legal"
+],
+"s": 162.864,
+"e": 163.118,
+"para": 6
+},
+{
+"cap": "systems",
+"spoken": [
+"systems"
+],
+"s": 163.118,
+"e": 163.482,
+"para": 6
+},
+{
+"cap": "around",
+"spoken": [
+"around"
+],
+"s": 163.482,
+"e": 163.755,
+"para": 6
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 163.755,
+"e": 163.918,
+"para": 6
+},
+{
+"cap": "world.",
+"spoken": [
+"world."
+],
+"s": 163.918,
+"e": 164.155,
+"para": 6
+},
+{
+"cap": "But",
+"spoken": [
+"But"
+],
+"s": 164.682,
+"e": 164.827,
+"para": 7
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 164.827,
+"e": 164.918,
+"para": 7
+},
+{
+"cap": "1812,",
+"spoken": [
+"eighteen-twelve,"
+],
+"s": 164.918,
+"e": 165.991,
+"para": 7
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 165.991,
+"e": 166.046,
+"para": 7
+},
+{
+"cap": "invaded",
+"spoken": [
+"invaded"
+],
+"s": 166.046,
+"e": 166.264,
+"para": 7
+},
+{
+"cap": "Russia",
+"spoken": [
+"Russia"
+],
+"s": 166.264,
+"e": 166.7,
+"para": 7
+},
+{
+"cap": "with",
+"spoken": [
+"with"
+],
+"s": 166.7,
+"e": 166.955,
+"para": 7
+},
+{
+"cap": "more",
+"spoken": [
+"more"
+],
+"s": 166.955,
+"e": 167.173,
+"para": 7
+},
+{
+"cap": "than",
+"spoken": [
+"than"
+],
+"s": 167.173,
+"e": 167.318,
+"para": 7
+},
+{
+"cap": "600,000",
+"spoken": [
+"six",
+"hundred",
+"thousand"
+],
+"s": 167.318,
+"e": 168.537,
+"para": 7
+},
+{
+"cap": "men.",
+"spoken": [
+"men."
+],
+"s": 168.537,
+"e": 168.773,
+"para": 7
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 169.071,
+"e": 169.162,
+"para": 7
+},
+{
+"cap": "Russians",
+"spoken": [
+"Russians"
+],
+"s": 169.162,
+"e": 169.307,
+"para": 7
+},
+{
+"cap": "kept",
+"spoken": [
+"kept"
+],
+"s": 169.307,
+"e": 169.671,
+"para": 7
+},
+{
+"cap": "retreating,",
+"spoken": [
+"retreating,"
+],
+"s": 169.671,
+"e": 170.089,
+"para": 7
+},
+{
+"cap": "burning",
+"spoken": [
+"burning"
+],
+"s": 170.344,
+"e": 170.635,
+"para": 7
+},
+{
+"cap": "crops",
+"spoken": [
+"crops"
+],
+"s": 170.635,
+"e": 170.944,
+"para": 7
+},
+{
+"cap": "behind",
+"spoken": [
+"behind"
+],
+"s": 170.944,
+"e": 171.289,
+"para": 7
+},
+{
+"cap": "them.",
+"spoken": [
+"them."
+],
+"s": 171.289,
+"e": 171.507,
+"para": 7
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 171.687,
+"e": 171.833,
+"para": 7
+},
+{
+"cap": "reached",
+"spoken": [
+"reached"
+],
+"s": 171.833,
+"e": 172.069,
+"para": 7
+},
+{
+"cap": "Moscow,",
+"spoken": [
+"Moscow,"
+],
+"s": 172.069,
+"e": 172.287,
+"para": 7
+},
+{
+"cap": "but",
+"spoken": [
+"but"
+],
+"s": 172.797,
+"e": 172.869,
+"para": 7
+},
+{
+"cap": "found",
+"spoken": [
+"found"
+],
+"s": 172.869,
+"e": 173.015,
+"para": 7
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 173.015,
+"e": 173.16,
+"para": 7
+},
+{
+"cap": "empty,",
+"spoken": [
+"empty,"
+],
+"s": 173.16,
+"e": 173.451,
+"para": 7
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 173.76,
+"e": 173.851,
+"para": 7
+},
+{
+"cap": "soon",
+"spoken": [
+"soon"
+],
+"s": 173.851,
+"e": 174.087,
+"para": 7
+},
+{
+"cap": "on",
+"spoken": [
+"on"
+],
+"s": 174.087,
+"e": 174.415,
+"para": 7
+},
+{
+"cap": "fire.",
+"spoken": [
+"fire."
+],
+"s": 174.415,
+"e": 174.778,
+"para": 7
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 174.778,
+"e": 175.14,
+"para": 7
+},
+{
+"cap": "waited",
+"spoken": [
+"waited"
+],
+"s": 175.14,
+"e": 175.34,
+"para": 7
+},
+{
+"cap": "over",
+"spoken": [
+"over"
+],
+"s": 175.34,
+"e": 175.649,
+"para": 7
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 175.649,
+"e": 175.649,
+"para": 7
+},
+{
+"cap": "month",
+"spoken": [
+"month"
+],
+"s": 175.649,
+"e": 176.177,
+"para": 7
+},
+{
+"cap": "for",
+"spoken": [
+"for"
+],
+"s": 176.177,
+"e": 176.431,
+"para": 7
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 176.431,
+"e": 176.504,
+"para": 7
+},
+{
+"cap": "surrender",
+"spoken": [
+"surrender"
+],
+"s": 176.504,
+"e": 176.758,
+"para": 7
+},
+{
+"cap": "that",
+"spoken": [
+"that"
+],
+"s": 176.758,
+"e": 177.049,
+"para": 7
+},
+{
+"cap": "never",
+"spoken": [
+"never"
+],
+"s": 177.049,
+"e": 177.267,
+"para": 7
+},
+{
+"cap": "came,",
+"spoken": [
+"came,"
+],
+"s": 177.267,
+"e": 177.595,
+"para": 7
+},
+{
+"cap": "then",
+"spoken": [
+"then"
+],
+"s": 177.93,
+"e": 177.985,
+"para": 7
+},
+{
+"cap": "turned",
+"spoken": [
+"turned"
+],
+"s": 177.985,
+"e": 178.276,
+"para": 7
+},
+{
+"cap": "back.",
+"spoken": [
+"back."
+],
+"s": 178.276,
+"e": 178.621,
+"para": 7
+},
+{
+"cap": "Temperatures",
+"spoken": [
+"Temperatures"
+],
+"s": 178.878,
+"e": 179.333,
+"para": 7
+},
+{
+"cap": "fell",
+"spoken": [
+"fell"
+],
+"s": 179.333,
+"e": 179.533,
+"para": 7
+},
+{
+"cap": "below",
+"spoken": [
+"below"
+],
+"s": 179.533,
+"e": 179.878,
+"para": 7
+},
+{
+"cap": "\u221230\u00b0C.",
+"spoken": [
+"minus",
+"thirty."
+],
+"s": 179.878,
+"e": 181.342,
+"para": 7
+},
+{
+"cap": "Hunger,",
+"spoken": [
+"Hunger,"
+],
+"s": 181.342,
+"e": 181.342,
+"para": 7
+},
+{
+"cap": "freezing",
+"spoken": [
+"freezing"
+],
+"s": 181.524,
+"e": 181.778,
+"para": 7
+},
+{
+"cap": "cold",
+"spoken": [
+"cold"
+],
+"s": 181.778,
+"e": 182.215,
+"para": 7
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 182.397,
+"e": 182.487,
+"para": 7
+},
+{
+"cap": "constant",
+"spoken": [
+"constant"
+],
+"s": 182.487,
+"e": 182.797,
+"para": 7
+},
+{
+"cap": "attacks",
+"spoken": [
+"attacks"
+],
+"s": 182.797,
+"e": 183.324,
+"para": 7
+},
+{
+"cap": "destroyed",
+"spoken": [
+"destroyed"
+],
+"s": 183.324,
+"e": 183.833,
+"para": 7
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 183.833,
+"e": 184.178,
+"para": 7
+},
+{
+"cap": "army.",
+"spoken": [
+"army."
+],
+"s": 184.178,
+"e": 184.36,
+"para": 7
+},
+{
+"cap": "Only",
+"spoken": [
+"Only"
+],
+"s": 184.734,
+"e": 184.897,
+"para": 7
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 184.897,
+"e": 184.988,
+"para": 7
+},
+{
+"cap": "small",
+"spoken": [
+"small"
+],
+"s": 184.988,
+"e": 185.261,
+"para": 7
+},
+{
+"cap": "fraction",
+"spoken": [
+"fraction"
+],
+"s": 185.261,
+"e": 185.588,
+"para": 7
+},
+{
+"cap": "ever",
+"spoken": [
+"ever"
+],
+"s": 185.588,
+"e": 186.043,
+"para": 7
+},
+{
+"cap": "made",
+"spoken": [
+"made"
+],
+"s": 186.043,
+"e": 186.279,
+"para": 7
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 186.279,
+"e": 186.37,
+"para": 7
+},
+{
+"cap": "home.",
+"spoken": [
+"home."
+],
+"s": 186.37,
+"e": 186.552,
+"para": 7
+},
+{
+"cap": "Now",
+"spoken": [
+"Now"
+],
+"s": 187.334,
+"e": 187.334,
+"para": 8
+},
+{
+"cap": "Russia,",
+"spoken": [
+"Russia,"
+],
+"s": 187.57,
+"e": 187.77,
+"para": 8
+},
+{
+"cap": "Prussia,",
+"spoken": [
+"Prussia,"
+],
+"s": 188.279,
+"e": 188.443,
+"para": 8
+},
+{
+"cap": "Austria,",
+"spoken": [
+"Austria,"
+],
+"s": 188.788,
+"e": 189.097,
+"para": 8
+},
+{
+"cap": "Sweden",
+"spoken": [
+"Sweden"
+],
+"s": 189.243,
+"e": 189.534,
+"para": 8
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 189.807,
+"e": 189.861,
+"para": 8
+},
+{
+"cap": "Britain",
+"spoken": [
+"Britain"
+],
+"s": 189.861,
+"e": 190.079,
+"para": 8
+},
+{
+"cap": "all",
+"spoken": [
+"all"
+],
+"s": 190.079,
+"e": 190.552,
+"para": 8
+},
+{
+"cap": "joined",
+"spoken": [
+"joined"
+],
+"s": 190.552,
+"e": 190.861,
+"para": 8
+},
+{
+"cap": "forces",
+"spoken": [
+"forces"
+],
+"s": 190.861,
+"e": 191.097,
+"para": 8
+},
+{
+"cap": "against",
+"spoken": [
+"against"
+],
+"s": 191.097,
+"e": 191.443,
+"para": 8
+},
+{
+"cap": "him.",
+"spoken": [
+"him."
+],
+"s": 191.443,
+"e": 191.716,
+"para": 8
+},
+{
+"cap": "In",
+"spoken": [
+"In"
+],
+"s": 191.957,
+"e": 192.047,
+"para": 8
+},
+{
+"cap": "1813,",
+"spoken": [
+"eighteen-thirteen,"
+],
+"s": 192.047,
+"e": 193.066,
+"para": 8
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 193.066,
+"e": 193.12,
+"para": 8
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 193.12,
+"e": 193.211,
+"para": 8
+},
+{
+"cap": "beaten",
+"spoken": [
+"beaten"
+],
+"s": 193.211,
+"e": 193.466,
+"para": 8
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 193.466,
+"e": 193.684,
+"para": 8
+},
+{
+"cap": "Leipzig,",
+"spoken": [
+"Leipzig,"
+],
+"s": 193.684,
+"e": 194.084,
+"para": 8
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 194.084,
+"e": 194.375,
+"para": 8
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 194.375,
+"e": 194.447,
+"para": 8
+},
+{
+"cap": "Battle",
+"spoken": [
+"Battle"
+],
+"s": 194.447,
+"e": 194.647,
+"para": 8
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 194.647,
+"e": 194.847,
+"para": 8
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 194.847,
+"e": 194.938,
+"para": 8
+},
+{
+"cap": "Nations.",
+"spoken": [
+"Nations."
+],
+"s": 194.938,
+"e": 195.102,
+"para": 8
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 195.594,
+"e": 195.703,
+"para": 8
+},
+{
+"cap": "next",
+"spoken": [
+"next"
+],
+"s": 195.703,
+"e": 195.848,
+"para": 8
+},
+{
+"cap": "year,",
+"spoken": [
+"year,"
+],
+"s": 195.848,
+"e": 196.121,
+"para": 8
+},
+{
+"cap": "enemy",
+"spoken": [
+"enemy"
+],
+"s": 196.285,
+"e": 196.557,
+"para": 8
+},
+{
+"cap": "armies",
+"spoken": [
+"armies"
+],
+"s": 196.557,
+"e": 196.903,
+"para": 8
+},
+{
+"cap": "marched",
+"spoken": [
+"marched"
+],
+"s": 196.903,
+"e": 197.23,
+"para": 8
+},
+{
+"cap": "into",
+"spoken": [
+"into"
+],
+"s": 197.23,
+"e": 197.503,
+"para": 8
+},
+{
+"cap": "Paris,",
+"spoken": [
+"Paris,"
+],
+"s": 197.503,
+"e": 197.83,
+"para": 8
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 198.248,
+"e": 198.303,
+"para": 8
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 198.303,
+"e": 198.539,
+"para": 8
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 198.539,
+"e": 198.903,
+"para": 8
+},
+{
+"cap": "forced",
+"spoken": [
+"forced"
+],
+"s": 198.903,
+"e": 199.121,
+"para": 8
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 199.121,
+"e": 199.412,
+"para": 8
+},
+{
+"cap": "give",
+"spoken": [
+"give"
+],
+"s": 199.412,
+"e": 199.594,
+"para": 8
+},
+{
+"cap": "up",
+"spoken": [
+"up"
+],
+"s": 199.594,
+"e": 199.739,
+"para": 8
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 199.739,
+"e": 199.885,
+"para": 8
+},
+{
+"cap": "throne.",
+"spoken": [
+"throne."
+],
+"s": 199.885,
+"e": 200.121,
+"para": 8
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 200.408,
+"e": 200.526,
+"para": 8
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 200.526,
+"e": 200.653,
+"para": 8
+},
+{
+"cap": "exiled",
+"spoken": [
+"exiled"
+],
+"s": 200.653,
+"e": 200.889,
+"para": 8
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 200.889,
+"e": 201.235,
+"para": 8
+},
+{
+"cap": "Elba,",
+"spoken": [
+"Elba,"
+],
+"s": 201.235,
+"e": 201.58,
+"para": 8
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 201.835,
+"e": 201.889,
+"para": 8
+},
+{
+"cap": "tiny",
+"spoken": [
+"tiny"
+],
+"s": 201.889,
+"e": 202.107,
+"para": 8
+},
+{
+"cap": "island",
+"spoken": [
+"island"
+],
+"s": 202.107,
+"e": 202.526,
+"para": 8
+},
+{
+"cap": "off",
+"spoken": [
+"off"
+],
+"s": 202.526,
+"e": 202.707,
+"para": 8
+},
+{
+"cap": "Italy,",
+"spoken": [
+"Italy,"
+],
+"s": 202.707,
+"e": 202.944,
+"para": 8
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 203.271,
+"e": 203.435,
+"para": 8
+},
+{
+"cap": "allowed",
+"spoken": [
+"allowed"
+],
+"s": 203.435,
+"e": 203.635,
+"para": 8
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 203.635,
+"e": 203.835,
+"para": 8
+},
+{
+"cap": "keep",
+"spoken": [
+"keep"
+],
+"s": 203.835,
+"e": 204.035,
+"para": 8
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 204.035,
+"e": 204.162,
+"para": 8
+},
+{
+"cap": "title",
+"spoken": [
+"title"
+],
+"s": 204.162,
+"e": 204.417,
+"para": 8
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 204.417,
+"e": 204.562,
+"para": 8
+},
+{
+"cap": "Emperor,",
+"spoken": [
+"Emperor,"
+],
+"s": 204.562,
+"e": 204.853,
+"para": 8
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 204.853,
+"e": 205.398,
+"para": 8
+},
+{
+"cap": "an",
+"spoken": [
+"an"
+],
+"s": 205.398,
+"e": 205.471,
+"para": 8
+},
+{
+"cap": "island",
+"spoken": [
+"island"
+],
+"s": 205.471,
+"e": 205.762,
+"para": 8
+},
+{
+"cap": "just",
+"spoken": [
+"just"
+],
+"s": 205.762,
+"e": 206.035,
+"para": 8
+},
+{
+"cap": "29",
+"spoken": [
+"twenty-nine"
+],
+"s": 206.035,
+"e": 206.398,
+"para": 8
+},
+{
+"cap": "kilometers",
+"spoken": [
+"kilometers"
+],
+"s": 206.398,
+"e": 206.798,
+"para": 8
+},
+{
+"cap": "long.",
+"spoken": [
+"long."
+],
+"s": 206.798,
+"e": 207.38,
+"para": 8
+},
+{
+"cap": "Ten",
+"spoken": [
+"Ten"
+],
+"s": 207.835,
+"e": 208.071,
+"para": 9
+},
+{
+"cap": "months",
+"spoken": [
+"months"
+],
+"s": 208.071,
+"e": 208.235,
+"para": 9
+},
+{
+"cap": "later,",
+"spoken": [
+"later,"
+],
+"s": 208.235,
+"e": 208.544,
+"para": 9
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 208.853,
+"e": 208.944,
+"para": 9
+},
+{
+"cap": "escaped,",
+"spoken": [
+"escaped,"
+],
+"s": 208.944,
+"e": 209.217,
+"para": 9
+},
+{
+"cap": "with",
+"spoken": [
+"with"
+],
+"s": 209.562,
+"e": 209.689,
+"para": 9
+},
+{
+"cap": "about",
+"spoken": [
+"about"
+],
+"s": 209.689,
+"e": 209.835,
+"para": 9
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 209.835,
+"e": 210.08,
+"para": 9
+},
+{
+"cap": "thousand",
+"spoken": [
+"thousand"
+],
+"s": 210.08,
+"e": 210.326,
+"para": 9
+},
+{
+"cap": "men.",
+"spoken": [
+"men."
+],
+"s": 210.326,
+"e": 210.544,
+"para": 9
+},
+{
+"cap": "When",
+"spoken": [
+"When"
+],
+"s": 210.772,
+"e": 210.936,
+"para": 9
+},
+{
+"cap": "soldiers",
+"spoken": [
+"soldiers"
+],
+"s": 210.936,
+"e": 211.263,
+"para": 9
+},
+{
+"cap": "were",
+"spoken": [
+"were"
+],
+"s": 211.263,
+"e": 211.463,
+"para": 9
+},
+{
+"cap": "sent",
+"spoken": [
+"sent"
+],
+"s": 211.463,
+"e": 211.608,
+"para": 9
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 211.608,
+"e": 211.736,
+"para": 9
+},
+{
+"cap": "stop",
+"spoken": [
+"stop"
+],
+"s": 211.736,
+"e": 211.954,
+"para": 9
+},
+{
+"cap": "him,",
+"spoken": [
+"him,"
+],
+"s": 211.954,
+"e": 212.19,
+"para": 9
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 212.427,
+"e": 212.517,
+"para": 9
+},
+{
+"cap": "walked",
+"spoken": [
+"walked"
+],
+"s": 212.517,
+"e": 212.627,
+"para": 9
+},
+{
+"cap": "right",
+"spoken": [
+"right"
+],
+"s": 212.627,
+"e": 212.972,
+"para": 9
+},
+{
+"cap": "up",
+"spoken": [
+"up"
+],
+"s": 212.972,
+"e": 213.099,
+"para": 9
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 213.099,
+"e": 213.227,
+"para": 9
+},
+{
+"cap": "them",
+"spoken": [
+"them"
+],
+"s": 213.227,
+"e": 213.372,
+"para": 9
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 213.372,
+"e": 213.463,
+"para": 9
+},
+{
+"cap": "said,",
+"spoken": [
+"said,"
+],
+"s": 213.463,
+"e": 213.663,
+"para": 9
+},
+{
+"cap": "\"If",
+"spoken": [
+"\"If"
+],
+"s": 214.099,
+"e": 214.117,
+"para": 9
+},
+{
+"cap": "any",
+"spoken": [
+"any"
+],
+"s": 214.117,
+"e": 214.317,
+"para": 9
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 214.317,
+"e": 214.499,
+"para": 9
+},
+{
+"cap": "you",
+"spoken": [
+"you"
+],
+"s": 214.499,
+"e": 214.608,
+"para": 9
+},
+{
+"cap": "wants",
+"spoken": [
+"wants"
+],
+"s": 214.608,
+"e": 214.79,
+"para": 9
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 214.79,
+"e": 214.972,
+"para": 9
+},
+{
+"cap": "kill",
+"spoken": [
+"kill"
+],
+"s": 214.972,
+"e": 215.136,
+"para": 9
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 215.136,
+"e": 215.317,
+"para": 9
+},
+{
+"cap": "Emperor,",
+"spoken": [
+"Emperor,"
+],
+"s": 215.317,
+"e": 215.572,
+"para": 9
+},
+{
+"cap": "here",
+"spoken": [
+"here"
+],
+"s": 215.899,
+"e": 216.099,
+"para": 9
+},
+{
+"cap": "I",
+"spoken": [
+"I"
+],
+"s": 216.099,
+"e": 216.299,
+"para": 9
+},
+{
+"cap": "am.\"",
+"spoken": [
+"am.\""
+],
+"s": 216.299,
+"e": 216.517,
+"para": 9
+},
+{
+"cap": "They",
+"spoken": [
+"They"
+],
+"s": 216.771,
+"e": 216.917,
+"para": 9
+},
+{
+"cap": "switched",
+"spoken": [
+"switched"
+],
+"s": 216.917,
+"e": 217.117,
+"para": 9
+},
+{
+"cap": "sides.",
+"spoken": [
+"sides."
+],
+"s": 217.117,
+"e": 217.426,
+"para": 9
+},
+{
+"cap": "The",
+"spoken": [
+"The"
+],
+"s": 217.927,
+"e": 217.963,
+"para": 9
+},
+{
+"cap": "king",
+"spoken": [
+"king"
+],
+"s": 217.963,
+"e": 218.127,
+"para": 9
+},
+{
+"cap": "fled",
+"spoken": [
+"fled"
+],
+"s": 218.127,
+"e": 218.399,
+"para": 9
+},
+{
+"cap": "Paris,",
+"spoken": [
+"Paris,"
+],
+"s": 218.399,
+"e": 218.781,
+"para": 9
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 219.072,
+"e": 219.199,
+"para": 9
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 219.199,
+"e": 219.327,
+"para": 9
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 219.327,
+"e": 219.836,
+"para": 9
+},
+{
+"cap": "back.",
+"spoken": [
+"back."
+],
+"s": 219.836,
+"e": 220.09,
+"para": 9
+},
+{
+"cap": "His",
+"spoken": [
+"His"
+],
+"s": 220.438,
+"e": 220.511,
+"para": 9
+},
+{
+"cap": "return",
+"spoken": [
+"return"
+],
+"s": 220.511,
+"e": 220.802,
+"para": 9
+},
+{
+"cap": "lasted",
+"spoken": [
+"lasted"
+],
+"s": 220.802,
+"e": 221.111,
+"para": 9
+},
+{
+"cap": "about",
+"spoken": [
+"about"
+],
+"s": 221.111,
+"e": 221.493,
+"para": 9
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 221.493,
+"e": 221.647,
+"para": 9
+},
+{
+"cap": "hundred",
+"spoken": [
+"hundred"
+],
+"s": 221.647,
+"e": 221.802,
+"para": 9
+},
+{
+"cap": "days.",
+"spoken": [
+"days."
+],
+"s": 221.802,
+"e": 222.184,
+"para": 9
+},
+{
+"cap": "On",
+"spoken": [
+"On"
+],
+"s": 222.507,
+"e": 222.667,
+"para": 9
+},
+{
+"cap": "June",
+"spoken": [
+"June"
+],
+"s": 222.667,
+"e": 222.849,
+"para": 9
+},
+{
+"cap": "eighteenth,",
+"spoken": [
+"eighteenth,"
+],
+"s": 222.849,
+"e": 223.722,
+"para": 9
+},
+{
+"cap": "1815,",
+"spoken": [
+"eighteen-fifteen,"
+],
+"s": 223.722,
+"e": 224.595,
+"para": 9
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 224.595,
+"e": 224.686,
+"para": 9
+},
+{
+"cap": "Waterloo,",
+"spoken": [
+"Waterloo,"
+],
+"s": 224.686,
+"e": 224.995,
+"para": 9
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 225.522,
+"e": 225.577,
+"para": 9
+},
+{
+"cap": "faced",
+"spoken": [
+"faced"
+],
+"s": 225.577,
+"e": 225.795,
+"para": 9
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 225.795,
+"e": 225.995,
+"para": 9
+},
+{
+"cap": "British",
+"spoken": [
+"British"
+],
+"s": 225.995,
+"e": 226.213,
+"para": 9
+},
+{
+"cap": "under",
+"spoken": [
+"under"
+],
+"s": 226.213,
+"e": 226.449,
+"para": 9
+},
+{
+"cap": "Wellington.",
+"spoken": [
+"Wellington."
+],
+"s": 226.449,
+"e": 226.758,
+"para": 9
+},
+{
+"cap": "Rain",
+"spoken": [
+"Rain"
+],
+"s": 227.217,
+"e": 227.417,
+"para": 9
+},
+{
+"cap": "delayed",
+"spoken": [
+"delayed"
+],
+"s": 227.417,
+"e": 227.69,
+"para": 9
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 227.69,
+"e": 227.999,
+"para": 9
+},
+{
+"cap": "attack,",
+"spoken": [
+"attack,"
+],
+"s": 227.999,
+"e": 228.327,
+"para": 9
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 228.708,
+"e": 228.763,
+"para": 9
+},
+{
+"cap": "British",
+"spoken": [
+"British"
+],
+"s": 228.763,
+"e": 228.963,
+"para": 9
+},
+{
+"cap": "line",
+"spoken": [
+"line"
+],
+"s": 228.963,
+"e": 229.199,
+"para": 9
+},
+{
+"cap": "held,",
+"spoken": [
+"held,"
+],
+"s": 229.199,
+"e": 229.508,
+"para": 9
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 229.854,
+"e": 229.999,
+"para": 9
+},
+{
+"cap": "when",
+"spoken": [
+"when"
+],
+"s": 229.999,
+"e": 230.09,
+"para": 9
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 230.09,
+"e": 230.181,
+"para": 9
+},
+{
+"cap": "Prussians",
+"spoken": [
+"Prussians"
+],
+"s": 230.181,
+"e": 230.527,
+"para": 9
+},
+{
+"cap": "under",
+"spoken": [
+"under"
+],
+"s": 230.527,
+"e": 230.708,
+"para": 9
+},
+{
+"cap": "Bl\u00fccher",
+"spoken": [
+"Bl\u00fccher"
+],
+"s": 230.708,
+"e": 231.108,
+"para": 9
+},
+{
+"cap": "arrived,",
+"spoken": [
+"arrived,"
+],
+"s": 231.108,
+"e": 231.472,
+"para": 9
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 231.854,
+"e": 231.945,
+"para": 9
+},
+{
+"cap": "army",
+"spoken": [
+"army"
+],
+"s": 231.945,
+"e": 232.181,
+"para": 9
+},
+{
+"cap": "broke.",
+"spoken": [
+"broke."
+],
+"s": 232.181,
+"e": 232.545,
+"para": 9
+},
+{
+"cap": "Wellington",
+"spoken": [
+"Wellington"
+],
+"s": 232.915,
+"e": 233.169,
+"para": 9
+},
+{
+"cap": "called",
+"spoken": [
+"called"
+],
+"s": 233.169,
+"e": 233.515,
+"para": 9
+},
+{
+"cap": "it",
+"spoken": [
+"it"
+],
+"s": 233.515,
+"e": 233.678,
+"para": 9
+},
+{
+"cap": "\"the",
+"spoken": [
+"\"the"
+],
+"s": 233.678,
+"e": 234.006,
+"para": 9
+},
+{
+"cap": "nearest-run",
+"spoken": [
+"nearest-run"
+],
+"s": 234.006,
+"e": 234.624,
+"para": 9
+},
+{
+"cap": "thing",
+"spoken": [
+"thing"
+],
+"s": 234.624,
+"e": 234.951,
+"para": 9
+},
+{
+"cap": "you",
+"spoken": [
+"you"
+],
+"s": 234.951,
+"e": 235.169,
+"para": 9
+},
+{
+"cap": "ever",
+"spoken": [
+"ever"
+],
+"s": 235.169,
+"e": 235.478,
+"para": 9
+},
+{
+"cap": "saw.\"",
+"spoken": [
+"saw.\""
+],
+"s": 235.478,
+"e": 235.806,
+"para": 9
+},
+{
+"cap": "This",
+"spoken": [
+"This"
+],
+"s": 236.242,
+"e": 236.46,
+"para": 10
+},
+{
+"cap": "time,",
+"spoken": [
+"time,"
+],
+"s": 236.46,
+"e": 236.733,
+"para": 10
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 236.933,
+"e": 237.006,
+"para": 10
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 237.006,
+"e": 237.097,
+"para": 10
+},
+{
+"cap": "sent",
+"spoken": [
+"sent"
+],
+"s": 237.097,
+"e": 237.297,
+"para": 10
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 237.297,
+"e": 237.424,
+"para": 10
+},
+{
+"cap": "Saint",
+"spoken": [
+"Saint"
+],
+"s": 237.424,
+"e": 237.751,
+"para": 10
+},
+{
+"cap": "Helena,",
+"spoken": [
+"Helena,"
+],
+"s": 237.751,
+"e": 237.915,
+"para": 10
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 238.26,
+"e": 238.387,
+"para": 10
+},
+{
+"cap": "speck",
+"spoken": [
+"speck"
+],
+"s": 238.387,
+"e": 238.715,
+"para": 10
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 238.715,
+"e": 238.824,
+"para": 10
+},
+{
+"cap": "rock",
+"spoken": [
+"rock"
+],
+"s": 238.824,
+"e": 239.024,
+"para": 10
+},
+{
+"cap": "in",
+"spoken": [
+"in"
+],
+"s": 239.024,
+"e": 239.206,
+"para": 10
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 239.206,
+"e": 239.297,
+"para": 10
+},
+{
+"cap": "South",
+"spoken": [
+"South"
+],
+"s": 239.297,
+"e": 239.497,
+"para": 10
+},
+{
+"cap": "Atlantic,",
+"spoken": [
+"Atlantic,"
+],
+"s": 239.497,
+"e": 239.824,
+"para": 10
+},
+{
+"cap": "nearly",
+"spoken": [
+"nearly"
+],
+"s": 240.206,
+"e": 240.369,
+"para": 10
+},
+{
+"cap": "2,000",
+"spoken": [
+"two",
+"thousand"
+],
+"s": 240.369,
+"e": 241.26,
+"para": 10
+},
+{
+"cap": "kilometers",
+"spoken": [
+"kilometers"
+],
+"s": 241.26,
+"e": 241.406,
+"para": 10
+},
+{
+"cap": "from",
+"spoken": [
+"from"
+],
+"s": 241.406,
+"e": 241.933,
+"para": 10
+},
+{
+"cap": "Africa.",
+"spoken": [
+"Africa."
+],
+"s": 241.933,
+"e": 242.133,
+"para": 10
+},
+{
+"cap": "He",
+"spoken": [
+"He"
+],
+"s": 242.486,
+"e": 242.614,
+"para": 10
+},
+{
+"cap": "spent",
+"spoken": [
+"spent"
+],
+"s": 242.614,
+"e": 242.777,
+"para": 10
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 242.777,
+"e": 242.977,
+"para": 10
+},
+{
+"cap": "last",
+"spoken": [
+"last"
+],
+"s": 242.977,
+"e": 243.159,
+"para": 10
+},
+{
+"cap": "years",
+"spoken": [
+"years"
+],
+"s": 243.159,
+"e": 243.505,
+"para": 10
+},
+{
+"cap": "dictating",
+"spoken": [
+"dictating"
+],
+"s": 243.505,
+"e": 244.087,
+"para": 10
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 244.087,
+"e": 244.25,
+"para": 10
+},
+{
+"cap": "memories.",
+"spoken": [
+"memories."
+],
+"s": 244.25,
+"e": 244.523,
+"para": 10
+},
+{
+"cap": "On",
+"spoken": [
+"On"
+],
+"s": 244.892,
+"e": 245.077,
+"para": 10
+},
+{
+"cap": "May",
+"spoken": [
+"May"
+],
+"s": 245.077,
+"e": 245.24,
+"para": 10
+},
+{
+"cap": "fifth,",
+"spoken": [
+"fifth,"
+],
+"s": 245.24,
+"e": 245.792,
+"para": 10
+},
+{
+"cap": "1821,",
+"spoken": [
+"eighteen",
+"twenty-one,"
+],
+"s": 245.792,
+"e": 246.895,
+"para": 10
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 246.895,
+"e": 247.222,
+"para": 10
+},
+{
+"cap": "died,",
+"spoken": [
+"died,"
+],
+"s": 247.222,
+"e": 247.695,
+"para": 10
+},
+{
+"cap": "at",
+"spoken": [
+"at"
+],
+"s": 248.077,
+"e": 248.149,
+"para": 10
+},
+{
+"cap": "51",
+"spoken": [
+"fifty-one"
+],
+"s": 248.149,
+"e": 248.495,
+"para": 10
+},
+{
+"cap": "years",
+"spoken": [
+"years"
+],
+"s": 248.495,
+"e": 248.877,
+"para": 10
+},
+{
+"cap": "old,",
+"spoken": [
+"old,"
+],
+"s": 248.877,
+"e": 249.149,
+"para": 10
+},
+{
+"cap": "most",
+"spoken": [
+"most"
+],
+"s": 249.339,
+"e": 249.467,
+"para": 10
+},
+{
+"cap": "likely",
+"spoken": [
+"likely"
+],
+"s": 249.467,
+"e": 249.812,
+"para": 10
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 249.812,
+"e": 249.939,
+"para": 10
+},
+{
+"cap": "stomach",
+"spoken": [
+"stomach"
+],
+"s": 249.939,
+"e": 250.176,
+"para": 10
+},
+{
+"cap": "cancer.",
+"spoken": [
+"cancer."
+],
+"s": 250.176,
+"e": 250.448,
+"para": 10
+},
+{
+"cap": "Nineteen",
+"spoken": [
+"Nineteen"
+],
+"s": 250.448,
+"e": 251.121,
+"para": 10
+},
+{
+"cap": "years",
+"spoken": [
+"years"
+],
+"s": 251.121,
+"e": 251.467,
+"para": 10
+},
+{
+"cap": "later,",
+"spoken": [
+"later,"
+],
+"s": 251.467,
+"e": 251.757,
+"para": 10
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 252.067,
+"e": 252.139,
+"para": 10
+},
+{
+"cap": "body",
+"spoken": [
+"body"
+],
+"s": 252.139,
+"e": 252.412,
+"para": 10
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 252.412,
+"e": 252.557,
+"para": 10
+},
+{
+"cap": "brought",
+"spoken": [
+"brought"
+],
+"s": 252.557,
+"e": 252.776,
+"para": 10
+},
+{
+"cap": "back",
+"spoken": [
+"back"
+],
+"s": 252.776,
+"e": 253.012,
+"para": 10
+},
+{
+"cap": "to",
+"spoken": [
+"to"
+],
+"s": 253.012,
+"e": 253.176,
+"para": 10
+},
+{
+"cap": "Paris,",
+"spoken": [
+"Paris,"
+],
+"s": 253.176,
+"e": 253.448,
+"para": 10
+},
+{
+"cap": "as",
+"spoken": [
+"as"
+],
+"s": 253.448,
+"e": 253.794,
+"para": 10
+},
+{
+"cap": "huge",
+"spoken": [
+"huge"
+],
+"s": 253.794,
+"e": 254.121,
+"para": 10
+},
+{
+"cap": "crowds",
+"spoken": [
+"crowds"
+],
+"s": 254.121,
+"e": 254.594,
+"para": 10
+},
+{
+"cap": "lined",
+"spoken": [
+"lined"
+],
+"s": 254.594,
+"e": 254.921,
+"para": 10
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 254.921,
+"e": 255.103,
+"para": 10
+},
+{
+"cap": "streets.",
+"spoken": [
+"streets."
+],
+"s": 255.103,
+"e": 255.339,
+"para": 10
+},
+{
+"cap": "His",
+"spoken": [
+"His"
+],
+"s": 255.921,
+"e": 256.048,
+"para": 11
+},
+{
+"cap": "wars",
+"spoken": [
+"wars"
+],
+"s": 256.048,
+"e": 256.285,
+"para": 11
+},
+{
+"cap": "cost",
+"spoken": [
+"cost"
+],
+"s": 256.285,
+"e": 256.703,
+"para": 11
+},
+{
+"cap": "millions",
+"spoken": [
+"millions"
+],
+"s": 256.703,
+"e": 257.067,
+"para": 11
+},
+{
+"cap": "of",
+"spoken": [
+"of"
+],
+"s": 257.067,
+"e": 257.485,
+"para": 11
+},
+{
+"cap": "lives.",
+"spoken": [
+"lives."
+],
+"s": 257.485,
+"e": 257.685,
+"para": 11
+},
+{
+"cap": "But",
+"spoken": [
+"But"
+],
+"s": 258.111,
+"e": 258.202,
+"para": 11
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 258.202,
+"e": 258.311,
+"para": 11
+},
+{
+"cap": "laws,",
+"spoken": [
+"laws,"
+],
+"s": 258.311,
+"e": 258.566,
+"para": 11
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 259.002,
+"e": 259.093,
+"para": 11
+},
+{
+"cap": "schools,",
+"spoken": [
+"schools,"
+],
+"s": 259.093,
+"e": 259.366,
+"para": 11
+},
+{
+"cap": "and",
+"spoken": [
+"and"
+],
+"s": 259.802,
+"e": 259.929,
+"para": 11
+},
+{
+"cap": "even",
+"spoken": [
+"even"
+],
+"s": 259.929,
+"e": 260.129,
+"para": 11
+},
+{
+"cap": "the",
+"spoken": [
+"the"
+],
+"s": 260.129,
+"e": 260.293,
+"para": 11
+},
+{
+"cap": "metric",
+"spoken": [
+"metric"
+],
+"s": 260.293,
+"e": 260.529,
+"para": 11
+},
+{
+"cap": "system",
+"spoken": [
+"system"
+],
+"s": 260.529,
+"e": 260.947,
+"para": 11
+},
+{
+"cap": "he",
+"spoken": [
+"he"
+],
+"s": 260.947,
+"e": 261.093,
+"para": 11
+},
+{
+"cap": "spread",
+"spoken": [
+"spread"
+],
+"s": 261.093,
+"e": 261.293,
+"para": 11
+},
+{
+"cap": "across",
+"spoken": [
+"across"
+],
+"s": 261.293,
+"e": 261.493,
+"para": 11
+},
+{
+"cap": "Europe",
+"spoken": [
+"Europe"
+],
+"s": 261.493,
+"e": 261.966,
+"para": 11
+},
+{
+"cap": "outlived",
+"spoken": [
+"outlived"
+],
+"s": 261.966,
+"e": 262.475,
+"para": 11
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 262.475,
+"e": 262.693,
+"para": 11
+},
+{
+"cap": "empire.",
+"spoken": [
+"empire."
+],
+"s": 262.693,
+"e": 262.893,
+"para": 11
+},
+{
+"cap": "So,",
+"spoken": [
+"So,"
+],
+"s": 263.343,
+"e": 263.543,
+"para": 11
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 263.797,
+"e": 263.961,
+"para": 11
+},
+{
+"cap": "Napoleon",
+"spoken": [
+"Napoleon"
+],
+"s": 263.961,
+"e": 264.325,
+"para": 11
+},
+{
+"cap": "a",
+"spoken": [
+"a"
+],
+"s": 264.325,
+"e": 264.579,
+"para": 11
+},
+{
+"cap": "brilliant",
+"spoken": [
+"brilliant"
+],
+"s": 264.579,
+"e": 264.852,
+"para": 11
+},
+{
+"cap": "leader,",
+"spoken": [
+"leader,"
+],
+"s": 264.852,
+"e": 265.143,
+"para": 11
+},
+{
+"cap": "or",
+"spoken": [
+"or"
+],
+"s": 265.597,
+"e": 265.797,
+"para": 11
+},
+{
+"cap": "was",
+"spoken": [
+"was"
+],
+"s": 265.797,
+"e": 266.016,
+"para": 11
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 266.016,
+"e": 266.179,
+"para": 11
+},
+{
+"cap": "ambition",
+"spoken": [
+"ambition"
+],
+"s": 266.179,
+"e": 266.507,
+"para": 11
+},
+{
+"cap": "his",
+"spoken": [
+"his"
+],
+"s": 266.507,
+"e": 266.87,
+"para": 11
+},
+{
+"cap": "greatest",
+"spoken": [
+"greatest"
+],
+"s": 266.87,
+"e": 267.161,
+"para": 11
+},
+{
+"cap": "weakness?",
+"spoken": [
+"weakness?"
+],
+"s": 267.161,
+"e": 267.525,
+"para": 11
+}
+]
