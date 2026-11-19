@@ -1,4 +1,4 @@
-// The shot list of "Alexander the Great: The Boy Who Conquered an Empire". Shots start at a narration word (index into
+// The shot list of "Napoleon Bonaparte: The Man Who Conquered Europe". Shots start at a narration word (index into
 // words.json) 2 frames before it is spoken, so every visual beat lands 0-3 frames ahead of its word. Inside a shot,
 // c.t counts frames from the shot start and c.w(i) is the shot-relative frame of word i. Camera keys are shot-relative.
 import type { CamKey, Kick } from "../core/camera.ts";
@@ -6,10 +6,10 @@ import { FPS, words, frameOfWord, smooth, clamp01, lerp, lerp3, easeOut, hash, t
 import type { CardDraw } from "../render/cards.ts";
 import type { PointL } from "../render/engine.ts";
 import type { Light } from "../render/lights.ts";
-import { charCard, propCard, fxCard, army, walkPhase, shadowCard, CAST, type Who, type Pose } from "../chars/cast.ts";
-import { drawMap, type MapState } from "../overlay/maps.ts";
-import { CITY, R } from "../overlay/geo.ts";
-import { drawStamp, drawLabel, drawTitle, drawTag } from "../overlay/text.ts";
+import { charCard, propCard, fxCard, army, walkPhase, CAST, type Who, type Pose } from "../chars/cast.ts";
+import { drawMap, type MapState, type Realm } from "../overlay/maps.ts";
+import { P, FRANCE_1789, EMPIRE_1812, CLIENTS_1812, RUSSIA, PRUSSIA, AUSTRIA, SWEDEN, BRITAIN, CORSICA, ROUTE_ITALY, ROUTE_EGYPT, ROUTE_EGYPT_BACK, ROUTE_RUSSIA, ROUTE_RETREAT, ROUTE_ELBA, ROUTE_HELENA, type LL } from "../overlay/geo.ts";
+import { drawStamp, drawLabel, drawTitle, drawTag, drawSnow, drawRain } from "../overlay/text.ts";
 import { Pen, bodyFront } from "../chars/toon.ts";
 
 export type Cue = { f: number; kind: string; gain?: number; dur?: number };
@@ -21,563 +21,529 @@ export type Shot = {
   actors?: (c: C) => CardDraw[]; state?: (c: C) => Record<string, number>; points?: (c: C) => PointL[];
   map?: (c: C) => MapState; paint?: (c: C, g: G2, W: number, H: number) => void; over?: (c: C, g: G2, W: number, H: number) => void;
   xin?: number; noCap?: (c: C) => boolean; cues?: (c: C) => Cue[]; amb?: string; shadowAt?: V3; shadowSize?: number;
-  fade?: (c: C) => number; flash?: (c: C) => number;
-  // resolved
+  fade?: (c: C) => number; flash?: (c: C) => number; weather?: "snow" | "snowlight" | "rain";
   a?: number; b?: number;
 };
 
 // ---------- helpers
-const SEED: Partial<Record<Who, number>> = { alex: 5, alex_helm: 5, alex_king: 5, alex_boy: 6, alex_sick: 5, philip: 9, aristotle: 11, darius: 13, parmenion: 15, porus: 17, general: 19, seer: 21, physician: 23 };
+const SEED: Partial<Record<Who, number>> = { nap: 5, nap_young: 5, nap_crown: 5, nap_coat: 5, nap_boy: 6, josephine: 7, pope: 9, king: 11, wellington: 13, blucher: 15, general: 17 };
 const ch = (who: Who, pos: V3, c: C, p: Partial<Pose> = {}, o: Parameters<typeof charCard>[3] = {}) => charCard({ who, seed: SEED[who] ?? 3, ...p }, pos, c.f, o);
 const K = (f: number, pos: V3, look: V3, fov = 40, o: Partial<CamKey> = {}): CamKey => ({ f, pos, look, fov, ...o });
 const kick = (f: number, a = 0.12): Kick => ({ f, a });
-const st = (c: C, i: number) => c.t - c.w(i); // frames since word i
+const st = (c: C, i: number) => c.t - c.w(i);
 const u01 = (c: C, a: number, b: number) => clamp01((c.t - a) / Math.max(1, b - a));
-const along = (a: V3, b: V3, u: number): V3 => lerp3(a, b, smooth(u));
+const crowd = (who: Who, n: number, x0: number, x1: number, z0: number, z1: number, c: C, p: Partial<Pose> = {}, seed = 1): CardDraw[] => {
+  const out: CardDraw[] = [];
+  for (let i = 0; i < n; i++) { const x = lerp(x0, x1, hash(i, seed)), z = lerp(z0, z1, hash(i, seed + 7)); out.push(...ch(who, [x, 0, z], c, { v: i % 6, seed: 30 + (i % 6), facing: x < (x0 + x1) / 2 ? 1 : -1, ...p })); }
+  return out;
+};
+/** a field gun firing every `period` frames from t0: recoil, muzzle flash, smoke */
+const gun = (pos: V3, c: C, t0 = 0, period = 40, flip = false): CardDraw[] => {
+  const dt = c.t - t0, ph = dt < 0 ? 0.99 : (dt % period) / period, out = propCard("cannon", pos, c.f, { anim: ph < 0.2 ? ph / 0.2 * 0.5 : 0, flip });
+  const mx = pos[0] + (flip ? -1.1 : 1.1);
+  if (dt >= 0 && ph < 0.12) out.push(fxCard("burst", [mx, pos[1] + 0.8, pos[2] + 0.1], 1.4, ph / 0.12, 3));
+  if (dt >= 0 && ph < 0.7) out.push(fxCard("smoke", [mx + (flip ? -0.6 : 0.6), pos[1] + 1.0, pos[2] + 0.2], 2.2, ph / 0.7, 4));
+  return out;
+};
+const gunCues = (t0: number, n: number, period = 40): Cue[] => Array.from({ length: n }, (_, i) => ({ f: t0 + i * period, kind: "cannon", gain: 0.7 }));
 let IDX: (cap: string, from: number) => number = () => 0;
-const TORCH_PTS = (pts: V3[], c: C, i = 3.2): PointL[] => pts.slice(0, 4).map((q, k) => ({ pos: [q[0], q[1] + 2.4, q[2]], color: "#ffa64a", i: i * (0.9 + 0.1 * Math.sin(c.f * 0.4 + k * 2)), d: 16 }));
-const torchCards = (pts: V3[], c: C): CardDraw[] => pts.flatMap((q, k) => [...propCard("torch", q, c.f), fxCard("flame", [q[0], q[1] + 2.35, q[2]], 0.75, ((c.f / 12 + k * 0.3) % 1), k + 1), fxCard("glow", [q[0], q[1] + 2.3, q[2]], 2.4, 0, k)]);
 
 export const buildShots = (): { shots: Shot[]; total: number } => {
   const W = words();
   IDX = (cap: string, from: number) => {
-    const n = (s: string) => s.replace(/[^A-Za-z0-9]/g, ""); // case-sensitive: "His" must not match "his"
+    const n = (s: string) => s.replace(/[^A-Za-z0-9]/g, "");
     for (let i = from; i < W.length; i++) if (n(W[i].cap) === n(cap)) return i;
     throw new Error(`word ${cap} after ${from}`);
   };
   const w = IDX;
   const S: Shot[] = [];
   const add = (s: Shot) => S.push(s);
-  const AEGAE_T: V3[] = [[-7.2, 0, 3.2], [7.2, 0, 3.2], [-4.5, 0, 8.4], [4.5, 0, 8.4]];
+  const titleAbs = frameOfWord(w("Napoleon", 36));
+  const EU: [number, number, number] = [12, 48, 1.0];
+  const fr = (a = 0.6): Realm => ({ polys: [FRANCE_1789, CORSICA], col: "#27408b", alpha: a });
 
-  const titleAbs = frameOfWord(w("major", 47));
-  // ===================== S1 — INTRODUCTION =====================
-  add({ id: "birth", from: 0, scene: 1, set: "pella", light: "dawn", amb: "birds",
-    cams: (c) => [K(0, [3.2, 1.25, 3.4], [2.2, 0.55, 0.2], 34), K(c.w(w("Pella,", 0)) - 4, [5.5, 3.4, 8.5], [1.5, 0.8, -2], 40, { dur: 34 })],
-    dof: { cInf: 12, focus: 3.4 },
-    actors: (c) => [...propCard("cradle", [2.2, 0, 0], c.f, { anim: c.t > c.w(w("born", 0)) ? 1 : 0 }), ...ch("courtier", [0.4, 0, -0.6], c, { v: 4, expr: "smile_closed", facing: 1 }), ...ch("philip", [4.2, 0, -1.4], c, { expr: "proud", facing: -1 })],
-    over: (c, g, Wd, H) => { drawStamp(g, "356 BC", st(c, w("356 BC,", 0)), 70, Wd, H); drawLabel(g, "PELLA", st(c, w("Pella,", 0)), 50, Wd, H, 0.5, 0.17, { sub: "capital of Macedonia" }); },
-    cues: (c) => [{ f: c.w(1), kind: "stamp" }, { f: c.w(w("born", 0)), kind: "sparkle" }, { f: c.w(w("Pella,", 0)), kind: "pop" }, { f: c.w(w("Pella,", 0)) - 4, kind: "whoosh", gain: 0.6 }] });
-  add({ id: "kingdom", from: w("the", 8), scene: 1, set: "pella", light: "day", amb: "wind", xin: 6,
-    cams: () => [K(0, [0, 7, 6], [0, 1, 40], 52), K(2, [0, 12, 12], [0, -6, 90], 54, { dur: 90 })],
-    actors: (c) => army("phalangite", [-6, 0, -4], 2, 7, [2, 2], c.f, { march: false }),
-    over: (c, g, Wd, H) => { drawLabel(g, "MACEDONIA", st(c, w("Macedonia,", 9)), 70, Wd, H, 0.5, 0.2, { size: 64, sub: "a rugged mountain kingdom" }); },
-    cues: (c) => [{ f: c.w(w("Macedonia,", 9)), kind: "pop" }, { f: c.w(w("mountain", 9)), kind: "wind", gain: 0.6 }] });
-  add({ id: "name", from: 25, scene: 1, set: "pella", light: "day", amb: "wind",
-    cams: () => [K(0, [0.4, 1.5, 7.2], [0, 1.6, 2], 36), K(8, [0.2, 1.55, 6.0], [0, 1.7, 2], 32, { dur: 26 })], dof: { cInf: 12, focus: 7 },
-    actors: (c) => ch("alex", [0, 0, 2], c, { expr: st(c, 27) > 0 ? "sly" : "neutral" }),
-    over: (c, g, Wd, H) => drawLabel(g, "ALEXANDER", st(c, 28), 40, Wd, H, 0.5, 0.2, { size: 66 }),
-    cues: (c) => [{ f: c.w(28), kind: "title_hit", gain: 0.6 }] });
-  add({ id: "future_map", from: 29, scene: 1, xin: 8, amb: "map",
-    map: (c) => ({ f: c.f, view: [47 + 3 * u01(c, 0, c.d), 33, 1.02 + 0.06 * u01(c, 0, c.d)], mac: 1, full: easeOut(u01(c, c.w(w("largest", 29)) - 10, c.w(w("seen.", 29)))), labels: [{ text: "MACEDONIA", at: [22.5, 42.8], t: c.t - 4 }] }),
-    cues: (c) => [{ f: c.w(w("largest", 29)) - 10, kind: "swell" }] });
-  add({ id: "never_lose", from: 47, scene: 1, set: "pella", light: "golden", amb: "wind",
-    cams: (c) => [K(0, [1.2, 1.65, 6.4], [0, 1.85, 2], 32, { roll: -4.5, creep: 0.004 }), K(c.w(w("battle.", 47)) - 6, [0.9, 1.75, 5.4], [0, 1.9, 2], 28, { dur: 10, roll: -4.5, creep: 0.006 })],
-    kicks: (c) => [kick(c.w(w("battle.", 47)), 0.1)], dof: { cInf: 14, focus: 4.4 },
-    actors: (c) => [...ch("alex_helm", [0, 0, 2], c, { expr: "sly", facing: 0 }), ...army("phalangite", [-7, 0, -6], 2, 8, [2, 2], c.f, {})],
-    over: (c, g, Wd, H) => drawTitle(g, c.f - titleAbs, 56, Wd, H),
-    noCap: (c) => c.f - titleAbs > 0,
-    cues: (c) => [{ f: c.w(w("battle.", 47)), kind: "boom" }, { f: c.w(w("major", 47)), kind: "title_hit" }] });
+  // ===================== S1 — THE HOOK =====================
+  add({ id: "europe", from: 0, scene: 1, amb: "map",
+    map: (c) => { const u = smooth(u01(c, 10, c.d)); return { f: c.f, view: [lerp(14, 3, u), lerp(50, 47, u), lerp(0.85, 1.9, u * u)], realms: [fr(0.2 + 0.5 * u)], labels: [{ text: "EUROPE", at: [16, 53], t: c.t - 4, dur: 60, size: 70, dy: 0 }, { text: "FRANCE", at: [2.4, 46.6], t: c.t - 70, size: 56, dy: 0 }] }; },
+    cues: (c) => [{ f: 0, kind: "swell" }, { f: 10, kind: "whoosh" }, { f: 70, kind: "pop" }] });
+  const sHook2 = w("He", 20);
+  add({ id: "hero_map", from: sHook2, scene: 1, set: "room", v: 0, light: "interior", amb: "court", xin: 8,
+    cams: (c) => [K(0, [0.6, 1.4, 4.2], [0, 1.9, -2], 40), K(c.w(w("twice.", sHook2)) - 6, [0.3, 1.7, 2.6], [0, 1.95, -2], 32, { dur: 10, roll: -4, creep: 0.004 })],
+    kicks: (c) => [kick(c.w(w("crowned", sHook2)), 0.06), kick(c.w(w("twice.", sHook2)), 0.1)], dof: { cInf: 10 },
+    actors: (c) => { const tc = st(c, w("crowned", sHook2)), tl = st(c, w("lost", sHook2));
+      return [...ch("nap", [0, 0, -2], c, { vest: true, expr: tl > 0 ? "worried" : tc > 0 ? "proud" : "sly" }), ...(tc > 0 && tc < 40 ? [fxCard("sparkle", [0, 2.6, -1.9], 1.6, tc / 40, 2)] : [])]; },
+    cues: (c) => [{ f: c.w(w("crowned", sHook2)), kind: "sparkle" }, { f: c.w(w("redrew", sHook2)), kind: "scribble", dur: 30 }, { f: c.w(w("twice.", sHook2)), kind: "boom" }] });
+  const sName = w("His", 36);
+  add({ id: "name", from: sName, scene: 1, set: "room", v: 0, light: "interior", amb: "court",
+    cams: () => [K(0, [0.2, 1.8, 3.4], [0, 2.0, -2], 34, { creep: 0.004 })], dof: { cInf: 12 },
+    actors: (c) => ch("nap", [0, 0, -2], c, { vest: true, expr: "proud" }),
+    over: (c, g, Wd, H) => drawTitle(g, c.f - titleAbs, 66, Wd, H, ["NAPOLEON", "BONAPARTE"], [150, 120], "The Man Who Conquered Europe"),
+    noCap: (c) => c.f - titleAbs > 0, cues: (c) => [{ f: c.w(w("Napoleon", sName)), kind: "title_hit" }] });
 
   // ===================== S2 — CHILDHOOD =====================
-  const sPhil = w("His", 55);
-  add({ id: "philip", from: sPhil, scene: 2, set: "pella", light: "day", amb: "court", flash: (c) => (c.t < 4 ? [0.9, 0.6, 0.35, 0.15][c.t] : 0),
-    cams: (c) => [K(0, [0.3, 2.7, -3.2], [0, 2.7, -9.6], 38), K(c.w(w("eye", sPhil)) - 3, [0.1, 3.3, -6.9], [0, 3.35, -9.6], 30, { dur: 12, creep: 0.004 })],
-    kicks: (c) => [kick(c.w(w("eye", sPhil)), 0.05)], dof: { cInf: 12, focus: 6.5 },
-    actors: (c) => [...ch("philip", [0, 1.55, -9.6], c, { expr: st(c, w("eye", sPhil)) > 0 ? "stern" : "proud" }), ...propCard("throne", [0, 1.55, -10.8], c.f)],
-    over: (c, g, Wd, H) => { drawTitle(g, c.f - titleAbs, 56, Wd, H); drawLabel(g, "PHILIP II", st(c, w("Philip", sPhil)), 60, Wd, H, 0.5, 0.18, { sub: "King of Macedonia" }); },
-    noCap: (c) => c.f - titleAbs < 66,
-    cues: (c) => [{ f: 0, kind: "flash" }, { f: c.w(w("Philip", sPhil)), kind: "pop" }, { f: c.w(w("eye", sPhil)), kind: "boom", gain: 0.5 }] });
-  const sFarm = w("and", w("battle,", sPhil));
-  add({ id: "army_drill", from: sFarm, scene: 2, set: "field", v: 0, light: "day", amb: "march", xin: 6,
-    cams: () => [K(0, [6, 1.4, 14], [0, 1.6, 0], 40), K(4, [3, 1.2, 10], [0, 1.8, 0], 36, { dur: 60 })],
-    kicks: (c) => [kick(c.w(w("dangerous", sFarm)), 0.08)],
-    actors: (c) => [...army("phalangite", [-5, 0, -6 + 3 * u01(c, 0, c.d)], 4, 6, [2, 2], c.f, { march: true }), ...ch("philip", [5.5, 0, 4], c, { expr: st(c, w("dangerous", sFarm)) > 0 ? "grin" : "stern", facing: -1 })],
-    cues: (c) => [{ f: c.w(w("dangerous", sFarm)), kind: "boom", gain: 0.6 }, { f: 0, kind: "march", dur: c.d }] });
-  const sBuc = w("According", 80);
-  const rear = (c: C) => 0.5 + 0.5 * Math.sin(c.t * 0.28);
-  add({ id: "bucephalus", from: sBuc, scene: 2, set: "pella", light: "day", amb: "court", xin: 6,
-    cams: () => [K(0, [7, 1.6, 12], [0, 1.6, 1], 42), K(6, [5.5, 1.5, 10], [-0.5, 1.7, 1], 38, { dur: 80 })],
-    kicks: (c) => [0, 1, 2, 3].map((k) => kick(Math.round((Math.PI / 2 + k * 2 * Math.PI) / 0.28), 0.05)),
-    actors: (c) => [...propCard("horse_rear", [-0.5, 0, 0], c.f, { anim: rear(c), phase: (c.t / 20) % 1 }),
-      ...ch("courtier", [2.6 + 0.04 * c.t, 0, 2.4], c, { v: 1, expr: "shock", facing: 1, mode: "march", phase: walkPhase(c.f, 1.8) }), ...ch("guard", [-3.4 - 0.03 * c.t, 0, 2.6], c, { expr: "nervous", facing: -1 }),
-      ...ch("alex_boy", [4.6, 0, 4.2], c, { expr: "sly", facing: -1 })],
-    over: (c, g, Wd, H) => { drawTag(g, "ACCORDING TO PLUTARCH", c.t - 2, 80, Wd, H); drawLabel(g, "BUCEPHALUS", st(c, w("Bucephalus.", sBuc)), 60, Wd, H, 0.36, 0.2); },
-    cues: (c) => [0, 1, 2, 3].map((k): Cue => ({ f: Math.round((Math.PI / 2 + k * 2 * Math.PI) / 0.28), kind: "neigh", gain: 0.7 })).concat([{ f: c.w(w("Bucephalus.", sBuc)), kind: "pop" }]) });
-  const sShadow = w("Alexander", w("Bucephalus.", sBuc));
-  add({ id: "shadow", from: sShadow, scene: 2, set: "pella", light: "golden", amb: "court",
-    cams: (c) => [K(0, [3.2, 1.2, 6.6], [3.6, 1.05, 3.6], 34), K(c.w(w("shadow,", sShadow)) - 14, [1.2, 3.2, 5.5], [-0.6, 0.2, 1.4], 44, { dur: 16 })],
-    dof: { cInf: 10, focus: 3 },
-    actors: (c) => [...propCard("horse", [-0.6, 0, 0], c.f, { phase: 0.1 }), ...propCard("horse_shadow", [-0.6, 0, 1.12], c.f, { flat: true, phase: 0.1, yaw: Math.PI }),
-      ...ch("alex_boy", [3.6, 0, 3.6], c, { expr: "sly", facing: -1 }), ...(st(c, w("shadow,", sShadow)) > 0 ? [fxCard("bang", [3.7, 1.75, 3.6], 0.8, st(c, w("shadow,", sShadow)) / 30, 2)] : [])],
-    cues: (c) => [{ f: c.w(w("shadow,", sShadow)), kind: "pop" }, { f: c.w(w("shadow,", sShadow)) - 12, kind: "whoosh", gain: 0.5 }] });
-  const sRide = w("so", sShadow);
-  add({ id: "ride", from: sRide, scene: 2, set: "pella", light: "golden", amb: "court",
-    cams: (c) => [K(0, [2, 1.6, 9], [0, 1.4, 0], 40), K(c.w(w("rode", sRide)) - 6, [6, 1.8, 11], [8, 1.5, 0], 44, { dur: 26 })],
-    kicks: (c) => [kick(c.w(w("rode", sRide)), 0.08)],
-    actors: (c) => {
-      const tr = c.w(w("rode", sRide));
-      if (c.t < tr) return [...propCard("horse", [0, 0, 0], c.f, { flip: c.t > c.w(w("turned", sRide)) + 6 }), ...ch("alex_boy", [1.6, 0, 0.6], c, { expr: "smile", facing: -1 }), fxCard("glow", [-8, 4, -6], 6, 0, 1)];
-      const x = -2 + 0.32 * (c.t - tr);
-      return [...propCard("horse", [x, 0, 0], c.f, { phase: (c.t / 8) % 1, rider: "alex_boy" }), fxCard("speed", [x - 2.4, 1.2, 0.1], 2.2, ((c.t - tr) / 10) % 1, 3), fxCard("dust", [x - 1.6, 0.3, 0.3], 1.4, ((c.t - tr) / 14) % 1, 4)];
-    },
-    cues: (c) => [{ f: c.w(w("rode", sRide)), kind: "hooves", dur: 40 }, { f: c.w(w("sun,", sRide)), kind: "sparkle" }] });
-  const sTeach = w("Philip", 118);
-  add({ id: "teacher", from: sTeach, scene: 2, set: "pella", light: "day", amb: "court",
-    cams: () => [K(0, [0.6, 1.8, 7.5], [0, 1.6, 1.5], 38)], dof: { cInf: 12, focus: 6 },
-    actors: (c) => [...ch("philip", [-1.1, 0, 1.4], c, { expr: st(c, w("money", sTeach)) > 0 ? "grin" : "proud", facing: 1 }), ...ch("alex_boy", [1.0, 0, 1.6], c, { expr: "smile", facing: -1 }),
-      ...(st(c, w("money", sTeach)) > -4 ? [...propCard("sack", [-0.2, 0, 2.3], c.f), fxCard("sparkle", [-0.2, 0.7, 2.4], 1.0, (st(c, w("money", sTeach)) / 24) % 1, 2)] : [])],
-    cues: (c) => [{ f: c.w(w("money", sTeach)), kind: "coins" }] });
-  const sArist = w("So", sTeach);
-  add({ id: "aristotle", from: sArist, scene: 2, set: "mieza", light: "day", amb: "birds", xin: 8,
-    cams: () => [K(0, [-1, 1.8, 9], [-1.5, 1.6, 2], 42), K(2, [-1.3, 1.7, 6.5], [-1.5, 1.7, 2.2], 34, { dur: 34 })], dof: { cInf: 12, focus: 4.5 },
-    actors: (c) => [...ch("aristotle", [-1.5, 0, 2.2], c, { expr: "smile", facing: 1 }), ...propCard("scroll", [-0.9, 0.95, 2.4], c.f, { scale: 0.8 })],
-    over: (c, g, Wd, H) => drawLabel(g, "ARISTOTLE", st(c, w("Aristotle.", sArist)), 70, Wd, H, 0.5, 0.18, { sub: "philosopher" }),
-    cues: (c) => [{ f: c.w(w("Aristotle.", sArist)), kind: "pop" }] });
-  const sMieza = w("At", sArist);
-  add({ id: "mieza", from: sMieza, scene: 2, set: "mieza", light: "day", amb: "birds",
-    cams: () => [K(0, [9, 4, 14], [0, 1, 0], 44), K(4, [6, 2.6, 10], [1, 1.2, 1], 40, { dur: 60 })],
-    actors: (c) => [...ch("aristotle", [-1.5, 0, 2.2], c, { expr: "smile", facing: 1, wave: Math.sin(c.t / 9) }), ...ch("alex_boy", [3.2, 0, 2.8], c, { expr: "neutral", facing: -1 }), ...ch("student", [4.6, 0, 1.6], c, { v: 2, expr: "neutral", facing: -1 })],
-    over: (c, g, Wd, H) => drawLabel(g, "MIEZA", st(c, w("Mieza,", sMieza)), 60, Wd, H, 0.5, 0.18, { sub: "school of Aristotle" }),
-    cues: (c) => [{ f: c.w(w("Mieza,", sMieza)), kind: "pop" }] });
-  const sSubj = w("philosophy,", sMieza);
-  add({ id: "subjects", from: sSubj, scene: 2, set: "mieza", light: "day", amb: "birds",
-    cams: () => [K(0, [1.2, 3.1, 3.6], [1, 0.8, 0.5], 40), K(6, [1.2, 2.8, 3.1], [1, 0.8, 0.5], 38, { dur: 80 })], dof: { cInf: 10, focus: 3.4 },
-    actors: (c) => {
-      const out: CardDraw[] = [];
-      const items: [string, number, V3][] = [["scroll", w("philosophy,", sSubj), [0, 0.82, 0.9]], ["geom", w("mathematics,", sSubj), [1.1, 0.82, 0.35]], ["tablet", w("science", sSubj), [2.1, 0.82, 0.9]], ["sack", w("medicine,", sSubj), [2.2, 0.82, 0.1]]];
-      for (const [kind, wi, pos] of items) { const t = st(c, wi); if (t < 0) continue; out.push(...propCard(kind as any, pos, c.f, { flat: kind === "geom", anim: clamp01(t / 30), scale: kind === "geom" ? 0.6 : 0.7 })); if (t < 14) out.push(fxCard("puff", [pos[0], pos[1] + 0.2, pos[2]], 0.6, t / 14, 3)); }
-      return out;
-    },
-    cues: (c) => ["philosophy,", "mathematics,", "science", "medicine,"].map((x) => ({ f: c.w(w(x, sSubj)), kind: "pop" })) });
-  const sThink = w("and", w("medicine,", sSubj));
-  add({ id: "think", from: sThink, scene: 2, set: "mieza", light: "day", amb: "birds",
-    cams: () => [K(0, [1, 1.6, 6.4], [0.8, 1.7, 2.4], 36)], dof: { cInf: 12, focus: 4 },
-    actors: (c) => [...ch("aristotle", [-0.3, 0, 2.2], c, { expr: "smile", facing: 1, wave: 0.9 }), ...ch("alex_boy", [1.9, 0, 2.6], c, { expr: st(c, w("think.", sThink)) > 0 ? "determined" : "neutral", facing: -1 }),
-      ...(st(c, w("think.", sThink)) > 0 ? [fxCard("sparkle", [1.9, 1.6, 2.7], 0.8, (st(c, w("think.", sThink)) / 24) % 1, 3)] : [])],
-    cues: (c) => [{ f: c.w(w("think.", sThink)), kind: "sparkle" }] });
-  const sIliad = w("Alexander", 159);
-  const bedAt: V3 = [-14.4, 0, 3];
-  add({ id: "iliad", from: sIliad, scene: 2, set: "pella", light: "lamp", amb: "night", xin: 8,
-    cams: (c) => [K(0, [-11, 1.6, 7.5], [-14.4, 0.7, 3], 40), K(c.w(w("pillow...", sIliad)) - 10, [-13, 1.25, 5], [-14.6, 0.8, 3], 34, { dur: 20 })], dof: { cInf: 12, focus: 3 },
-    actors: (c) => [...propCard("bed", bedAt, c.f), ...ch("alex_boy", [bedAt[0] - 0.1, 0.62, bedAt[2] + 0.05], c, { expr: "smile_closed", blinkOff: true }, { shadow: false }).map((d) => ({ ...d, roll: -Math.PI / 2, pos: [bedAt[0] + 0.15, 0.9, bedAt[2] + 0.06] as V3, anchor: 0.5, z: 1 })),
-      ...propCard("pillow", [bedAt[0] - 0.95, 0.68, bedAt[2] + 0.08], c.f, { z: 2 }), ...(st(c, w("Iliad", sIliad)) > 0 ? propCard("scroll", [bedAt[0] - 0.75, 0.64, bedAt[2] + 0.12], c.f, { scale: 0.6, z: 3 }) : []),
-      ...propCard("lamp", [bedAt[0] + 1.6, 0, bedAt[2] - 0.3], c.f), fxCard("flame", [bedAt[0] + 1.75, 0.17, bedAt[2] - 0.26], 0.22, (c.f / 10) % 1, 2), fxCard("glow", [bedAt[0] + 1.75, 0.17, bedAt[2] - 0.26], 1.4, 0, 2)],
-    points: (c) => [{ pos: [bedAt[0] + 1.6, 1.2, bedAt[2]], color: "#ffb060", i: 5 * (0.92 + 0.08 * Math.sin(c.f * 0.5)), d: 12 }],
-    over: (c, g, Wd, H) => drawLabel(g, "THE ILIAD", st(c, w("Iliad", sIliad)), 60, Wd, H, 0.5, 0.18, { sub: "by Homer" }),
-    cues: (c) => [{ f: c.w(w("Iliad", sIliad)), kind: "pop" }] });
-  const sDag = w("right", sIliad);
-  add({ id: "dagger", from: sDag, scene: 2, set: "pella", light: "lamp", amb: "night",
-    cams: () => [K(0, [bedAt[0] - 0.4, 1.35, bedAt[2] + 2.6], [bedAt[0] - 0.9, 0.7, bedAt[2] + 0.1], 32, { roll: 4, creep: 0.006 })], kicks: (c) => [kick(c.w(w("dagger.", sDag)), 0.04)], dof: { cInf: 14, focus: 1.3 },
-    actors: (c) => [...propCard("bed", bedAt, c.f), ...propCard("pillow", [bedAt[0] - 0.95, 0.68, bedAt[2] + 0.08], c.f, { z: 2 }), ...propCard("scroll", [bedAt[0] - 0.75, 0.64, bedAt[2] + 0.12], c.f, { scale: 0.6, z: 3 }),
-      ...propCard("dagger", [bedAt[0] - 1.25, 0.7, bedAt[2] + 0.3], c.f, { scale: 1.1, z: 4 }),
-      ...(st(c, w("dagger.", sDag)) > 0 ? [fxCard("bang", [bedAt[0] - 1.2, 1.05, bedAt[2] + 0.2], 0.35, st(c, w("dagger.", sDag)) / 24, 1)] : [])],
-    points: (c) => [{ pos: [bedAt[0] + 1.6, 1.2, bedAt[2]], color: "#ffb060", i: 5 * (0.92 + 0.08 * Math.sin(c.f * 0.5)), d: 12 }],
-    cues: (c) => [{ f: c.w(w("dagger.", sDag)), kind: "sting" }] });
-  const sWar = w("His", 178);
-  add({ id: "war_lesson", from: sWar, scene: 2, set: "field", v: 5, light: "day", amb: "wind", xin: 6,
-    cams: () => [K(0, [2, 1.9, 6.5], [0, 0.8, 0], 40), K(6, [1.5, 1.7, 5.4], [0, 0.9, 0], 36, { dur: 60 })], dof: { cInf: 10, focus: 5 },
-    actors: (c) => [...ch("general", [-1.6, 0, 0], c, { expr: "stern", facing: 1, wave: 0.4 }), ...ch("alex", [1.6, 0, 0.3], c, { expr: st(c, w("war.", sWar)) > 0 ? "determined" : "neutral", facing: -1 }),
-      ...[0, 1, 2, 3, 4, 5].flatMap((k) => propCard(k < 3 ? "token_m" : "token_p", [-0.6 + (k % 3) * 0.35 + (k < 3 ? 0 : 0.2), 0, 1.2 + (k < 3 ? 0 : 0.6) - 0.15 * Math.max(0, Math.min(1, st(c, w("war.", sWar)) / 20)) * (k < 3 ? -1 : 0)], c.f, { scale: 1.6 }))],
-    cues: (c) => [{ f: c.w(w("war.", sWar)), kind: "boom", gain: 0.5 }] });
-  const sChaer = w("At", sWar);
-  add({ id: "chaeronea", from: sChaer, scene: 2, set: "field", v: 0, light: "golden", amb: "battle",
-    cams: (c) => [K(0, [-10, 1.8, 9], [-10, 1.4, 0], 42), K(10, [8, 1.9, 10], [6, 1.4, 0], 44, { dur: 100 })],
-    kicks: (c) => [kick(c.w(w("charge", sChaer)), 0.12), kick(c.w(w("charge", sChaer)) + 16, 0.06)],
-    actors: (c) => {
-      const t0 = 0, x = -12 + 0.22 * Math.max(0, c.t - t0);
-      const out = [...propCard("horse", [x, 0, 0], c.f, { phase: (c.t / 8) % 1, rider: "alex_helm" }), ...army("phalangite", [-14 + 0.05 * c.t, 0, -12], 2, 10, [1.8, 1.6], c.f, { march: true, side: true })];
-      for (let k = 0; k < 4; k++) out.push(...propCard("horse", [x - 3 - k * 2.5, 0, -2 - (k % 2) * 2], c.f, { phase: ((c.t + k * 3) / 8) % 1, rider: "general" }));
-      if (c.t > t0) out.push(fxCard("speed", [x - 2.5, 1.2, 0.2], 2.4, (c.t / 10) % 1, 1), fxCard("dust", [x - 2, 0.4, 0.6], 2, (c.t / 12) % 1, 2), fxCard("dust", [x - 7, 0.4, -1.4], 2.5, ((c.t + 6) / 12) % 1, 3));
-      return out;
-    },
-    over: (c, g, Wd, H) => drawLabel(g, "CHAERONEA", st(c, w("Chaeronea,", sChaer)), 60, Wd, H, 0.5, 0.18, { sub: "338 BC" }),
-    cues: (c) => [{ f: c.w(w("cavalry", sChaer)) - 10, kind: "hooves", dur: 70 }, { f: c.w(w("charge", sChaer)), kind: "crowd" }, { f: c.w(w("Chaeronea,", sChaer)), kind: "pop" }] });
-  const sGreece = w("and", w("Chaeronea,", sChaer));
-  add({ id: "greece", from: sGreece, scene: 2, set: "field", v: 0, light: "golden", amb: "wind",
-    cams: () => [K(0, [3, 1.2, 8], [0, 2.2, 0], 40, { roll: -3 })], kicks: (c) => [kick(c.w(w("Greece.", sGreece)), 0.1)], dof: { cInf: 10, focus: 7.5 },
-    actors: (c) => [...ch("philip", [-1.2, 0, 0], c, { expr: "grin", facing: 1 }), ...ch("alex_helm", [1.2, 0, 0.2], c, { expr: "proud", facing: -1 }),
-      ...propCard("flag_mac", [0, Math.max(0, 1.5 - 0.15 * Math.max(0, st(c, w("Greece.", sGreece)) + 8)), -0.4], c.f, { phase: (c.f / 30) % 1 })],
-    cues: (c) => [{ f: c.w(w("Greece.", sGreece)), kind: "boom" }, { f: c.w(w("Greece.", sGreece)), kind: "crowd", gain: 0.6 }] });
-
-  // ===================== S3 — BECOMING KING =====================
-  const sThen = w("Then,", 205);
-  add({ id: "changed", from: sThen, scene: 3, set: "aegae", light: "night", amb: "night", xin: 14,
-    cams: () => [K(0, [0, 14, -26], [0, 1, 4], 46), K(2, [0, 10, -20], [0, 1, 4], 44, { dur: 80 })],
-    actors: (c) => torchCards(AEGAE_T, c), points: (c) => TORCH_PTS(AEGAE_T, c),
-    over: (c, g, Wd, H) => drawStamp(g, "336 BC", st(c, w("336 BC,", sThen)), 60, Wd, H),
-    cues: (c) => [{ f: c.w(w("336 BC,", sThen)), kind: "stamp" }, { f: c.w(w("changed.", sThen)), kind: "drum_hit" }] });
-  const sWed = w("At", sThen);
-  add({ id: "wedding", from: sWed, scene: 3, set: "aegae", light: "night", amb: "crowd_murmur",
-    cams: (c) => [K(0, [5, 2.2, 3], [-6, 2.6, -8], 44), K(c.w(w("walked", sWed)) - 10, [-3, 2.4, -4], [0, 1.4, 7], 40, { dur: 30 })],
-    actors: (c) => {
-      const out = torchCards(AEGAE_T, c);
-      for (let i = 0; i < 26; i++) { const a = Math.PI * (0.08 + 0.84 * (i / 25)), r = 9.2 + (i % 3) * 2.2, y = 0.5 + (i % 3) * 1.1; out.push(...ch("courtier", [Math.cos(a) * r, y, -Math.sin(a) * r + 0.5], c, { v: i % 5, mode: "sit", expr: i % 4 ? "smile" : "grin", seed: 30 + (i % 6) }, { shadow: false })); }
-      const tw = c.w(w("walked", sWed)), x = st(c, w("walked", sWed)) > 0 ? lerp(10, 2.5, smooth((c.t - tw) / 70)) : 10;
-      out.push(...ch("philip", [0, 0, x], c, { expr: "proud", view: c.t > tw && c.t < tw + 70 ? "front" : "front", mode: c.t > tw && c.t < tw + 70 ? "stroll" : "stand", phase: walkPhase(c.f) }));
-      for (const sx of [-1, 1]) out.push(...ch("guard", [sx * 1.4, 0, x + 1.2], c, { expr: "neutral", mode: c.t > tw && c.t < tw + 70 ? "stroll" : "stand", phase: walkPhase(c.f, 1.4, 0.5) }));
-      return out;
-    }, points: (c) => TORCH_PTS(AEGAE_T, c),
-    over: (c, g, Wd, H) => drawLabel(g, "AEGAE", st(c, w("Aegae,", sWed)), 60, Wd, H, 0.5, 0.18, { sub: "the old capital" }),
-    cues: (c) => [{ f: c.w(w("wedding", sWed)), kind: "lyre_flourish" }, { f: c.w(w("Aegae,", sWed)), kind: "pop" }] });
-  const sAss = w("and", w("theatre...", sWed));
-  add({ id: "assassination", from: sAss, scene: 3, set: "aegae", light: "night", amb: "night",
-    cams: (c) => [K(0, [1.5, 1.3, -1], [0, 1.6, 9], 38, { roll: 4, creep: 0.004 }), K(c.w(w("assassinated", sAss)) + 8, [0.4, 0.5, 1.2], [0, 0.1, 2.8], 34, { cut: true, creep: 0.003 })],
-    fade: (c) => { const t = st(c, w("assassinated", sAss)); return t < 0 ? 0 : t < 8 ? 1 : t < 20 ? 1 - (t - 8) / 12 : 0; },
-    actors: (c) => {
-      const ta = c.w(w("assassinated", sAss)), out = torchCards(AEGAE_T, c);
-      if (c.t < ta) {
-        // a bodyguard's long shadow sliding over the stage wall: a dark card, never the act itself
-        out.push(...ch("guard", [-2.4 + 0.02 * c.t, 0, 10.2], c, { expr: "angry" }, { scale: 1.6, alpha: 0.85, lit: 0, shadow: false }).map((d) => ({ ...d, key: d.key + "|sil", draw: (g: CanvasRenderingContext2D) => { d.draw(g); g.globalCompositeOperation = "source-in"; g.fillStyle = "#120c1c"; g.fillRect(0, 0, 600, 1000); } })));
-        out.push(...ch("philip", [0, 0, 4], c, { expr: "proud" }));
-      } else {
-        const t = c.t - ta - 8, y = t < 0 ? 1.6 : Math.max(0, 1.6 - 0.012 * t * t) + (t > 11.5 ? Math.abs(Math.sin((t - 11.5) * 0.5)) * 0.25 * Math.exp(-(t - 11.5) * 0.12) : 0);
-        out.push(...propCard("crown_fall", [0, y, 2.8], c.f, { roll: t > 11.5 ? 0.3 : -0.4 + 0.06 * t }));
-      }
-      return out;
-    }, points: (c) => TORCH_PTS(AEGAE_T, c, 2.6),
-    cues: (c) => [{ f: c.w(w("assassinated", sAss)), kind: "drum_hit", gain: 1.2 }, { f: c.w(w("assassinated", sAss)) + 20, kind: "clink" }] });
-  const s20 = w("Alexander", sAss);
-  add({ id: "twenty", from: s20, scene: 3, set: "aegae", light: "night", amb: "night",
-    cams: () => [K(0, [0.3, 1.7, 3.6], [0, 1.75, 0], 32, { creep: 0.003 })], dof: { cInf: 14, focus: 3.6 },
-    actors: (c) => [...ch("alex", [0, 0, 0], c, { expr: "sad" }), ...torchCards([AEGAE_T[0], AEGAE_T[1]], c)], points: (c) => TORCH_PTS(AEGAE_T, c, 3.4),
-    over: (c, g, Wd, H) => drawLabel(g, "AGE 20", st(c, w("twenty", s20)), 40, Wd, H, 0.5, 0.18),
-    cues: (c) => [{ f: c.w(w("twenty", s20)), kind: "pop", gain: 0.6 }] });
-  const sKing = w("Overnight,", s20);
-  add({ id: "king", from: sKing, scene: 3, set: "pella", light: "dawn", amb: "court", xin: 8,
-    cams: (c) => [K(0, [0, 1.6, -1.8], [0, 2.7, -9.6], 40), K(c.w(w("king.", sKing)) - 4, [0, 1.8, -4.2], [0, 3.0, -9.6], 34, { dur: 12 })], kicks: (c) => [kick(c.w(w("king.", sKing)), 0.08)], dof: { cInf: 10, focus: 6 },
-    actors: (c) => [...ch("alex_king", [0, 1.55, -9.6], c, { expr: "proud" }), ...propCard("throne", [0, 1.55, -10.8], c.f), ...(st(c, w("king.", sKing)) > 0 ? [fxCard("sparkle", [0, 3.1, -9.5], 2, (st(c, w("king.", sKing)) / 30) % 1, 1), fxCard("burst", [0, 2.7, -9.8], 3, clamp01(st(c, w("king.", sKing)) / 14), 2)] : []),
-      ...army("phalangite", [-7.5, 0, -8], 2, 2, [1.8, 1.6], c.f, {}), ...army("phalangite", [5.7, 0, -8], 2, 2, [1.8, 1.6], c.f, {})],
-    cues: (c) => [{ f: c.w(w("king.", sKing)), kind: "title_hit" }, { f: c.w(w("king.", sKing)), kind: "crowd", gain: 0.6 }] });
-  const sPush = w("Some", sKing);
-  add({ id: "push_around", from: sPush, scene: 3, set: "field", v: 0, light: "day", amb: "wind", xin: 6,
-    cams: () => [K(0, [0, 1.6, 7], [0, 1.6, 0], 40), K(4, [0, 1.5, 6], [0, 1.6, 0], 36, { dur: 70 })],
-    actors: (c) => [0, 1, 2, 3].flatMap((k) => ch("courtier", [-2.4 + k * 1.6, 0, (k % 2) * 0.5], c, { v: k + 1, expr: (c.t + k * 5) % 24 < 12 ? "laugh" : "grin", facing: k < 2 ? 1 : -1, wave: k === 1 ? 0.6 : undefined, seed: 40 + k })),
-    cues: (c) => [{ f: c.w(w("boy-king", sPush)), kind: "laugh_crowd" }] });
-  const sWrong = w("They", sPush);
-  add({ id: "wrong", from: sWrong, scene: 3, set: "field", v: 0, light: "golden", amb: "wind",
-    cams: () => [K(0, [0.6, 1.8, 3.8], [0, 1.9, 0], 30, { roll: 4.5, creep: 0.008 })], kicks: (c) => [kick(c.w(w("wrong.", sWrong)), 0.1)], dof: { cInf: 14, focus: 3.8 },
-    actors: (c) => ch("alex_helm", [0, 0, 0], c, { expr: "angry" }),
-    cues: (c) => [{ f: c.w(w("wrong.", sWrong)), kind: "boom" }] });
-  const sFace = w("He", sWrong);
-  add({ id: "turn_east", from: sFace, scene: 3, set: "field", v: 0, light: "golden", amb: "march",
-    cams: (c) => [K(0, [0, 2.4, 16], [0, 1.4, 0], 44), K(c.w(w("turned", sFace)) - 2, [3, 1.5, 5], [0, 1.7, 0], 38, { dur: 18 }), K(c.w(w("empire", sFace)) - 6, [3, 4, 6], [40, 14, -40], 50, { dur: 30 })],
-    actors: (c) => [...army("phalangite", [-14 + 0.06 * c.t, 0, -4], 3, 8, [1.6, 1.6], c.f, { march: true, side: true }), ...ch("alex_helm", [0, 0, 0], c, { expr: "determined", view: c.t > c.w(w("turned", sFace)) ? "side" : "front", mode: "stand" })],
-    cues: (c) => [{ f: 0, kind: "march", dur: c.d }, { f: c.w(w("empire", sFace)) - 6, kind: "whoosh" }] });
-
-  // ===================== S4 — CONQUERING PERSIA =====================
-  const sPers = w("Persian", 270) - 1;
-  add({ id: "persia_map", from: sPers, scene: 4, xin: 10, amb: "map",
-    map: (c) => ({ f: c.f, view: [46, 32.5, 1], mac: 1, persia: easeOut(u01(c, 0, 30)), labels: [{ text: "MACEDONIA", at: [22.5, 42.8], t: c.t }, { text: "PERSIAN EMPIRE", at: [52, 34], t: c.t - 12, size: 56 }, { text: "EGYPT", at: [30.5, 26.5], t: st(c, w("Egypt", sPers)) }, { text: "INDIA", at: [74, 28], t: st(c, w("India,", sPers)) }] }),
-    cues: (c) => [{ f: 0, kind: "swell" }, { f: c.w(w("Egypt", sPers)), kind: "pop" }, { f: c.w(w("India,", sPers)), kind: "pop" }] });
-  const sDar = w("and", w("India,", sPers));
-  add({ id: "darius", from: sDar, scene: 4, set: "field", v: 2, light: "day", amb: "battle_far", xin: 6,
-    cams: (c) => [K(0, [0, 2.1, 4.6], [0, 2.3, 0], 32), K(c.w(w("armies", sDar)) - 4, [0, 9, 24], [0, 1, -20], 48, { dur: 34 })], dof: { cInf: 12, focus: 4.6 },
-    actors: (c) => [...ch("darius", [0, 0, 0], c, { expr: st(c, w("bigger", sDar)) > 0 ? "sly" : "stern" }), ...army("persian", [-22, 0, -30], 6, 22, [2, 2.2], c.f, { march: false })],
-    over: (c, g, Wd, H) => drawLabel(g, "DARIUS III", st(c, w("Darius", sDar)), 50, Wd, H, 0.5, 0.18, { sub: "King of Persia" }),
-    cues: (c) => [{ f: c.w(w("Darius", sDar)), kind: "pop" }, { f: c.w(w("armies", sDar)) - 4, kind: "whoosh" }, { f: c.w(w("armies", sDar)), kind: "crowd" }] });
-  const sCross = w("In", sDar);
-  add({ id: "crossing", from: sCross, scene: 4, set: "field", v: 3, light: "golden", amb: "sea", xin: 8,
-    cams: () => [K(0, [14, 4, 18], [0, 1, -6], 46), K(4, [10, 3, 14], [0, 1, -8], 44, { dur: 90 })],
-    actors: (c) => [...[0, 1, 2].flatMap((k) => propCard("ship", [-18 + k * 14, -0.4, -24 - (k % 2) * 8], c.f, { phase: ((c.f / 40) + k * 0.3) % 1 })), ...army("phalangite", [-8, 0, -11 + 0.04 * c.t], 3, 7, [1.8, 1.6], c.f, { march: true })],
-    over: (c, g, Wd, H) => { drawStamp(g, "334 BC", st(c, w("334 BC,", sCross)), 60, Wd, H); drawLabel(g, "HELLESPONT", st(c, w("Asia", sCross)), 60, Wd, H, 0.5, 0.18, { sub: "from Europe into Asia" }); drawLabel(g, "40,000 MEN", st(c, w("40,000", sCross)), 50, Wd, H, 0.72, 0.5, { size: 54 }); },
-    cues: (c) => [{ f: c.w(w("334 BC,", sCross)), kind: "stamp" }, { f: c.w(w("40,000", sCross)), kind: "pop" }, { f: 0, kind: "march", dur: c.d }] });
-  const sSpear = w("Legend", sCross);
-  add({ id: "spear", from: sSpear, scene: 4, set: "field", v: 3, light: "golden", amb: "sea",
-    cams: (c) => [K(0, [3, 1.6, 6], [0, 1.6, 0], 40), K(c.w(w("threw", sSpear)) + 2, [5, 1.4, 6], [5, 0.9, 0], 40, { dur: 14 })],
-    kicks: (c) => [kick(c.w(w("beach", sSpear)), 0.14)],
-    actors: (c) => {
-      const tt = c.w(w("threw", sSpear)), ti = c.w(w("beach", sSpear)), out = [...ch("alex_helm", [0, 0, 0], c, { expr: c.t > ti ? "proud" : "determined", wave: c.t > tt - 6 && c.t < tt + 4 ? 1 : undefined, facing: 1 })];
-      if (c.t >= tt && c.t < ti) { const u = (c.t - tt) / Math.max(1, ti - tt); out.push(...propCard("spear_beach", [lerp(0.6, 5, u), 1.9 + 2.2 * Math.sin(Math.PI * u) - 1.8 * u, 0], c.f, { roll: -1.2 + 1.0 * u, scale: 0.8 })); }
-      if (c.t >= ti) { out.push(...propCard("spear_beach", [5, -0.4, 0], c.f, { roll: 0.25, scale: 0.8 })); if (c.t - ti < 18) out.push(fxCard("dust", [5, 0.3, 0.1], 1.6, (c.t - ti) / 18, 2), fxCard("burst", [5, 0.4, 0.1], 1.4, (c.t - ti) / 12, 3)); }
-      return out;
-    },
+  const sBorn = w("He", 41);
+  add({ id: "birth", from: sBorn, scene: 2, set: "coast", v: 0, light: "dawn", amb: "sea", flash: (c) => (c.t < 4 ? [0.9, 0.6, 0.35, 0.15][c.t] : 0),
+    cams: (c) => [K(0, [1.9, 1.5, 5.6], [1.2, 0.9, 0], 36), K(c.w(w("Corsica,", sBorn)) - 6, [6, 4, 10], [0, 3, 30], 50, { dur: 30 })],
+    dof: { cInf: 10 },
+    actors: (c) => [...propCard("cradle", [2.0, 0, 0], c.f, { anim: st(c, w("born", sBorn)) > 0 ? 1 : 0 }), ...ch("townsman", [0.2, 0, -0.6], c, { v: 1, expr: "smile_closed", facing: 1 }),
+      ...(st(c, w("French", sBorn)) > 0 ? propCard("flag_fr", [-3, 0, 6], c.f, { phase: (c.f / 30) % 1 }) : [])],
+    over: (c, g, Wd, H) => { drawTitle(g, c.f - titleAbs, 66, Wd, H, ["NAPOLEON", "BONAPARTE"], [150, 120], "The Man Who Conquered Europe"); drawStamp(g, "AUG 15, 1769", st(c, w("fifteenth,", sBorn)), 80, Wd, H); drawLabel(g, "CORSICA", st(c, w("Corsica,", sBorn)), 70, Wd, H, 0.5, 0.18, { sub: "Ajaccio" }); },
+    noCap: (c) => c.f - titleAbs < 76,
+    cues: (c) => [{ f: 0, kind: "flash" }, { f: c.w(w("fifteenth,", sBorn)), kind: "stamp" }, { f: c.w(w("Corsica,", sBorn)), kind: "pop" }, { f: c.w(w("French", sBorn)), kind: "flag" }] });
+  const sDad = w("His", 61);
+  add({ id: "father", from: sDad, scene: 2, set: "coast", v: 0, light: "day", amb: "wind", xin: 6,
+    cams: () => [K(0, [0.6, 1.6, 6.5], [0, 1.6, 0], 38)], dof: { cInf: 10 },
+    actors: (c) => [...ch("townsman", [-1.2, 0, 0], c, { v: 2, expr: "angry", facing: 1, prop: ["hammer", 0] as any, wave: 0.5 }), ...army("fr_soldier", [1.4, 0, -1.5], 2, 2, [1.4, 1.4], c.f, {}),
+      ...(st(c, w("against", sDad)) > 0 ? [fxCard("bang", [-1.2, 2.5, 0], 0.7, st(c, w("against", sDad)) / 24, 1)] : [])],
+    cues: (c) => [{ f: c.w(w("against", sDad)), kind: "sting" }] });
+  const sMock = w("At", 69);
+  add({ id: "mocked", from: sMock, scene: 2, set: "school", light: "day", amb: "court", xin: 8,
+    cams: () => [K(0, [0, 1.5, 7], [0, 1.2, 0], 40), K(4, [0, 1.4, 5.8], [0, 1.25, 0], 36, { dur: 100 })], dof: { cInf: 10 },
+    actors: (c) => { const tm = st(c, w("mocked", sMock)); return [...ch("nap_boy", [0, 0, 0.3], c, { expr: tm > 0 ? "angry" : "neutral" }),
+      ...[0, 1, 2].flatMap((k) => ch("cadet", [[-2.2, 1.7, 2.7][k], 0, -0.6], c, { v: k + 1, seed: 40 + k, expr: tm > 0 ? ((c.t + k * 5) % 24 < 12 ? "laugh" : "grin") : "neutral", facing: k ? -1 : 1 })),
+      ...(st(c, w("accent.", sMock)) > 0 ? [fxCard("quest", [-2.2, 2.1, -0.6], 0.6, st(c, w("accent.", sMock)) / 24, 2)] : [])]; },
+    over: (c, g, Wd, H) => drawLabel(g, "BRIENNE MILITARY SCHOOL", st(c, w("school", sMock)), 80, Wd, H, 0.5, 0.18, { size: 40, sub: "France, 1779" }),
+    cues: (c) => [{ f: c.w(w("school", sMock)), kind: "pop" }, { f: c.w(w("mocked", sMock)), kind: "laugh_crowd" }] });
+  const sBooks = w("So", 87);
+  add({ id: "books", from: sBooks, scene: 2, set: "room", v: 1, light: "lamp", amb: "night", xin: 6,
+    cams: () => [K(0, [0.8, 1.2, 3], [0, 0.8, -1.5], 36, { creep: 0.003 })], dof: { cInf: 12 },
+    actors: (c) => [...ch("nap_boy", [0, 0, -1.5], c, { mode: "sit", expr: "determined" }), ...propCard("book", [-0.7, 0, -1.3], c.f, { scale: 0.9, anim: 0.5 }), ...propCard("book", [0.75, 0, -1.2], c.f, { scale: 0.8, anim: 1 }), ...propCard("lamp", [1.3, 0, -1.6], c.f), fxCard("flame", [1.45, 0.17, -1.56], 0.2, (c.f / 10) % 1, 2), fxCard("glow", [1.45, 0.17, -1.56], 1.3, 0, 2)],
+    points: (c) => [{ pos: [1.3, 1.0, -1.0], color: "#ffb060", i: 5 * (0.92 + 0.08 * Math.sin(c.f * 0.5)), d: 10 }],
+    cues: (c) => [{ f: c.w(w("books", sBooks)), kind: "page" }] });
+  const sSnow = w("Legend", 97);
+  add({ id: "snowball", from: sSnow, scene: 2, set: "school", light: "snow", amb: "wind", xin: 6, state: () => ({ snow: 1 }), weather: "snowlight",
+    cams: (c) => [K(0, [3.4, 1.7, 6.8], [0, 1.2, -1.8], 46), K(c.w(w("battle.", sSnow)) - 4, [1.8, 1.5, 4.4], [0, 1.3, -0.5], 40, { dur: 20 })], kicks: (c) => [kick(c.w(w("battle.", sSnow)), 0.08)],
+    actors: (c) => { const out = [...ch("nap_boy", [0, 0, 0], c, { expr: "determined", wave: Math.sin(c.t / 6) > 0 ? 1 : 0.4 })];
+      for (let k = 0; k < 4; k++) out.push(...ch("cadet", [-4 + k * 1.3, 0, -3 + (k % 2)], c, { v: k, seed: 50 + k, expr: "grin", facing: 1 }), ...ch("cadet", [3 + k * 1.3, 0, -5 + (k % 2)], c, { v: k + 2, seed: 60 + k, expr: "shock", facing: -1 }));
+      for (let k = 0; k < 5; k++) { const ph = ((c.t + k * 11) % 30) / 30; out.push(...propCard("snowball", [lerp(-3, 4, ph), 1.4 + 1.6 * Math.sin(Math.PI * ph), lerp(-2.5, -4.5, ph)], c.f)); }
+      return out; },
     over: (c, g, Wd, H) => drawTag(g, "LEGEND SAYS", c.t - 2, 90, Wd, H),
-    cues: (c) => [{ f: c.w(w("threw", sSpear)), kind: "whoosh" }, { f: c.w(w("beach", sSpear)), kind: "thunk" }, { f: c.w(w("claiming", sSpear)), kind: "crowd", gain: 0.6 }] });
-  const sIssus = w("In", sSpear);
-  const issusArmies = (c: C, squeeze = 0): CardDraw[] => [
-    ...army("phalangite", [-14, 0, 10], 3, 14, [2, 1.8], c.f, {}),
-    ...army("persian", [-22 + squeeze * 4, 0, -14], 5, 22, [2 - squeeze * 0.35, 1.6 - squeeze * 0.3], c.f, { expr: squeeze > 0.5 ? "worried" : undefined, jitter: 0.25 + squeeze }),
-    ...propCard("chariot", [0, 0, -7], c.f, { rider: "darius" }), ...propCard("horse", [0, 0, 7], c.f, { flip: true, rider: "alex_helm" }),
-    ...propCard("flag_per", [-4, 0, -9], c.f, { phase: (c.f / 30) % 1 }), ...propCard("flag_mac", [3, 0, 8.4], c.f, { phase: (c.f / 30) % 1 })];
-  add({ id: "issus", from: sIssus, scene: 4, set: "field", v: 1, light: "day", amb: "battle_far", xin: 8,
-    cams: () => [K(0, [22, 9, 0], [0, 0.5, 0], 48), K(4, [18, 7, 0], [0, 1, 0], 46, { dur: 90 })],
-    actors: (c) => issusArmies(c),
-    over: (c, g, Wd, H) => { drawStamp(g, "333 BC", st(c, w("333 BC,", sIssus)), 60, Wd, H); drawLabel(g, "ISSUS", st(c, w("Issus,", sIssus)), 70, Wd, H, 0.5, 0.18); },
-    cues: (c) => [{ f: c.w(w("333 BC,", sIssus)), kind: "stamp" }, { f: c.w(w("Issus,", sIssus)), kind: "pop" }, { f: c.w(w("met.", sIssus)), kind: "drum_hit" }] });
-  const sSqz = w("Darius", sIssus);
-  add({ id: "squeeze", from: sSqz, scene: 4, set: "field", v: 1, light: "day", amb: "battle_far",
-    cams: (c) => [K(0, [0, 38, 40], [0, 0, -8], 50), K(c.w(w("mountains", sSqz)) - 4, [18, 30, 34], [30, 6, -12], 52, { dur: 26 }), K(c.w(w("sea,", sSqz)) - 4, [-18, 30, 34], [-40, 0, -12], 52, { dur: 26 }), K(c.w(w("numbers", sSqz)) - 4, [0, 6, 6], [0, 1.2, -14], 44, { dur: 26 })],
-    actors: (c) => issusArmies(c, smooth(u01(c, c.w(w("squeezed", sSqz)), c.w(w("numbers", sSqz))))),
-    cues: (c) => [{ f: c.w(w("mountains", sSqz)) - 4, kind: "whoosh", gain: 0.5 }, { f: c.w(w("sea,", sSqz)) - 4, kind: "whoosh", gain: 0.5 }, { f: c.w(w("help.", sSqz)), kind: "squish" }] });
-  const sCharge = w("Alexander", sSqz);
-  add({ id: "charge_issus", from: sCharge, scene: 4, set: "field", v: 1, light: "day", amb: "battle",
-    cams: (c) => { const x = lerp(-10, 6, c.t / c.d); return [K(0, [x - 3.5, 1.5, 12], [x, 1.4, 5], 42, { creep: 0.001 })]; }, kicks: (c) => [kick(8, 0.08), kick(24, 0.08), kick(40, 0.08)],
-    actors: (c) => { const x = lerp(-10, 6, c.t / c.d); return [...propCard("horse", [x, 0, 5], c.f, { phase: (c.t / 7) % 1, rider: "alex_helm" }), fxCard("dust", [x - 2, 0.4, 5.2], 2.4, (c.t / 10) % 1, 1), fxCard("speed", [x - 2.6, 1.3, 5.2], 2.4, (c.t / 8) % 1, 2), ...army("persian", [4, 0, -2], 2, 7, [2, 2], c.f, { expr: "shock" })]; },
-    cues: (c) => [{ f: 0, kind: "hooves", dur: c.d }, { f: 4, kind: "crowd" }] });
-  const sFled = w("and", sCharge);
-  const fleeX = (c: C, t0: number) => -0.012 * Math.max(0, c.t - t0) ** 2;
-  const flee = (c: C, t0: number) => { const t = Math.max(0, c.t - t0), x = fleeX(c, t0); return [...propCard("chariot", [x, 0, 6], c.f, { flip: t > 0, phase: (c.t / 6) % 1, rider: "darius" }), ...(t > 0 ? [fxCard("dust", [x + 2.6, 0.5, 6.2], 2.2, (t / 10) % 1, 1), fxCard("speed", [x + 3.4, 1.2, 6.2], 2.4, (t / 8) % 1, 2)] : [])]; };
-  add({ id: "darius_flees", from: sFled, scene: 4, set: "field", v: 1, light: "day", amb: "battle",
-    cams: (c) => { const x = fleeX(c, c.w(w("around", sFled))) * 0.85; return [K(0, [x + 2, 1.7, 15], [x, 1.4, 6], 40, { creep: 0.001 })]; }, kicks: (c) => [kick(c.w(w("around", sFled)), 0.06)],
-    actors: (c) => flee(c, c.w(w("around", sFled))),
-    cues: (c) => [{ f: c.w(w("around", sFled)), kind: "neigh" }, { f: c.w(w("fled.", sFled)), kind: "wheels", dur: 40 }, { f: c.w(w("fled.", sFled)), kind: "whoosh" }] });
-  const sOffer = w("offered", sFled) - 1;
-  add({ id: "offer", from: sOffer, scene: 4, set: "field", v: 5, light: "day", amb: "wind", xin: 6,
-    cams: () => [K(0, [0.4, 1.7, 6], [0, 1.6, 0], 38)], dof: { cInf: 10, focus: 6 },
-    actors: (c) => [...ch("persian", [-1.4, 0, 0], c, { v: 3, expr: "nervous", facing: 1, wave: 0.2 }), ...ch("alex", [1.4, 0, 0.2], c, { expr: st(c, w("peace.", sOffer)) > 0 ? "sly" : "neutral", facing: -1 }),
-      ...propCard("scroll", [-0.4, 1.0, 0.3], c.f, { scale: 0.7 }), ...(st(c, w("huge", sOffer)) > 0 ? [fxCard("sparkle", [-0.4, 1.1, 0.4], 1, (st(c, w("huge", sOffer)) / 24) % 1, 2)] : [])],
-    cues: (c) => [{ f: c.w(w("huge", sOffer)), kind: "sparkle" }] });
-  const sParm = w("His", sOffer);
-  add({ id: "parmenion", from: sParm, scene: 4, set: "field", v: 5, light: "day", amb: "wind",
-    cams: () => [K(0, [-0.6, 1.75, 4.6], [-0.6, 1.8, 0], 32, { creep: 0.003 })], dof: { cInf: 12, focus: 4.6 },
-    actors: (c) => [...ch("parmenion", [-1.1, 0, 0], c, { expr: st(c, w("take", sParm)) > 0 ? "grin" : "sly", facing: 1, wave: st(c, w("If", sParm)) > 0 ? 0.5 : undefined }), ...ch("alex", [1.2, 0, 0.3], c, { expr: "neutral", facing: -1 })],
-    over: (c, g, Wd, H) => drawLabel(g, "PARMENION", st(c, w("Parmenion", sParm)), 50, Wd, H, 0.3, 0.18, { sub: "Alexander's general" }),
-    cues: (c) => [{ f: c.w(w("Parmenion", sParm)), kind: "pop" }] });
-  const sRep = w("replied,", sParm) - 1;
-  add({ id: "reply", from: sRep, scene: 4, set: "field", v: 5, light: "day", amb: "wind",
-    cams: (c) => [K(0, [0.8, 1.75, 4.4], [0.9, 1.85, 0], 32), K(c.w(w("Parmenion.\"", sRep)) - 4, [0.95, 1.85, 3.2], [1.0, 1.95, 0.3], 26, { dur: 8, creep: 0.006 })], kicks: (c) => [kick(c.w(w("Parmenion.\"", sRep)), 0.06)], dof: { cInf: 12, focus: 4 },
-    actors: (c) => [...ch("parmenion", [-1.1, 0, 0], c, { expr: st(c, w("Parmenion.\"", sRep)) > 4 ? "worried" : "sly", facing: 1 }), ...ch("alex", [1.2, 0, 0.3], c, { expr: "sly", facing: -1 })],
-    cues: (c) => [{ f: c.w(w("Parmenion.\"", sRep)), kind: "sting" }] });
-  const sGau = w("In", sRep);
-  add({ id: "gaugamela", from: sGau, scene: 4, set: "field", v: 2, light: "golden", amb: "battle_far", xin: 8,
-    cams: () => [K(0, [0, 12, 34], [0, 1, -14], 50), K(2, [0, 9, 28], [0, 1, -14], 48, { dur: 90 })],
-    actors: (c) => [...army("persian", [-40, 0, -34], 5, 34, [2.4, 2.2], c.f, {}), ...army("phalangite", [-14, 0, 10], 3, 14, [2, 1.8], c.f, {}),
-      ...[-24, -12, 0, 12, 24].flatMap((x) => propCard("chariot", [x, 0, -22], c.f, { flip: true, phase: 0 }))],
-    over: (c, g, Wd, H) => { drawStamp(g, "331 BC", st(c, w("331 BC,", sGau)), 60, Wd, H); drawLabel(g, "GAUGAMELA", st(c, w("Gaugamela,", sGau)), 80, Wd, H, 0.5, 0.18); },
-    cues: (c) => [{ f: c.w(w("331 BC,", sGau)), kind: "stamp" }, { f: c.w(w("Gaugamela,", sGau)), kind: "pop" }, { f: c.w(w("scythed", sGau)), kind: "blades" }] });
-  const sGap = w("Alexander's", sGau);
-  add({ id: "gaps", from: sGap, scene: 4, set: "field", v: 2, light: "golden", amb: "battle",
-    cams: () => [K(0, [7, 4.2, 13], [0, 1, -1], 44, { creep: 0.002 })],
-    kicks: (c) => [kick(c.w(w("through.", sGap)), 0.12)],
-    actors: (c) => {
-      const op = smooth(u01(c, c.w(w("gaps", sGap)) - 4, c.w(w("gaps", sGap)) + 16)) * 2.2, tr = c.w(w("roll", sGap)) - 8;
-      const out = [...army("phalangite", [-1.6, 0, 1.6 + op], 3, 3, [1.6, 1.6], c.f, { expr: op > 1 ? "sly" : undefined }), ...army("phalangite", [-1.6, 0, -1.6 - op - 6.4], 5, 3, [1.6, 1.6], c.f, { expr: op > 1 ? "sly" : undefined })];
-      const x = c.t < tr ? -30 : -30 + 0.75 * (c.t - tr);
-      out.push(...propCard("chariot", [x, 0, -0.8], c.f, { phase: (c.t / 5) % 1, rider: "persian" }));
-      if (c.t > tr) out.push(fxCard("dust", [x - 2.4, 0.5, -0.6], 2.4, ((c.t - tr) / 10) % 1, 3), fxCard("speed", [x - 3, 1.2, -0.6], 2.4, ((c.t - tr) / 8) % 1, 4));
-      return out;
-    },
-    cues: (c) => [{ f: c.w(w("gaps", sGap)), kind: "shuffle" }, { f: c.w(w("roll", sGap)) - 8, kind: "wheels", dur: 50 }, { f: c.w(w("through.", sGap)), kind: "whoosh" }] });
-  const sWeak = w("Then", sGap);
-  add({ id: "weak_spot", from: sWeak, scene: 4, set: "field", v: 2, light: "golden", amb: "battle",
-    cams: (c) => [K(0, [12, 2, 10], [0, 1.4, -6], 42), K(c.w(w("charged...", sWeak)) - 4, [-6, 1.5, 8], [-14, 1.4, -4], 44, { dur: 20 })], kicks: (c) => [kick(c.w(w("charged...", sWeak)), 0.12)],
-    actors: (c) => { const tc = c.w(w("charged...", sWeak)), x = c.t < tc ? 6 : 6 - 0.4 * (c.t - tc);
-      return [...army("persian", [-12, 0, -10], 3, 12, [2, 1.8], c.f, { expr: "worried" }), ...propCard("horse", [x, 0, -2], c.f, { flip: true, phase: (c.t / 7) % 1, rider: "alex_helm" }),
-        ...(st(c, w("spot,", sWeak)) > 0 ? [fxCard("sparkle", [0, 2.2, -8], 2, (st(c, w("spot,", sWeak)) / 20) % 1, 4)] : []), ...(c.t > tc ? [fxCard("speed", [x + 2.4, 1.3, -1.9], 2.4, (c.t / 8) % 1, 2), fxCard("dust", [x + 2, 0.4, -1.6], 2.4, (c.t / 10) % 1, 1)] : [])]; },
-    cues: (c) => [{ f: c.w(w("spot,", sWeak)), kind: "sparkle" }, { f: c.w(w("charged...", sWeak)), kind: "hooves", dur: 40 }, { f: c.w(w("charged...", sWeak)), kind: "crowd" }] });
-  const sFled2 = w("and", sWeak);
-  add({ id: "darius_flees2", from: sFled2, scene: 4, set: "field", v: 2, light: "golden", amb: "battle",
-    cams: (c) => { const x = fleeX(c, 2) * 0.85; return [K(0, [x + 2, 1.7, 15], [x, 1.4, 6], 40, { creep: 0.001 })]; },
-    actors: (c) => flee(c, 2), cues: () => [{ f: 2, kind: "wheels", dur: 40 }, { f: 2, kind: "whoosh" }] });
-  const sAgain = w("Again.", sFled2);
-  add({ id: "again", from: sAgain, scene: 4, set: "field", v: 2, light: "golden", amb: "wind",
-    cams: () => [K(0, [0.2, 1.8, 3.4], [0, 1.85, 0], 30)], dof: { cInf: 14, focus: 3.4 },
-    actors: (c) => ch("alex_helm", [0, 0, 0], c, { expr: "neutral", blinkOff: true }), cues: () => [{ f: 0, kind: "sting", gain: 0.6 }] });
+    cues: (c) => [0, 1, 2, 3, 4, 5].map((k) => ({ f: 10 + k * 14, kind: "snowball", gain: 0.6 })) });
+  const sOff = w("At", 111);
+  add({ id: "officer", from: sOff, scene: 2, set: "school", light: "day", amb: "court", xin: 8, state: () => ({ snow: 0 }),
+    cams: (c) => [K(0, [3, 1.6, 7.2], [0.8, 1.2, 0], 42), K(c.w(w("officer.", sOff)) - 20, [0.8, 1.5, 4.6], [0.4, 1.4, 0], 36, { dur: 20 })], dof: { cInf: 10 },
+    actors: (c) => { const grown = st(c, w("sixteen,", sOff)) > 0; return [...ch(grown ? "nap_young" : "nap_boy", [0, 0, 0], c, { expr: grown ? "proud" : "determined" }), ...gun([2.4, 0, -1.2], c, c.w(w("artillery", sOff)), 999),
+      ...(grown && st(c, w("sixteen,", sOff)) < 16 ? [fxCard("burst", [0, 1.6, 0.1], 2.6, st(c, w("sixteen,", sOff)) / 16, 1)] : [])]; },
+    over: (c, g, Wd, H) => { drawLabel(g, "ÉCOLE MILITAIRE", st(c, w("Paris,", sOff)), 70, Wd, H, 0.5, 0.18, { sub: "Paris · course done in 1 year" }); drawStamp(g, "AGE 16", st(c, w("sixteen,", sOff)), 60, Wd, H); },
+    cues: (c) => [{ f: c.w(w("Paris,", sOff)), kind: "pop" }, { f: c.w(w("sixteen,", sOff)), kind: "title_hit", gain: 0.6 }, { f: c.w(w("artillery", sOff)), kind: "cannon" }] });
 
-  // ===================== S5 — HIS EMPIRE =====================
-  const sBab = w("Babylon,", 440);
-  add({ id: "babylon", from: sBab, scene: 5, set: "babylon", light: "day", amb: "march", xin: 10,
-    cams: () => [K(0, [14, 3, 30], [0, 6, 0], 46), K(4, [10, 2.4, 24], [0, 6, 2], 44, { dur: 90 })],
-    actors: (c) => [...army("phalangite", [-1.8, 0, 26 - 0.07 * c.t], 6, 3, [1.8, 2.2], c.f, { march: true }), ...propCard("flag_mac", [2.6, 0, 18 - 0.07 * c.t], c.f, { phase: (c.f / 30) % 1 })],
-    over: (c, g, Wd, H) => { drawLabel(g, "BABYLON", st(c, sBab), 70, Wd, H, 0.3, 0.18); drawLabel(g, "SUSA", st(c, w("Susa", sBab)), 60, Wd, H, 0.52, 0.18, { size: 40 }); drawLabel(g, "PERSEPOLIS", st(c, w("Persepolis", sBab)), 50, Wd, H, 0.74, 0.18, { size: 40 }); },
-    cues: (c) => [{ f: 0, kind: "march", dur: c.d }, { f: c.w(sBab), kind: "pop" }, { f: c.w(w("Susa", sBab)), kind: "pop" }, { f: c.w(w("Persepolis", sBab)), kind: "pop" }] });
-  const sAsia = w("and", w("Persepolis", sBab));
-  add({ id: "king_asia", from: sAsia, scene: 5, set: "babylon", light: "golden", amb: "court",
-    cams: () => [K(0, [9.5, 1.75, 13.6], [9, 1.95, 9], 32)], kicks: (c) => [kick(c.w(w("Asia.", sAsia)), 0.08)], dof: { cInf: 10, focus: 6 },
-    actors: (c) => [...ch("alex_king", [9, 0, 9], c, { expr: "proud" }), ...(st(c, w("Asia.", sAsia)) > 0 ? [fxCard("burst", [9, 2.2, 8.8], 3, clamp01(st(c, w("Asia.", sAsia)) / 14), 2), fxCard("sparkle", [9, 2.4, 9.1], 2, (st(c, w("Asia.", sAsia)) / 30) % 1, 3)] : [])],
-    over: (c, g, Wd, H) => drawLabel(g, "KING OF ASIA", st(c, w("Asia.", sAsia)), 40, Wd, H, 0.5, 0.18, { size: 60 }),
-    cues: (c) => [{ f: c.w(w("Asia.", sAsia)), kind: "title_hit" }] });
-  const sStop = w("But", sAsia);
-  add({ id: "no_stop", from: sStop, scene: 5, set: "babylon", light: "golden", amb: "wind",
-    cams: () => [K(0, [13, 1.6, 15], [10, 1.6, 9], 40)],
-    actors: (c) => ch("alex_helm", [7 + 0.12 * c.t, 0, 9], c, { view: "side", mode: "march", phase: walkPhase(c.f, 1.6), expr: "determined" }),
-    cues: () => [{ f: 2, kind: "whoosh" }] });
-  const sWest = w("His", sStop);
-  const routeKeys = (c: C, keys: [number, number][]) => { // [shot frame, route index] piecewise
-    let r = keys[0][1];
-    for (let i = 1; i < keys.length; i++) if (c.t >= keys[i - 1][0]) r = lerp(keys[i - 1][1], keys[i][1], smooth((c.t - keys[i - 1][0]) / Math.max(1, keys[i][0] - keys[i - 1][0])));
-    return r;
-  };
-  const battlesUpTo = (r: number, t: number, at: Record<number, number>): [number, number][] => [R.granicus, R.issus, R.gaugamela, R.hydaspes].filter((i) => r >= i).map((i) => [i, at[i] !== undefined ? t - at[i] : 99]);
-  add({ id: "map_west", from: sWest, scene: 5, xin: 8, amb: "map",
-    map: (c) => { const r = routeKeys(c, [[0, 0], [c.w(w("Egypt,", sWest)), R.alexandria], [c.d, R.persepolis]]);
-      return { f: c.f, view: [40 + 6 * u01(c, 0, c.d), 33, 1.25], route: r, empire: 1, token: true, battles: battlesUpTo(r, 99, {}),
-        labels: [{ text: "GREECE", at: [22, 38.8], t: c.t, dy: 0 }, { text: "EGYPT", at: [30, 27], t: st(c, w("Egypt,", sWest)), sub: "welcomed as pharaoh", dy: 0 }] }; },
-    cues: (c) => [{ f: 0, kind: "scribble", dur: c.d }, { f: c.w(w("Egypt,", sWest)), kind: "pop" }, { f: c.w(w("pharaoh.", sWest)), kind: "title_hit", gain: 0.5 }] });
-  const sEast = w("Now", sWest);
-  add({ id: "map_east", from: sEast, scene: 5, amb: "map",
-    map: (c) => {
-      const tB = c.w(w("Bactria", sEast)), tS = c.w(w("Sogdiana,", sEast)), tI = c.w(w("Indus", sEast)), tH = c.w(w("Hydaspes", sEast));
-      const r = routeKeys(c, [[0, R.persepolis], [tB, R.bactra], [tS, R.maracanda], [tI, 24], [tH, R.hydaspes], [c.d, R.hydaspes]]);
-      return { f: c.f, view: [lerp(50, 62, u01(c, 0, c.d)), 34, 1.45], route: r, empire: 1, token: true, battles: battlesUpTo(r, c.t, { [R.hydaspes]: tH }),
-        labels: [{ text: "PERSIA", at: [54, 31], t: c.t, dy: 0 }, { text: "BACTRIA", at: [66.9, 35.6], t: st(c, w("Bactria", sEast)), sub: "Afghanistan", dy: 0 }, { text: "SOGDIANA", at: [66.0, 41.0], t: st(c, w("Sogdiana,", sEast)), sub: "Uzbekistan", dy: 0 },
-          { text: "INDIA", at: [75, 27.5], t: st(c, w("India,", sEast)), dy: 0 }, { text: "HYDASPES", at: [73, 33.6], t: tH - c.t <= 0 ? c.t - tH : -1, sub: "326 BC", size: 34, dy: -50 }] };
-    },
-    over: (c, g, Wd, H) => drawStamp(g, "326 BC", st(c, w("326 BC,", sEast)), 50, Wd, H),
-    cues: (c) => [{ f: 0, kind: "scribble", dur: c.d }, ...["Bactria", "Sogdiana,", "India,"].map((x) => ({ f: c.w(w(x, sEast)), kind: "pop" })), { f: c.w(w("326 BC,", sEast)), kind: "stamp" }] });
-  const sPorus = w("where", w("India,", sEast));
-  add({ id: "porus", from: sPorus, scene: 5, set: "field", v: 4, light: "day", amb: "battle", xin: 8,
-    cams: (c) => [K(0, [2, 2.4, 12], [0, 2.2, -2], 44), K(c.w(w("elephants", sPorus)) - 6, [-0.5, 1.6, 7], [-3, 2.8, -3], 40, { dur: 24 })], kicks: (c) => [kick(c.w(w("elephants", sPorus)), 0.1), kick(c.w(w("beat", sPorus)), 0.08)],
-    actors: (c) => [...propCard("elephant", [-3, 0, -3], c.f, { phase: (c.f / 40) % 1 }), ...ch("porus", [-3.2, 2.6, -3.05], c, { expr: "angry" }, { shadow: false, z: 1 }),
-      ...propCard("horse", [3.2, 0, -1], c.f, { flip: true, rider: "alex_helm", phase: (c.t / 9) % 1 }), ...army("phalangite", [4, 0, -6], 2, 4, [1.8, 1.6], c.f, {}),
-      fxCard("dust", [0, 0.5, -3], 3, (c.t / 16) % 1, 2), ...(st(c, w("beat", sPorus)) > 0 && st(c, w("beat", sPorus)) < 14 ? [fxCard("clash", [0, 2, -3], 2.4, st(c, w("beat", sPorus)) / 14, 4)] : [])],
-    over: (c, g, Wd, H) => { drawLabel(g, "KING PORUS", st(c, w("Porus", sPorus)), 60, Wd, H, 0.3, 0.18); drawLabel(g, "HYDASPES RIVER", st(c, w("Hydaspes", sPorus)), 60, Wd, H, 0.68, 0.18, { sub: "326 BC", size: 40 }); },
-    cues: (c) => [{ f: c.w(w("beat", sPorus)), kind: "clash" }, { f: c.w(w("elephants", sPorus)), kind: "trumpet" }, { f: c.w(w("Porus", sPorus)), kind: "pop" }, { f: c.w(w("Hydaspes", sPorus)), kind: "pop" }] });
-  const sTired = w("There,", sPorus);
-  add({ id: "refuse", from: sTired, scene: 5, set: "field", v: 5, light: "dusk", amb: "wind", xin: 8,
-    cams: () => [K(0, [0, 1.6, 9], [0, 1.0, 0], 42), K(4, [0, 1.5, 7.6], [0, 1.1, 0], 38, { dur: 100 })], dof: { cInf: 10, focus: 7.5 },
-    actors: (c) => [...[0, 1, 2, 3, 4, 5].flatMap((k) => ch("phalangite", [-4 + k * 1.6, 0, (k % 2) * 0.8], c, { v: k, mode: "sit", expr: k % 2 ? "sick" : "sad", seed: 50 + k, headTilt: st(c, w("refused", sTired)) > 0 && k === 2 ? 6 * Math.sin(c.t / 4) : 0 })),
-      ...ch("alex", [5, 0, 1.6], c, { expr: st(c, w("refused", sTired)) > 0 ? "sad" : "determined", facing: -1 })],
-    over: (c, g, Wd, H) => drawLabel(g, "8 YEARS OF MARCHING", st(c, w("eight", sTired)), 70, Wd, H, 0.5, 0.18, { size: 44 }),
-    cues: (c) => [{ f: c.w(w("exhausted", sTired)), kind: "groan" }, { f: c.w(w("refused", sTired)), kind: "sting", gain: 0.5 }] });
-  const sBack = w("So,", sTired);
-  add({ id: "turn_back", from: sBack, scene: 5, xin: 8, amb: "map",
-    map: (c) => { const r = routeKeys(c, [[0, R.hyphasis], [c.d, R.end]]); return { f: c.f, view: [58, 31, 1.25], route: r, empire: 1, token: true, battles: battlesUpTo(r, 99, {}), labels: [{ text: "BABYLON", at: CITY.Babylon, t: c.d - c.t < 30 ? 30 - (c.d - c.t) : -1, dy: -46 }] }; },
+  // ===================== S3 — THE REVOLUTION =====================
+  const sRev = w("Then,", 130);
+  add({ id: "revolution", from: sRev, scene: 3, set: "paris", light: "day", amb: "crowd_murmur", xin: 10,
+    cams: () => [K(0, [0, 6, 24], [0, 2, -10], 48), K(2, [0, 3.5, 18], [0, 2.2, -10], 46, { dur: 100 })], kicks: (c) => [kick(c.w(w("upside", sRev)), 0.1)],
+    actors: (c) => { const up = st(c, w("upside", sRev)) > 0; return [...crowd("sans", 16, -8, 8, -2, 10, c, { expr: up ? "laugh" : "angry", wave: up ? 1 : 0.5 }), ...[-6, 0, 6].flatMap((x, k) => propCard("flag_fr", [x, 0, 2 + k], c.f, { phase: ((c.f / 25) + k * 0.3) % 1, roll: up ? Math.sin(c.t / 5 + k) * 0.08 : 0 }))]; },
+    over: (c, g, Wd, H) => { drawStamp(g, "1789", st(c, w("1789,", sRev)), 60, Wd, H); drawLabel(g, "THE FRENCH REVOLUTION", st(c, w("Revolution", sRev)), 70, Wd, H, 0.5, 0.18, { size: 48 }); },
+    cues: (c) => [{ f: c.w(w("1789,", sRev)), kind: "stamp" }, { f: c.w(w("Revolution", sRev)), kind: "crowd" }, { f: c.w(w("upside", sRev)), kind: "boom" }] });
+  const sKing = w("The", 143);
+  add({ id: "king", from: sKing, scene: 3, set: "paris", light: "overcast", amb: "crowd_murmur",
+    cams: () => [K(0, [0, 2.1, -18.2], [0, 2.3, -22.4], 34, { creep: 0.003 })], dof: { cInf: 10 },
+    actors: (c) => { const tl = st(c, w("throne,", sKing)), crownY = tl < 0 ? 3.15 : Math.max(1.06, 3.15 - 0.01 * tl * tl);
+      return [...propCard("throne", [0, 1.05, -22.6], c.f), ...(tl < 8 ? ch("king", [0, 1.05, -22.2], c, { expr: tl > 0 ? "shock" : "proud" }, { alpha: tl > 0 ? 1 - tl / 8 : 1 }) : []), ...(tl > 0 ? propCard("crown_fall", [0.2, crownY, -21.6], c.f, { roll: tl * 0.08, scale: 0.9 }) : [])]; },
+    fade: (c) => 0.55 * smooth(u01(c, c.w(w("life.", sKing)) - 4, c.w(w("life.", sKing)) + 10)),
+    cues: (c) => [{ f: c.w(w("throne,", sKing)), kind: "clink" }, { f: c.w(w("life.", sKing)), kind: "drum_hit", gain: 0.8 }] });
+  const sTal = w("Suddenly,", 152);
+  add({ id: "talent", from: sTal, scene: 3, set: "paris", light: "day", amb: "crowd_murmur",
+    cams: () => [K(0, [0.4, 1.7, 5.5], [0, 1.7, 0], 38)], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap_young", [-1, 0, 0], c, { expr: st(c, w("talent", sTal)) > 0 ? "sly" : "neutral", facing: 1 }), ...ch("townsman", [1.3, 0, 0.2], c, { v: 0, expr: st(c, w("birth.", sTal)) > 0 ? "shock" : "proud", facing: -1 }),
+      ...(st(c, w("talent", sTal)) > 0 ? [fxCard("sparkle", [-1, 2.3, 0.1], 1.2, (st(c, w("talent", sTal)) / 24) % 1, 2)] : [])],
+    cues: (c) => [{ f: c.w(w("talent", sTal)), kind: "sparkle" }] });
+  const sTou = w("In", 159);
+  const fleet = (c: C, leave: number): CardDraw[] => [0, 1, 2].flatMap((k) => propCard("warship", [-30 + k * 26 - 0.08 * Math.max(0, c.t - leave), -0.4, -70 - k * 14 - 0.12 * Math.max(0, c.t - leave)], c.f, { rider: "redcoat", phase: ((c.f / 40) + k * 0.3) % 1 }));
+  add({ id: "toulon", from: sTou, scene: 3, set: "coast", v: 1, light: "golden", amb: "sea", xin: 10,
+    cams: (c) => [K(0, [-14, 5, 10], [-14, 2, -40], 46), K(c.w(w("cannons", sTou)) - 6, [-15.5, 2.2, 1.5], [-19, 1.2, -7], 42, { dur: 22 }), K(c.w(w("drove", sTou)) - 2, [-17, 3.2, 2], [-10, 1, -70], 46, { dur: 30 })],
+    kicks: (c) => [kick(c.w(w("drove", sTou)), 0.08)],
+    actors: (c) => { const tg = c.w(w("cannons", sTou)); return [...ch("nap_young", [-22, 0, -4], c, { expr: "determined", wave: c.t > tg - 10 ? 1 : undefined, facing: 1 }), ...gun([-20, 0, -8], c, tg, 34), ...gun([-15, 0, -8.5], c, tg + 12, 34),
+      ...crowd("fr_soldier", 4, -24, -14, -6, -3, c, { expr: "determined" }, 3), ...fleet(c, c.w(w("drove", sTou)))]; },
+    over: (c, g, Wd, H) => { drawStamp(g, "1793", st(c, w("1793,", sTou)), 60, Wd, H); drawLabel(g, "SIEGE OF TOULON", st(c, w("Toulon,", sTou)), 70, Wd, H, 0.5, 0.18, { sub: "Captain Bonaparte" }); },
+    cues: (c) => [{ f: c.w(w("1793,", sTou)), kind: "stamp" }, { f: c.w(w("Toulon,", sTou)), kind: "pop" }, ...gunCues(c.w(w("cannons", sTou)), 6, 17)] });
+  const sGen = w("At", 183);
+  add({ id: "general", from: sGen, scene: 3, set: "coast", v: 1, light: "golden", amb: "wind",
+    cams: (c) => [K(0, [-21.2, 1.55, 0.6], [-22, 1.4, -4], 34), K(c.w(w("general.", sGen)) - 4, [-21.4, 1.55, -0.6], [-22, 1.45, -4], 30, { dur: 8 })], kicks: (c) => [kick(c.w(w("general.", sGen)), 0.06)], dof: { cInf: 12 },
+    actors: (c) => { const tg = st(c, w("general.", sGen)); return [...ch(tg > 0 ? "nap" : "nap_young", [-22, 0, -4], c, { expr: tg > 0 ? "proud" : "neutral" }), ...(tg > 0 && tg < 16 ? [fxCard("burst", [-22, 1.5, -4.1], 1.6, tg / 16, 1)] : []), ...(tg > 0 ? [fxCard("sparkle", [-22, 2.1, -3.8], 0.9, (tg / 24) % 1, 2)] : [])]; },
+    over: (c, g, Wd, H) => drawLabel(g, "GENERAL AT 24", st(c, w("general.", sGen)), 50, Wd, H, 0.5, 0.18, { size: 52 }),
+    cues: (c) => [{ f: c.w(w("general.", sGen)), kind: "title_hit" }] });
+  const sRoy = w("Two", 191);
+  add({ id: "royalists", from: sRoy, scene: 3, set: "paris", light: "day", amb: "crowd_murmur", xin: 8,
+    cams: (c) => [K(0, [6, 3, 10], [0, 1.5, -16], 46), K(c.w(w("hero", sRoy)) - 8, [1, 2, -10], [0, 2.4, -22], 38, { dur: 24 })],
+    kicks: (c) => gunCues(c.w(w("uprising,", sRoy)), 3, 14).map((q) => kick(q.f, 0.07)),
+    actors: (c) => { const tu = c.w(w("uprising,", sRoy)), back = smooth(u01(c, tu + 10, tu + 50));
+      return [...ch("nap_young", [0, 1.05, -23], c, { expr: "determined", wave: 1 }), ...gun([-3.2, 1.05, -22.6], c, tu, 14, true), ...gun([3.2, 1.05, -22.6], c, tu + 7, 14),
+        ...crowd("townsman", 10, -6, 6, -12 + 10 * back, -4 + 10 * back, c, { expr: back > 0.2 ? "shock" : "angry", view: back > 0.2 ? "side" : "front", mode: back > 0.2 ? "march" : "stand", phase: walkPhase(c.f, 2) }, 5)]; },
+    over: (c, g, Wd, H) => drawLabel(g, "HERO OF THE REVOLUTION", st(c, w("hero", sRoy)), 60, Wd, H, 0.5, 0.18, { size: 44, sub: "Paris, 1795" }),
+    cues: (c) => [...gunCues(c.w(w("uprising,", sRoy)), 3, 14), { f: c.w(w("hero", sRoy)), kind: "crowd" }] });
+  const sJos = w("Soon", 211);
+  add({ id: "josephine", from: sJos, scene: 3, set: "paris", light: "golden", amb: "court",
+    cams: () => [K(0, [0, 1.5, 5], [0, 1.4, 0], 34, { creep: 0.004 })], dof: { cInf: 12 },
+    actors: (c) => [...ch("nap", [-0.75, 0, 0], c, { expr: "smile_closed", facing: 1 }), ...ch("josephine", [0.75, 0, 0], c, { expr: "smile_closed", facing: -1 }), ...(st(c, w("Josephine.", sJos)) > 0 ? [fxCard("sparkle", [0, 2.6, 0.1], 1.6, (st(c, w("Josephine.", sJos)) / 30) % 1, 3)] : [])],
+    over: (c, g, Wd, H) => drawLabel(g, "JOSEPHINE", st(c, w("Josephine.", sJos)), 60, Wd, H, 0.5, 0.18, { sub: "married 1796" }),
+    cues: (c) => [{ f: c.w(w("Josephine.", sJos)), kind: "lyre_flourish" }] });
+
+  // ===================== S4 — ITALY =====================
+  const sIt = w("In", 216);
+  add({ id: "italy_map", from: sIt, scene: 4, amb: "map", xin: 10,
+    map: (c) => ({ f: c.f, view: [10, 44.5, 3.4], realms: [fr(0.55)], routes: [{ pts: ROUTE_ITALY, u: smooth(u01(c, 10, c.d)) * 0.25 }], token: { at: P.Nice, who: "nap" }, labels: [{ text: "ITALY", at: [11.5, 43.2], t: c.t - 20, size: 56, dy: 0 }, { text: "ARMY OF ITALY", at: [7.3, 44.9], t: st(c, w("army", sIt)), size: 30 }] }),
+    over: (c, g, Wd, H) => drawStamp(g, "1796", st(c, w("1796,", sIt)), 60, Wd, H),
+    cues: (c) => [{ f: c.w(w("1796,", sIt)), kind: "stamp" }, { f: 10, kind: "scribble", dur: c.d - 10 }, { f: c.w(w("winning", sIt)), kind: "sparkle" }] });
+  const sFast = w("He", 235);
+  add({ id: "fast", from: sFast, scene: 4, set: "field", v: 0, light: "day", amb: "march", xin: 6,
+    cams: (c) => { const x = -14 + 0.3 * c.t; return [K(0, [x - 2, 1.6, 9], [x + 2, 1.3, 0], 42, { creep: 0.001 })]; },
+    actors: (c) => { const x = -14 + 0.3 * c.t; return [...army("fr_soldier", [x - 9, 0, -2], 3, 5, [1.4, 1.4], c.f, { march: true, side: true, phaseOff: 0.2 }), ...ch("nap", [x + 1, 0, 1.2], c, { view: "side", mode: "march", phase: walkPhase(c.f, 2.2), expr: "determined" }),
+      fxCard("speed", [x - 2, 1.2, 1.4], 2.6, (c.t / 8) % 1, 1), fxCard("dust", [x - 3, 0.4, 1.0], 2, (c.t / 10) % 1, 2), ...crowd("austrian", 4, 12, 18, -4, 0, c, { expr: "shock" }, 9)]; },
+    cues: (c) => [{ f: 0, kind: "march", dur: c.d }, { f: 4, kind: "whoosh" }] });
+  const sVic = w("Lodi,", 246);
+  add({ id: "victories", from: sVic, scene: 4, set: "field", v: 0, light: "golden", amb: "battle",
+    cams: () => [K(0, [22, 2.2, 10], [30, 2, 0], 40), K(4, [24, 2, 8], [30, 2.2, 0], 38, { dur: 120 })], kicks: (c) => ["Lodi,", "Arcole,", "Rivoli:"].map((x) => kick(c.w(w(x, sVic)), 0.08)),
+    actors: (c) => { const tp = st(c, w("peace.", sVic)); return [...propCard("horse", [26 + 0.04 * c.t, 1.7, 0.4], c.f, { rider: "nap", phase: (c.t / 10) % 1 }), ...propCard("flag_fr", [27.3 + 0.04 * c.t, 1.7, 0.2], c.f, { phase: (c.f / 25) % 1, scale: 0.8 }),
+      ...army("fr_soldier", [22.2 + 0.04 * c.t, 1.7, -0.6], 1, 3, [1.25, 1.4], c.f, { march: true, side: true }), ...(tp > -6 ? [...ch("austrian", [39.5, 0, 1], c, { v: 1, expr: "worried", facing: -1 }), ...propCard("flag_white", [40.1, 0, 0.8], c.f, { phase: (c.f / 25) % 1, scale: 0.7 })] : [])]; },
+    over: (c, g, Wd, H) => { ["Lodi,", "Arcole,", "Rivoli:"].forEach((x, k) => drawLabel(g, x.replace(/[,:]/, "").toUpperCase(), st(c, w(x, sVic)), 999, Wd, H, 0.22 + k * 0.28, 0.16, { size: 46, sub: ["May 1796", "Nov 1796", "Jan 1797"][k] })); drawLabel(g, "AUSTRIA MAKES PEACE · 1797", st(c, w("peace.", sVic)), 60, Wd, H, 0.5, 0.72, { size: 34 }); },
+    cues: (c) => [...["Lodi,", "Arcole,", "Rivoli:"].map((x) => ({ f: c.w(w(x, sVic)), kind: "boom", gain: 0.6 })), { f: c.w(w("peace.", sVic)), kind: "sparkle" }, { f: 0, kind: "hooves", dur: c.d }] });
+  const sCorp = w("His", 259);
+  add({ id: "corporal", from: sCorp, scene: 4, set: "field", v: 0, light: "golden", amb: "crowd_murmur",
+    cams: () => [K(0, [0, 1.5, 5.4], [0, 1.25, 0], 40)], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap", [0, 0, 0], c, { expr: "smile_closed" }), ...[-1, 1].flatMap((s, k) => [0, 1].flatMap((j) => ch("fr_soldier", [s * (1.5 + j * 1.2), 0, -0.6 - j * 0.6], c, { v: k * 2 + j, seed: 44 + k * 2 + j, expr: "grin", facing: s > 0 ? -1 : 1, wave: (c.t + k * 7 + j * 4) % 20 < 10 ? 1 : 0.6 })))],
+    over: (c, g, Wd, H) => drawLabel(g, "\"THE LITTLE CORPORAL\"", st(c, w("little", sCorp)), 999, Wd, H, 0.5, 0.18, { size: 48 }),
+    cues: (c) => [{ f: c.w(w("little", sCorp)), kind: "crowd", gain: 0.7 }] });
+  const sShort = w("And", 266);
+  add({ id: "not_short", from: sShort, scene: 4, set: "field", v: 0, light: "day", amb: "wind",
+    cams: () => [K(0, [0.4, 1.4, 5.2], [0.4, 1.3, 0], 40)], dof: { cInf: 8 },
+    actors: (c) => [...ch("nap", [-0.5, 0, 0], c, { expr: st(c, w("short.", sShort)) > 0 ? "angry" : "sly", vest: true }), ...ch("fr_soldier", [1.2, 0, 0], c, { v: 1, expr: "neutral" }), ...propCard("height_chart", [0.35, 0, -0.3], c.f)],
+    over: (c, g, Wd, H) => { drawLabel(g, "5 ft 7 in · 1.69 m", st(c, w("five", sShort)), 999, Wd, H, 0.5, 0.18, { size: 48, sub: "average for his time" }); },
+    cues: (c) => [{ f: c.w(w("short.", sShort)), kind: "sting" }, { f: c.w(w("five", sShort)), kind: "pop" }] });
+  const sCart = w("The", 282);
+  add({ id: "cartoon", from: sCart, scene: 4, set: "room", v: 1, light: "interior", amb: "court",
+    cams: () => [K(0, [0.6, 1.5, 3.4], [0, 1.4, -2], 38, { creep: 0.004 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("scholar", [-1.2, 0, -2], c, { expr: "laugh", facing: 1 }), ...propCard("cartoon", [0.7, 0.2, -2.4], c.f, { scale: 1.3 })],
+    over: (c, g, Wd, H) => drawTag(g, "BRITISH CARTOON, c. 1803", c.t - 4, 60, Wd, H),
+    cues: (c) => [{ f: 4, kind: "laugh_crowd", gain: 0.5 }] });
+
+  // ===================== S5 — EGYPT =====================
+  const sEg = w("In", 289);
+  add({ id: "egypt_map", from: sEg, scene: 5, amb: "map", xin: 10,
+    map: (c) => { const u = smooth(u01(c, 8, c.w(w("Egypt,", sEg)) + 10)); return { f: c.f, view: [lerp(10, 22, u), lerp(42, 36, u), 1.6], realms: [fr(0.5)], routes: [{ pts: ROUTE_EGYPT, u }, { pts: [P.AlexandriaEg, [36, 28], [48, 20], [60, 18]], u: smooth(u01(c, c.w(w("India.", sEg)) - 20, c.d)), col: "#f2a8a8" }], token: { at: ROUTE_EGYPT[Math.min(ROUTE_EGYPT.length - 1, Math.floor(u * (ROUTE_EGYPT.length - 1)))] },
+      labels: [{ text: "EGYPT", at: [30, 27], t: st(c, w("Egypt,", sEg)), size: 50, dy: 0 }, { text: "TO INDIA", at: [42, 23], t: st(c, w("India.", sEg)), size: 34, dy: 0 }] }; },
+    over: (c, g, Wd, H) => drawStamp(g, "1798", st(c, w("1798,", sEg)), 60, Wd, H),
+    cues: (c) => [{ f: c.w(w("1798,", sEg)), kind: "stamp" }, { f: 8, kind: "waves", dur: 60 }, { f: c.w(w("Egypt,", sEg)), kind: "pop" }] });
+  const sPyr = w("Legend", 302);
+  add({ id: "pyramids", from: sPyr, scene: 5, set: "field", v: 1, light: "day", amb: "wind", xin: 10,
+    cams: (c) => [K(0, [2.4, 1.6, 8], [0, 1.4, 0], 40), K(c.w(w("pyramids.", sPyr)) - 20, [0, 3, 12], [0, 18, -200], 44, { dur: 30 })],
+    actors: (c) => [...ch("nap", [0, 0, 2.5], c, { view: "front", expr: "proud", wave: 1, facing: -1 }), ...crowd("fr_soldier", 8, -5, 5, -3.5, -1, c, { expr: "shock" }, 11)],
+    over: (c, g, Wd, H) => { drawTag(g, "LEGEND SAYS", c.t - 2, 90, Wd, H); drawLabel(g, "40 CENTURIES", st(c, w("forty", sPyr)), 999, Wd, H, 0.5, 0.2, { size: 56 }); },
+    cues: (c) => [{ f: c.w(w("forty", sPyr)), kind: "title_hit", gain: 0.6 }] });
+  const sBat = w("He", 319);
+  add({ id: "pyramids_battle", from: sBat, scene: 5, set: "field", v: 1, light: "golden", amb: "battle",
+    cams: () => [K(0, [9, 2.2, 10], [3, 1.3, -3], 44), K(4, [7, 1.9, 8], [3, 1.3, -3], 42, { dur: 70 })], kicks: (c) => [kick(20, 0.08), kick(44, 0.08)],
+    actors: (c) => { const out = army("fr_soldier", [-4, 0, -2], 4, 4, [1.3, 1.3], c.f, {}); for (let k = 0; k < 4; k++) { const x = 14 - 0.18 * c.t + k * 2.2; out.push(...propCard("horse", [x, 0, -4 - k * 1.6], c.f, { flip: true, rider: "mamluk", phase: ((c.t + k * 3) / 8) % 1 }), fxCard("dust", [x + 2, 0.4, -3.8 - k * 1.6], 2, ((c.t + k * 4) / 12) % 1, k)); }
+      for (let k = 0; k < 3; k++) { const t = (c.t + k * 13) % 30; out.push(fxCard("smoke", [-2 + k * 1.4, 1.4, -0.6], 1.8, t / 30, k + 3)); if (t < 4) out.push(fxCard("burst", [-2 + k * 1.4, 1.3, -0.4], 0.8, t / 4, k)); }
+      return out; },
+    over: (c, g, Wd, H) => drawLabel(g, "BATTLE OF THE PYRAMIDS", 10 + c.t - 10, 999, Wd, H, 0.5, 0.18, { size: 44, sub: "July 1798" }),
+    cues: (c) => [{ f: 0, kind: "hooves", dur: 60 }, { f: 4, kind: "muskets", dur: 50 }, { f: 10, kind: "crowd" }] });
+  const sSch = w("and", w("Pyramids,", sBat));
+  add({ id: "scholars", from: sSch, scene: 5, set: "field", v: 1, light: "day", amb: "wind",
+    cams: (c) => [K(0, [3, 1.6, 7], [0, 1.4, 0], 40), K(c.w(w("Rosetta", sSch)) - 6, [1.2, 1.2, 2.6], [1.2, 0.8, 0], 34, { dur: 14 })], dof: { cInf: 10 },
+    actors: (c) => { const tr = st(c, w("Rosetta", sSch)); return [...crowd("scholar", 4, -3, 3, -1.5, 0.5, c, { expr: tr > 0 ? "shock" : "smile", wave: 0.4 }, 13), ...propCard("rosetta", [1.2, 0, -0.2], c.f), ...(tr > 0 ? [fxCard("sparkle", [1.2, 1.1, -0.1], 1.4, (tr / 24) % 1, 2)] : []), ...propCard("scroll", [-1.4, 0.9, 0.3], c.f, { scale: 0.7 })]; },
+    over: (c, g, Wd, H) => { drawLabel(g, "100+ SCHOLARS", st(c, w("scholars,", sSch)), 60, Wd, H, 0.5, 0.18, { size: 44 }); drawLabel(g, "THE ROSETTA STONE", st(c, w("Rosetta", sSch)), 999, Wd, H, 0.5, 0.18, { size: 48, sub: "found 1799" }); },
+    cues: (c) => [{ f: c.w(w("scholars,", sSch)), kind: "pop" }, { f: c.w(w("Rosetta", sSch)), kind: "sparkle" }] });
+  const sNel = w("But", 340);
+  add({ id: "nelson", from: sNel, scene: 5, set: "coast", v: 1, light: "dusk", amb: "sea", xin: 8,
+    cams: () => [K(0, [0, 4, -6], [0, 2, -80], 46), K(2, [0, 3.5, -10], [0, 3, -80], 44, { dur: 100 })], kicks: (c) => [kick(c.w(w("destroyed", sNel)), 0.1)],
+    actors: (c) => { const td = st(c, w("destroyed", sNel)); const out = [...propCard("warship", [-26, -0.4, -70], c.f, { rider: "redcoat", phase: (c.f / 40) % 1 }), ...propCard("warship", [26, -0.4, -76], c.f, { rider: "redcoat", phase: (c.f / 40 + 0.4) % 1, flip: true })];
+      out.push(...propCard("warship", [0, -0.4, -90], c.f, { phase: (c.f / 40 + 0.2) % 1 }));
+      if (td > 0) { out.push(fxCard("burst", [0, 6, -88], 14, clamp01(td / 14), 1), fxCard("smoke", [0, 10, -90], 18, clamp01(td / 60), 2)); for (let k = 0; k < 3; k++) out.push(fxCard("flame", [-4 + k * 4, 3 + k, -88], 4, ((c.f / 10) + k * 0.3) % 1, k)); }
+      return out; },
+    over: (c, g, Wd, H) => drawLabel(g, "BATTLE OF THE NILE", st(c, w("Nelson", sNel)), 999, Wd, H, 0.5, 0.18, { size: 44, sub: "Admiral Nelson, 1798" }),
+    cues: (c) => [...gunCues(4, 4, 14), { f: c.w(w("destroyed", sNel)), kind: "explosion" }] });
+  const sStr = w("The", 352);
+  add({ id: "stranded", from: sStr, scene: 5, set: "field", v: 1, light: "golden", amb: "wind", xin: 6,
+    cams: () => [K(0, [0, 1.6, 7], [0, 1.2, 0], 42, { creep: 0.003 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap", [0, 0, 0.5], c, { expr: st(c, w("goals.", sStr)) > -10 ? "worried" : "proud", vest: true }), ...[-3, -1.6, 1.6, 3].flatMap((x, k) => ch("fr_soldier", [x, 0, -0.5], c, { v: k, seed: 70 + k, mode: "sit", expr: k % 2 ? "sad" : "sick" }))],
+    cues: (c) => [{ f: c.w(w("never", sStr)), kind: "sting", gain: 0.5 }] });
+
+  // ===================== S6 — RULER OF FRANCE =====================
+  const sBack = w("So", 363);
+  add({ id: "slip_back", from: sBack, scene: 6, amb: "map", xin: 8,
+    map: (c) => ({ f: c.f, view: [14, 40, 1.3], realms: [fr(0.55)], routes: [{ pts: ROUTE_EGYPT_BACK, u: smooth(u01(c, 0, c.d)) }], token: { at: ROUTE_EGYPT_BACK[Math.min(5, Math.floor(smooth(u01(c, 0, c.d)) * 5.99))] } }),
+    cues: (c) => [{ f: 0, kind: "whoosh" }, { f: 0, kind: "scribble", dur: c.d }] });
+  const sCoup = w("In", 369);
+  add({ id: "coup", from: sCoup, scene: 6, set: "paris", light: "overcast", amb: "march", xin: 8,
+    cams: (c) => [K(0, [5, 2, 4], [0, 1.6, -14], 44), K(c.w(w("Consul.", sCoup)) - 10, [0.4, 2.4, -16], [0, 2.6, -22.6], 36, { dur: 16 })], kicks: (c) => [kick(c.w(w("coup,", sCoup)), 0.1)],
+    actors: (c) => [...army("guard", [-3, 0, -8 - 0.03 * c.t], 3, 4, [1.8, 1.8], c.f, { march: c.t < c.w(w("coup,", sCoup)) }), ...ch("nap", [0, 1.05, -22.6], c, { expr: st(c, w("Consul.", sCoup)) > 0 ? "proud" : "determined", vest: st(c, w("Consul.", sCoup)) > 0 })],
+    over: (c, g, Wd, H) => { drawStamp(g, "NOV 1799", st(c, w("1799,", sCoup)), 60, Wd, H); drawLabel(g, "FIRST CONSUL", st(c, w("Consul.", sCoup)), 999, Wd, H, 0.5, 0.18, { size: 56 }); },
+    cues: (c) => [{ f: c.w(w("1799,", sCoup)), kind: "stamp" }, { f: 0, kind: "march", dur: c.w(w("coup,", sCoup)) }, { f: c.w(w("coup,", sCoup)), kind: "drum_hit" }, { f: c.w(w("Consul.", sCoup)), kind: "title_hit" }] });
+  const sCrown = w("Five", 382);
+  add({ id: "coronation", from: sCrown, scene: 6, set: "notredame", light: "interior", amb: "cathedral", xin: 12,
+    cams: (c) => [K(0, [0, 3, 20], [0, 3, -24], 48), K(4, [0, 2.4, 6], [0, 2.4, -24], 44, { dur: c.w(w("crown", sCrown)) - 10 }), K(c.w(w("crown", sCrown)) - 4, [0.8, 2.7, -17.8], [0, 2.85, -23], 36, { dur: 20 })],
+    kicks: (c) => [kick(c.w(w("head.", sCrown)), 0.12)],
+    actors: (c) => { const tt = c.w(w("took", sCrown)), th = c.w(w("head.", sCrown)), cy = c.t < tt ? 1.9 : c.t < th - 10 ? lerp(1.9, 4.0, smooth((c.t - tt) / 14)) : lerp(4.0, 3.02, smooth((c.t - th + 10) / 10)), landed = c.t >= th;
+      const out = [...propCard("throne", [-3.6, 1.2, -25], c.f), ...ch("pope", [-3.6, 1.2, -24.6], c, { mode: "sit", expr: st(c, w("head.", sCrown)) > 0 ? "shock" : "neutral" }), ...ch("nap_crown", [0, 1.2, -23], c, { v: landed ? 0 : 1, expr: "proud", wave: c.t > tt - 4 && c.t < th + 6 ? 1 : undefined }),
+        ...(landed ? [] : propCard("wreath", [0.05, cy, -22.8], c.f, { scale: 0.75, z: 2 })), ...crowd("townsman", 14, -6, 6, -16, 4, c, { expr: "smile" }, 17)];
+      if (st(c, w("head.", sCrown)) > 0) out.push(fxCard("burst", [0, 3.0, -23.2], 1.8, clamp01(st(c, w("head.", sCrown)) / 14), 1), fxCard("sparkle", [0, 3.3, -22.5], 1.3, (st(c, w("head.", sCrown)) / 30) % 1, 2));
+      return out; },
+    over: (c, g, Wd, H) => { drawStamp(g, "DEC 2, 1804", st(c, w("1804,", sCrown)), 70, Wd, H); drawLabel(g, "NOTRE-DAME", st(c, w("Notre-Dame,", sCrown)), 60, Wd, H, 0.5, 0.18, { sub: "Paris" }); },
+    cues: (c) => [{ f: 0, kind: "organ", dur: c.d }, { f: c.w(w("1804,", sCrown)), kind: "stamp" }, { f: c.w(w("crown", sCrown)), kind: "swell" }, { f: c.w(w("head.", sCrown)), kind: "title_hit" }] });
+  const sEmp = w("Emperor", 406);
+  add({ id: "emperor", from: sEmp, scene: 6, set: "notredame", light: "interior", amb: "cathedral",
+    cams: () => [K(0, [0.2, 2.7, -19.6], [0, 2.7, -23], 32, { creep: 0.005 })], dof: { cInf: 12 },
+    actors: (c) => [...ch("nap_crown", [0, 1.2, -23], c, { expr: "proud" }), fxCard("sparkle", [0, 3.2, -22.8], 1.2, (c.t / 30) % 1, 3)],
+    over: (c, g, Wd, H) => drawLabel(g, "EMPEROR OF THE FRENCH", st(c, sEmp), 999, Wd, H, 0.5, 0.18, { size: 54 }),
+    cues: () => [{ f: 0, kind: "crowd", gain: 0.8 }] });
+  const sJc = w("Then", 410);
+  add({ id: "empress", from: sJc, scene: 6, set: "notredame", light: "interior", amb: "cathedral",
+    cams: () => [K(0, [2.6, 2.6, -19], [0, 2.2, -23], 38, { creep: 0.003 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap_crown", [-0.8, 1.2, -23.2], c, { expr: "smile_closed", wave: 0.9, facing: 1 }), ...ch("josephine", [0.8, 1.2, -22.8], c, { mode: "sit", expr: "smile_closed", facing: -1 }), ...(st(c, w("empress.", sJc)) > 0 ? [fxCard("sparkle", [0.8, 2.4, -22.7], 1.4, (st(c, w("empress.", sJc)) / 24) % 1, 2)] : [])],
+    cues: (c) => [{ f: c.w(w("empress.", sJc)), kind: "sparkle" }] });
+  const sPaint = w("The", 416);
+  add({ id: "painting", from: sPaint, scene: 6, set: "room", v: 0, light: "interior", amb: "court", xin: 6,
+    cams: () => [K(0, [0.4, 1.8, 4.2], [0, 1.8, -2], 40, { creep: 0.003 })], dof: { cInf: 8 },
+    actors: (c) => [...propCard("painting", [0.6, 0.4, -2.6], c.f, { scale: 1.0 }), ...ch("scholar", [-1.6, 0, -1.8], c, { expr: st(c, w("three", sPaint)) > 0 ? "sick" : "proud", facing: 1, wave: 0.6 })],
+    over: (c, g, Wd, H) => { drawLabel(g, "THE CORONATION OF NAPOLEON", 8 + c.t - 8, 999, Wd, H, 0.5, 0.14, { size: 38, sub: "Jacques-Louis David, 1805–1807" }); drawStamp(g, "~3 YEARS", st(c, w("three", sPaint)), 60, Wd, H, [0.7, 0.7]); },
+    cues: (c) => [{ f: c.w(w("three", sPaint)), kind: "stamp" }] });
+
+  // ===================== S7 — THE HEIGHT OF HIS POWER =====================
+  const sAus = w("Exactly", 432);
+  add({ id: "austerlitz", from: sAus, scene: 7, set: "field", v: 2, light: "fog", amb: "battle_far", xin: 12,
+    cams: () => [K(0, [4, 2.2, 9.5], [0, 1.4, -3], 44), K(2, [3, 2, 8], [0, 1.4, -3], 42, { dur: 120 })],
+    actors: (c) => [...ch("nap", [0, 0, 3], c, { expr: "sly", vest: true }), ...army("fr_soldier", [-8, 0, -6], 3, 8, [2, 1.8], c.f, {}), ...propCard("eagle", [3, 0, 2.4], c.f)],
+    over: (c, g, Wd, H) => { drawStamp(g, "DEC 2, 1805", st(c, w("Exactly", sAus)) - 4, 70, Wd, H); drawLabel(g, "AUSTERLITZ", st(c, w("Austerlitz,", sAus)), 999, Wd, H, 0.5, 0.18, { sub: "the Battle of the Three Emperors" }); },
+    cues: (c) => [{ f: 4, kind: "stamp" }, { f: c.w(w("Austerlitz,", sAus)), kind: "pop" }, { f: c.w(w("emperors", sAus)), kind: "drum_hit", gain: 0.6 }] });
+  const sLure = w("He", 448);
+  add({ id: "lure", from: sLure, scene: 7, set: "field", v: 2, light: "fog", amb: "battle_far",
+    cams: () => [K(0, [12, 4, 18], [26, 3, -4], 46, { creep: 0.001 })],
+    actors: (c) => { const u = smooth(u01(c, c.w(w("lured", sLure)) - 10, c.d)); return [...army("russian", [lerp(46, 26, u), lerp(10, 0.5, u), -8], 3, 6, [1.8, 1.6], c.f, { march: u > 0 && u < 1, side: true, flip: true }), ...army("austrian", [lerp(48, 30, u), lerp(10, 0.5, u), 2], 2, 5, [1.8, 1.6], c.f, { march: u > 0 && u < 1, side: true, flip: true }),
+      ...army("fr_soldier", [-2, 0, -2], 2, 3, [1.6, 1.6], c.f, { expr: "nervous" })]; },
+    over: (c, g, Wd, H) => drawLabel(g, "PRATZEN HEIGHTS", st(c, w("high", sLure)), 999, Wd, H, 0.75, 0.2, { size: 40 }),
+    cues: (c) => [{ f: c.w(w("lured", sLure)) - 10, kind: "march", dur: 60 }, { f: c.w(w("weak,", sLure)), kind: "sting", gain: 0.4 }] });
+  const sSun = w("Then,", 460);
+  add({ id: "sun", from: sSun, scene: 7, set: "field", v: 2, light: "golden", amb: "battle", xin: 14,
+    cams: (c) => [K(0, [-6, 2.4, 14], [10, 4, -10], 48), K(c.w(w("smashed", sSun)) - 4, [6, 1.6, 8], [20, 2, -2], 44, { dur: 14 })], kicks: (c) => [kick(c.w(w("smashed", sSun)), 0.14), kick(c.w(w("center.", sSun)), 0.1)],
+    actors: (c) => { const tc = c.w(w("smashed", sSun)), x = c.t < tc ? 6 : 6 + 0.35 * (c.t - tc);
+      return [fxCard("glow", [40, 20, -60], 50, 0, 1), ...army("fr_soldier", [x - 8, 0, -4], 3, 6, [1.6, 1.6], c.f, { march: true, side: true, stomp: 1.5 }), ...army("russian", [26, 0, -6], 2, 6, [1.8, 1.6], c.f, { expr: "shock" }), ...(c.t > tc ? [fxCard("clash", [22, 2, -4], 4, clamp01((c.t - tc) / 14), 2), fxCard("dust", [20, 0.6, -3], 5, ((c.t - tc) / 18) % 1, 3)] : [])]; },
+    over: (c, g, Wd, H) => drawLabel(g, "THE SUN OF AUSTERLITZ", st(c, w("sun", sSun)), 60, Wd, H, 0.5, 0.18, { size: 44 }),
+    cues: (c) => [{ f: c.w(w("sun", sSun)), kind: "swell" }, { f: c.w(w("smashed", sSun)), kind: "clash" }, { f: c.w(w("smashed", sSun)), kind: "crowd" }, ...gunCues(c.w(w("smashed", sSun)) + 4, 3, 10)] });
+  const sMas = w("It", 473);
+  add({ id: "masterpiece", from: sMas, scene: 7, set: "field", v: 2, light: "golden", amb: "battle_far",
+    cams: () => [K(0, [0.3, 1.5, 4], [0, 1.45, 0], 32, { creep: 0.005 })], dof: { cInf: 14 },
+    actors: (c) => [...ch("nap", [0, 0, 0], c, { expr: "proud", vest: true }), fxCard("sparkle", [0, 2.1, 0.1], 1.1, (c.t / 30) % 1, 2)],
+    cues: () => [{ f: 0, kind: "title_hit", gain: 0.6 }] });
+  const sJena = w("Then", 477);
+  add({ id: "jena_map", from: sJena, scene: 7, amb: "map", xin: 8,
+    map: (c) => ({ f: c.f, view: [14, 50, 1.55], realms: [fr(0.6)], battles: [{ at: P.Austerlitz, t: 99 }, { at: P.Jena, t: st(c, w("Jena", sJena)) }, { at: P.Friedland, t: st(c, w("Friedland", sJena)) }],
+      labels: [{ text: "AUSTERLITZ 1805", at: P.Austerlitz, t: 30, size: 28, dy: 44 }, { text: "JENA 1806", at: P.Jena, t: st(c, w("Jena", sJena)), size: 28 }, { text: "FRIEDLAND 1807", at: P.Friedland, t: st(c, w("Friedland", sJena)), size: 28 }] }),
+    cues: (c) => [{ f: c.w(w("Jena", sJena)), kind: "boom", gain: 0.6 }, { f: c.w(w("Friedland", sJena)), kind: "boom", gain: 0.6 }] });
+  const sCtrl = w("Much", 486);
+  add({ id: "empire_map", from: sCtrl, scene: 7, amb: "map",
+    map: (c) => { const u = smooth(u01(c, 0, 30)); return { f: c.f, view: [12, 48, lerp(1.55, 1.1, u)], realms: [{ polys: CLIENTS_1812, col: "#7a8fd0", alpha: 0.55 * u }, { polys: EMPIRE_1812, col: "#27408b", alpha: 0.7 }], labels: [{ text: "FRENCH EMPIRE", at: [2.4, 46.8], t: c.t - 6, size: 44, dy: 0 }, { text: "ALLIES & CLIENT STATES", at: [14, 51.5], t: c.t - 20, size: 26, dy: 0 }], token: { at: P.Paris } }; },
+    cues: () => [{ f: 0, kind: "swell" }] });
+  const sCode = w("At", 494);
+  add({ id: "code", from: sCode, scene: 7, set: "room", v: 0, light: "interior", amb: "court", xin: 8,
+    cams: (c) => [K(0, [0.4, 1.6, 4], [0, 1.4, -2], 40), K(c.w(w("women", sCode)) - 6, [1.6, 1.5, 3], [1.4, 1.5, -1.6], 38, { dur: 16 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap", [-0.6, 0, -2], c, { expr: "proud", wave: 0.6, facing: 1 }), ...propCard("desk", [0.4, 0, -2.4], c.f), ...propCard("book", [0.4, 1.0, -2.2], c.f, { scale: 1.2 }), ...ch("townsman", [1.6, 0, -1.6], c, { v: 1, expr: st(c, w("women", sCode)) > 0 ? "angry" : "neutral", facing: -1 })],
+    over: (c, g, Wd, H) => { drawLabel(g, "NAPOLEONIC CODE · 1804", st(c, w("Napoleonic", sCode)), 999, Wd, H, 0.5, 0.18, { size: 44 }); drawLabel(g, "EQUAL BEFORE THE LAW", st(c, w("equal", sCode)), 60, Wd, H, 0.32, 0.82, { size: 34 }); drawLabel(g, "BUT FEWER RIGHTS FOR WOMEN", st(c, w("women", sCode)), 60, Wd, H, 0.68, 0.82, { size: 30, col: "#8a1f24" }); },
+    cues: (c) => [{ f: c.w(w("Napoleonic", sCode)), kind: "pop" }, { f: c.w(w("equal", sCode)), kind: "sparkle" }, { f: c.w(w("women", sCode)), kind: "sting", gain: 0.5 }] });
+  const sLaw = w("Versions", 513);
+  add({ id: "laws_world", from: sLaw, scene: 7, amb: "map", xin: 8,
+    map: (c) => { const u = (k: number) => c.t - k * 6; return { f: c.f, view: [-25, 30, 0.42], realms: [fr(0.7)],
+      glows: [[2, 47], [5, 51], [12, 43], [-4, 40], [20, 52], [-71, 46.8], [-91, 31], [-58, -20], [-70, -33], [-99, 20], [30, 30], [10, 34]].map((at, k) => ({ at: at as LL, r: 70, t: u(k), col: [255, 210, 110] as [number, number, number] })), labels: [{ text: "CIVIL LAW TODAY", at: [-25, 58], t: c.t - 10, size: 36, dy: 0 }] }; },
+    cues: (c) => Array.from({ length: 6 }, (_, k) => ({ f: k * 12, kind: "pop", gain: 0.5 })) });
+
+  // ===================== S8 — RUSSIA =====================
+  const sRus = w("But", 523);
+  add({ id: "invasion", from: sRus, scene: 8, set: "field", v: 6, light: "day", amb: "march", xin: 10,
+    cams: () => [K(0, [0, 18, 40], [0, 0, -20], 50), K(2, [0, 12, 30], [0, 0, -30], 48, { dur: 120 })],
+    actors: (c) => [...army("fr_soldier", [-30, 0, -40 + 0.06 * c.t], 8, 26, [2.4, 2.6], c.f, { march: true }), ...army("guard", [-10, 0, -10 + 0.06 * c.t], 3, 8, [2.4, 2.4], c.f, { march: true }), ...propCard("eagle", [0, 0, 0 + 0.06 * c.t], c.f)],
+    over: (c, g, Wd, H) => { drawStamp(g, "1812", st(c, w("1812,", sRus)), 60, Wd, H); drawLabel(g, "600,000+ MEN", st(c, w("600,000", sRus)), 999, Wd, H, 0.5, 0.18, { size: 56, sub: "the invasion of Russia" }); },
+    cues: (c) => [{ f: c.w(w("1812,", sRus)), kind: "stamp" }, { f: 0, kind: "march", dur: c.d }, { f: c.w(w("600,000", sRus)), kind: "title_hit", gain: 0.6 }] });
+  const sRet = w("The", 534);
+  add({ id: "russia_map", from: sRet, scene: 8, amb: "map", xin: 8,
+    map: (c) => { const u = smooth(u01(c, 0, c.d)); return { f: c.f, view: [30, 54, 2.2], realms: [{ polys: [RUSSIA], col: "#3a7a4a", alpha: 0.35 }], routes: [{ pts: ROUTE_RUSSIA, u: u * 0.85 }],
+      glows: [P.Vilnius, P.Vitebsk, P.Smolensk, P.Borodino].map((at, k) => ({ at, r: 60, t: c.t - 8 - k * 14 })), token: { at: ROUTE_RUSSIA[Math.min(4, Math.floor(u * 0.85 * 5.99))] }, labels: [{ text: "MOSCOW", at: P.Moscow, t: c.t - 4, size: 34 }] }; },
+    cues: (c) => [{ f: 0, kind: "scribble", dur: c.d }, ...[0, 1, 2, 3].map((k) => ({ f: 8 + k * 14, kind: "fire", gain: 0.5 }))] });
+  const sMos = w("He", 542);
+  add({ id: "moscow", from: sMos, scene: 8, set: "field", v: 4, light: "dusk", amb: "fire", xin: 8,
+    cams: (c) => [K(0, [2, 1.6, 12], [0, 6, -60], 44), K(c.w(w("fire.", sMos)) - 6, [1, 2.4, 16], [0, 10, -80], 48, { dur: 20 })],
+    actors: (c) => { const tf = st(c, w("fire.", sMos)); const out = [...ch("nap_coat", [0, 0, 6], c, { expr: tf > 0 ? "shock" : st(c, w("empty,", sMos)) > 0 ? "worried" : "proud", vest: tf < 0 })];
+      if (tf > -6) out.push(...fires(c, clamp01((tf + 6) / 24)));
+      return out; },
+    points: (c) => st(c, w("fire.", sMos)) > 0 ? [{ pos: [0, 8, -40], color: "#ff7a3a", i: 6 * clamp01(st(c, w("fire.", sMos)) / 30), d: 120 }] : [],
+    over: (c, g, Wd, H) => drawLabel(g, "MOSCOW", st(c, w("Moscow,", sMos)), 60, Wd, H, 0.5, 0.18, { sub: "September 1812" }),
+    cues: (c) => [{ f: c.w(w("Moscow,", sMos)), kind: "pop" }, { f: c.w(w("fire.", sMos)), kind: "fire", dur: 60 }] });
+  const sWait = w("He", 553);
+  add({ id: "wait", from: sWait, scene: 8, set: "field", v: 4, light: "night", amb: "fire",
+    cams: () => [K(0, [0.3, 1.5, 9.8], [0, 1.4, 6], 36, { creep: 0.003 })], dof: { cInf: 12 },
+    actors: (c) => { const tb = st(c, w("turned", sWait)); return [...fires(c, 1), ...ch("nap_coat", [0, 0, 6], c, tb > 0 ? { view: "side", mode: "march", phase: walkPhase(c.f, 1.2), expr: "sad" } : { expr: "worried", vest: true }, { flip: tb > 0 })]; },
+    over: (c, g, Wd, H) => drawStamp(g, "35 DAYS", st(c, w("month", sWait)), 70, Wd, H, [0.62, 0.2]),
+    cues: (c) => [{ f: c.w(w("month", sWait)), kind: "clock", dur: 40 }, { f: c.w(w("turned", sWait)), kind: "sting", gain: 0.5 }] });
+  const sCold = w("Temperatures", 567);
+  add({ id: "cold", from: sCold, scene: 8, set: "field", v: 3, light: "snow", amb: "blizzard", xin: 10, weather: "snow",
+    cams: () => [K(0, [0.4, 1.7, 5], [0, 1.6, 0], 36, { creep: 0.004 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("fr_soldier", [0, 0, 0], c, { v: 2, expr: "sick" }), ...ch("fr_soldier", [-1.4, 0, -0.6], c, { v: 4, expr: "sad", mode: "sit" })],
+    over: (c, g, Wd, H) => drawStamp(g, "−30°C", st(c, w("−30°C.", sCold)), 999, Wd, H, [0.62, 0.2]),
+    cues: (c) => [{ f: c.w(w("−30°C.", sCold)), kind: "stamp" }] });
+  const sHung = w("Hunger,", 571);
+  add({ id: "retreat_snow", from: sHung, scene: 8, set: "field", v: 3, light: "snow", amb: "blizzard", weather: "snow",
+    cams: (c) => { const x = 0.06 * c.t; return [K(0, [x + 4, 2.2, 12], [x - 2, 1.4, 0], 46, { creep: 0.001 })]; },
+    actors: (c) => [...army("fr_soldier", [-8 + 0.06 * c.t, 0, -2], 3, 6, [1.8, 1.6], c.f, { march: true, side: true, flip: true, expr: "sick" }), ...ch("nap_coat", [0.06 * c.t - 2, 0, 1.5], c, { view: "side", mode: "march", phase: walkPhase(c.f, 1), expr: "sad" }, { flip: true }),
+      ...[0, 1, 2].flatMap((k) => propCard("horse", [26 - 0.1 * c.t + k * 4, 2, -30 - k * 3], c.f, { flip: true, rider: "russian", phase: ((c.t + k * 3) / 9) % 1 }))],
+    cues: (c) => [{ f: 0, kind: "march", dur: c.d, gain: 0.5 }, { f: c.w(w("attacks", sHung)), kind: "hooves", dur: 40 }] });
+  const sFrac = w("Only", 580);
+  add({ id: "fraction", from: sFrac, scene: 8, amb: "map", xin: 8,
+    map: (c) => ({ f: c.f, view: [30, 54, 2.2], realms: [{ polys: [RUSSIA], col: "#3a7a4a", alpha: 0.35 }], routes: [{ pts: ROUTE_RUSSIA, u: 1, col: "#c8d4e8" }, { pts: ROUTE_RETREAT, u: smooth(u01(c, 0, c.d)), col: "#e85a5a" }], cold: 0.7,
+      labels: [{ text: "600,000 → A SMALL FRACTION", at: [30, 58.5], t: c.t - 6, size: 34, dy: 0, col: "#8a1f24" }] }),
+    over: (c, g, Wd, H) => drawSnow(g, c.f, Wd, H, 140),
+    cues: (c) => [{ f: 0, kind: "drone_low" }] });
+
+  // ===================== S9 — DOWNFALL =====================
+  const sCoal = w("Now", 588);
+  const coal: [string, LL[][], string][] = [["Russia,", [RUSSIA], "#3a7a4a"], ["Prussia,", [PRUSSIA], "#5a5a6a"], ["Austria,", [AUSTRIA], "#c9a14a"], ["Sweden", [SWEDEN], "#3a6ad8"], ["Britain", [BRITAIN], "#c0272d"]];
+  add({ id: "coalition", from: sCoal, scene: 9, amb: "map", xin: 10,
+    map: (c) => ({ f: c.f, view: [14, 51, 0.95], realms: [{ polys: EMPIRE_1812, col: "#27408b", alpha: 0.7 }, ...coal.map(([word, polys, col]) => ({ polys, col, alpha: 0.6 * clamp01(st(c, w(word, sCoal)) / 10) }))],
+      routes: [[30, 54], [16, 55], [16, 48], [4, 55], [-1, 52]].map((s, k) => ({ pts: [s as LL, [8 + k * 0.6, 49.5] as LL], u: smooth(u01(c, c.w(w("joined", sCoal)) + k * 4, c.d)), col: "#ffd0d0" })) }),
+    cues: (c) => [...coal.map(([word]) => ({ f: c.w(w(word, sCoal)), kind: "pop" })), { f: c.w(w("joined", sCoal)), kind: "swell" }] });
+  const sLei = w("In", 600);
+  add({ id: "leipzig", from: sLei, scene: 9, set: "field", v: 6, light: "overcast", amb: "battle", xin: 8,
+    cams: () => [K(0, [0, 6, 20], [0, 1, -6], 48), K(2, [0, 4.5, 16], [0, 1.2, -6], 46, { dur: 100 })], kicks: (c) => [kick(c.w(w("beaten", sLei)), 0.12)],
+    actors: (c) => { const out = [...army("fr_soldier", [-6, 0, 0], 3, 6, [1.8, 1.6], c.f, { expr: "worried" }), ...army("russian", [-18, 0, -8], 2, 6, [1.8, 1.6], c.f, {}), ...army("prussian", [6, 0, -8], 2, 6, [1.8, 1.6], c.f, {}), ...army("austrian", [-6, 0, -14], 2, 8, [1.8, 1.6], c.f, {})];
+      for (let k = 0; k < 4; k++) out.push(fxCard("smoke", [-12 + k * 8, 2, -5], 4, ((c.t + k * 11) / 40) % 1, k));
+      return out; },
+    over: (c, g, Wd, H) => { drawStamp(g, "1813", st(c, w("1813,", sLei)), 60, Wd, H); drawLabel(g, "LEIPZIG", st(c, w("Leipzig,", sLei)), 999, Wd, H, 0.5, 0.18, { sub: "the Battle of the Nations" }); },
+    cues: (c) => [{ f: c.w(w("1813,", sLei)), kind: "stamp" }, ...gunCues(6, 5, 18), { f: c.w(w("beaten", sLei)), kind: "boom" }] });
+  const sAbd = w("The", 613);
+  add({ id: "paris_falls", from: sAbd, scene: 9, set: "paris", light: "overcast", amb: "march", xin: 8,
+    cams: () => [K(0, [6, 2.4, 14], [0, 1.6, -10], 46)],
+    actors: (c) => [...army("russian", [-4, 0, 0 - 0.05 * c.t], 3, 3, [1.6, 1.8], c.f, { march: true }), ...army("prussian", [2, 0, 2 - 0.05 * c.t], 3, 3, [1.6, 1.8], c.f, { march: true })],
+    over: (c, g, Wd, H) => drawLabel(g, "PARIS FALLS · 1814", 4 + c.t - 4, 999, Wd, H, 0.5, 0.18, { size: 44 }),
+    cues: (c) => [{ f: 0, kind: "march", dur: c.d }] });
+  const sThr = w("and", 620);
+  add({ id: "abdicate", from: sThr, scene: 9, set: "room", v: 0, light: "interior", amb: "court", xin: 6,
+    cams: () => [K(0, [0.4, 1.5, 3.2], [0, 1.4, -2], 36, { creep: 0.004 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap", [-0.4, 0, -2], c, { expr: "sad" }), ...propCard("desk", [0.5, 0, -2.4], c.f), ...propCard("bicorne_prop", [0.2, 1.0, -2.2], c.f)],
+    over: (c, g, Wd, H) => drawLabel(g, "ABDICATION", st(c, w("throne.", sThr)), 999, Wd, H, 0.5, 0.18, { size: 50, sub: "April 1814" }),
+    cues: (c) => [{ f: c.w(w("throne.", sThr)), kind: "drum_hit", gain: 0.7 }] });
+  const sElba = w("He", 630);
+  add({ id: "elba", from: sElba, scene: 9, set: "coast", v: 2, light: "day", amb: "sea", xin: 10,
+    cams: (c) => [K(0, [0, 5, -18], [0, 2, 10], 48), K(c.w(w("Emperor,", sElba)) - 4, [1, 1.8, -4], [0, 1.6, 2], 38, { dur: 16 })],
+    actors: (c) => { const tz = st(c, w("29", sElba)), x = tz > 0 ? 1.2 * Math.sin(tz / 12) : 0; return [...ch("nap", [x, 0, 2], c, { expr: st(c, w("Emperor,", sElba)) > 0 ? "sly" : "worried", vest: tz < 0, view: tz > 0 ? "side" : "front", mode: tz > 0 ? "march" : "stand", phase: walkPhase(c.f, 1.4) }, { flip: Math.cos(tz / 12) < 0 }), ...(st(c, w("Emperor,", sElba)) > 0 ? propCard("wreath", [x, 2.25, 2.1], c.f, { scale: 0.4 }) : [])]; },
+    over: (c, g, Wd, H) => { drawLabel(g, "ELBA", st(c, w("Elba,", sElba)), 999, Wd, H, 0.5, 0.18, { sub: "29 km long" }); },
+    cues: (c) => [{ f: c.w(w("Elba,", sElba)), kind: "pop" }, { f: c.w(w("Emperor,", sElba)), kind: "sparkle" }] });
+
+  // ===================== S10 — RETURN AND WATERLOO =====================
+  const sEsc = w("Ten", 655);
+  add({ id: "escape", from: sEsc, scene: 10, set: "coast", v: 2, light: "night", amb: "sea", xin: 10,
+    cams: () => [K(0, [6, 3, 8], [0, 1, -30], 46)],
+    actors: (c) => [...[0, 1].flatMap((k) => propCard("ship", [-6 + k * 10 - 0.05 * c.t, -0.4, -30 - k * 6 - 0.05 * c.t], c.f, { phase: ((c.f / 40) + k * 0.4) % 1, scale: 0.6 })), ...army("guard", [-4, 0, -6], 2, 5, [1.6, 1.4], c.f, {}), ...ch("nap", [1.5, 0, -3], c, { expr: "sly", vest: true })],
+    over: (c, g, Wd, H) => drawLabel(g, "~1,000 MEN", st(c, w("thousand", sEsc)), 999, Wd, H, 0.5, 0.18, { size: 50, sub: "February 1815" }),
+    cues: (c) => [{ f: c.w(w("escaped,", sEsc)), kind: "whoosh" }, { f: c.w(w("thousand", sEsc)), kind: "pop" }] });
+  const sLaf = w("When", 665);
+  add({ id: "here_i_am", from: sLaf, scene: 10, set: "field", v: 6, light: "day", amb: "wind", xin: 8,
+    cams: (c) => [K(0, [8, 1.8, 6], [0, 1.5, -2], 42), K(c.w(w("walked", sLaf)) - 4, [3, 1.6, 6], [0, 1.6, 0], 38, { dur: 30 }), K(c.w(w("here", sLaf)) - 6, [0.4, 1.5, 3.9], [0, 1.4, 0.5], 32, { dur: 12, creep: 0.006 })],
+    actors: (c) => { const tw = c.w(w("walked", sLaf)), z = c.t < tw ? 3 : lerp(3, 0.5, smooth((c.t - tw) / 40)); return [...ch("nap", [0, 0, z], c, { expr: "determined", view: c.t > tw && c.t < tw + 40 ? "side" : "front", mode: c.t > tw && c.t < tw + 40 ? "march" : "stand", phase: walkPhase(c.f, 1.2), wave: st(c, w("here", sLaf)) > 0 ? 1 : undefined }, { flip: true }),
+      ...[-2.4, -0.8, 0.8, 2.4].flatMap((x, k) => ch("fr_soldier", [x, 0, -2.5], c, { v: k, seed: 80 + k, expr: st(c, w("kill", sLaf)) > 0 ? "nervous" : "stern" }))]; },
+    over: (c, g, Wd, H) => drawLabel(g, "LAFFREY, MARCH 1815", 6 + c.t - 6, 90, Wd, H, 0.5, 0.18, { size: 36 }),
+    cues: (c) => [{ f: c.w(w("walked", sLaf)), kind: "steps", dur: 40 }, { f: c.w(w("here", sLaf)), kind: "drum_hit", gain: 0.6 }] });
+  const sSw = w("They", 692);
+  add({ id: "switch", from: sSw, scene: 10, set: "field", v: 6, light: "day", amb: "crowd_murmur",
+    cams: () => [K(0, [0, 2, 6], [0, 1.8, -1], 42)], kicks: () => [kick(4, 0.1)],
+    actors: (c) => [...ch("nap", [0, 0, 0.8], c, { expr: "grin" }), ...[-2.4, -0.8, 0.8, 2.4].flatMap((x, k) => ch("fr_soldier", [x, 0, -1.2], c, { v: k, seed: 80 + k, expr: "laugh", wave: (c.t + k * 5) % 16 < 8 ? 1 : 0.5 })), ...(c.t < 16 ? [fxCard("burst", [0, 1.6, 0.6], 2.0, c.t / 16, 1)] : [])],
+    over: (c, g, Wd, H) => drawLabel(g, "\"VIVE L'EMPEREUR!\"", 2 + c.t - 2, 999, Wd, H, 0.5, 0.18, { size: 46 }),
+    cues: () => [{ f: 2, kind: "crowd" }] });
+  const sFled = w("The", 695);
+  add({ id: "king_flees", from: sFled, scene: 10, set: "paris", light: "day", amb: "crowd_murmur", xin: 6,
+    cams: () => [K(0, [5, 2, 6], [0, 1.4, -6], 44)],
+    actors: (c) => [...ch("king", [4 - 0.12 * c.t, 0, -4], c, { view: "side", mode: "march", phase: walkPhase(c.f, 2.4), expr: "shock" }, { flip: true }), fxCard("speed", [5.4 - 0.12 * c.t, 1.4, -3.9], 2, (c.t / 8) % 1, 1),
+      ...(st(c, w("back.", sFled)) > -6 ? ch("nap", [2.6, 0, -1], c, { expr: "sly", vest: true }) : [])],
+    cues: (c) => [{ f: 0, kind: "whoosh" }, { f: c.w(w("back.", sFled)), kind: "title_hit", gain: 0.6 }] });
+  const sHun = w("His", 703);
+  add({ id: "hundred_days", from: sHun, scene: 10, amb: "map", xin: 6,
+    map: (c) => ({ f: c.f, view: [6, 46, 3.2], realms: [fr(0.55)], routes: [{ pts: ROUTE_ELBA, u: smooth(u01(c, 0, c.d)) }], labels: [{ text: "THE HUNDRED DAYS", at: [3.5, 49.6], t: st(c, w("hundred", sHun)), size: 40, dy: 0 }, { text: "ELBA", at: P.Elba, t: 4, size: 28 }] }),
     cues: (c) => [{ f: 0, kind: "scribble", dur: c.d }] });
+  const sWat = w("On", 710);
+  add({ id: "waterloo", from: sWat, scene: 10, set: "field", v: 5, light: "overcast", amb: "rain", xin: 10, weather: "rain",
+    cams: () => [K(0, [10, 6, 24], [-6, 1, -10], 48), K(2, [8, 4.5, 18], [-6, 1.2, -10], 46, { dur: 120 })],
+    actors: (c) => [...army("redcoat", [-14, 0, -14], 2, 10, [1.6, 1.4], c.f, {}), ...propCard("horse", [-4, 0, -10], c.f, { rider: "wellington", flip: true }), ...propCard("flag_uk", [-10, 0, -16], c.f, { phase: (c.f / 25) % 1 }), ...army("fr_soldier", [-10, 0, 4], 2, 8, [1.8, 1.6], c.f, {})],
+    over: (c, g, Wd, H) => { drawStamp(g, "JUNE 18, 1815", st(c, w("eighteenth,", sWat)), 70, Wd, H); drawLabel(g, "WATERLOO", st(c, w("Waterloo,", sWat)), 999, Wd, H, 0.5, 0.18, { sub: "Belgium" }); drawLabel(g, "WELLINGTON", st(c, w("Wellington.", sWat)), 60, Wd, H, 0.3, 0.6, { size: 34 }); },
+    cues: (c) => [{ f: c.w(w("eighteenth,", sWat)), kind: "stamp" }, { f: c.w(w("Waterloo,", sWat)), kind: "pop" }, { f: c.w(w("Wellington.", sWat)), kind: "pop" }] });
+  const sRain = w("Rain", 722);
+  add({ id: "waterloo_battle", from: sRain, scene: 10, set: "field", v: 5, light: "overcast", amb: "rain", weather: "rain",
+    cams: (c) => [K(0, [3, 1.9, 7], [-6, 1.3, -8], 44), K(c.w(w("Prussians", sRain)) - 6, [-8, 2.2, 14], [-20, 1.6, -2], 46, { dur: 20 })], kicks: (c) => [kick(c.w(w("held,", sRain)), 0.08), kick(c.w(w("broke.", sRain)), 0.14)],
+    actors: (c) => { const tp = c.w(w("Prussians", sRain)), tb = st(c, w("broke.", sRain)), out = [...army("redcoat", [-10, 0, -12], 3, 8, [1.4, 1.2], c.f, { expr: "determined" }), ...gun([4, 0, -2], c, 0, 30, true)];
+      out.push(...army("guard", [-8 + (tb > 0 ? 0.08 * tb : 0), 0, -5], 2, 6, [1.6, 1.4], c.f, { march: true, side: tb > 0, expr: tb > 0 ? "shock" : "determined", flip: tb > 0 }));
+      if (c.t > tp - 10) out.push(...army("prussian", [-34 + 0.14 * (c.t - tp + 10), 0, -2], 3, 4, [1.6, 1.4], c.f, { march: true, side: true }), ...propCard("horse", [-30 + 0.14 * (c.t - tp + 10), 0, 1], c.f, { rider: "blucher", phase: (c.t / 9) % 1 }));
+      return out; },
+    over: (c, g, Wd, H) => { drawLabel(g, "BLÜCHER'S PRUSSIANS", st(c, w("Prussians", sRain)), 60, Wd, H, 0.3, 0.18, { size: 36 }); },
+    cues: (c) => [...gunCues(0, 4, 30), { f: c.w(w("held,", sRain)), kind: "muskets", dur: 30 }, { f: c.w(w("Prussians", sRain)), kind: "march", dur: 60 }, { f: c.w(w("broke.", sRain)), kind: "crowd" }] });
+  const sNear = w("Wellington", 740);
+  add({ id: "nearest", from: sNear, scene: 10, set: "field", v: 5, light: "overcast", amb: "rain", weather: "rain",
+    cams: () => [K(0, [0.3, 1.5, 3.8], [0, 1.45, 0], 32, { creep: 0.005 })], dof: { cInf: 12 },
+    actors: (c) => ch("wellington", [0, 0, 0], c, { expr: "sly" }),
+    over: (c, g, Wd, H) => drawLabel(g, "WELLINGTON", 4 + c.t - 4, 999, Wd, H, 0.5, 0.18, { size: 44, sub: "Duke of" }),
+    cues: () => [{ f: 0, kind: "sting", gain: 0.6 }] });
 
-  // ===================== S6 — ALEXANDRIA =====================
-  const sFound = w("Along", 530);
-  add({ id: "founded", from: sFound, scene: 6, amb: "map",
-    map: (c) => ({ f: c.f, view: [52, 32, 1.05], route: R.end, empire: 1, founded: Math.max(0, c.t - c.w(w("founded", sFound))) * 0.6, battles: battlesUpTo(R.end, 99, {}),
-      labels: [{ text: "ALEXANDRIA", at: CITY.Alexandria, t: st(c, w("himself.", sFound)), size: 28, dy: -34 }, { text: "ALEXANDRIA", at: CITY.Herat, t: st(c, w("himself.", sFound)) - 4, size: 28, dy: -34 }, { text: "ALEXANDRIA", at: CITY.Kandahar, t: st(c, w("himself.", sFound)) - 8, size: 28, dy: 40 }, { text: "ALEXANDRIA", at: [69.6, 40.3], t: st(c, w("himself.", sFound)) - 12, size: 28, dy: -34 }] }),
-    cues: (c) => [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ f: c.w(w("founded", sFound)) + Math.round(i * 4 / 0.6), kind: "pop", gain: 0.5 })) });
-  const sEgypt = w("most", sFound) - 1;
-  add({ id: "egypt_zoom", from: sEgypt, scene: 6, amb: "map",
-    map: (c) => { const u = smooth(u01(c, 0, c.d)); return { f: c.f, view: [lerp(52, 30.5, u), lerp(32, 30.6, u), lerp(1.05, 5.5, u * u)], route: R.end, empire: 1, labels: [{ text: "EGYPT", at: [30.4, 28.4], t: c.t - 6, dy: 0 }] }; },
-    cues: () => [{ f: 0, kind: "whoosh" }] });
-  const sMark = w("Earlier,", sEgypt);
-  add({ id: "mark_city", from: sMark, scene: 6, set: "alexandria", light: "day", amb: "sea", xin: 10, state: () => ({ build: 0, light: 0, lib: 0 }),
-    cams: () => [K(0, [6, 2.4, 22], [0, 1.4, 8], 44), K(4, [4, 2, 18], [0, 1.5, 8], 40, { dur: 90 })],
-    actors: (c) => [...ch("alex_king", [0, 0, 10], c, { expr: "determined", wave: st(c, w("marked", sMark)) > 0 ? 1 : undefined, facing: -1 }), ...ch("builder", [-2.2, 0, 11], c, { v: 0, expr: "neutral", facing: 1 }), ...ch("builder", [2.4, 0, 11.4], c, { v: 1, expr: "neutral", facing: -1 })],
-    over: (c, g, Wd, H) => { drawStamp(g, "331 BC", st(c, w("331 BC,", sMark)), 60, Wd, H); drawLabel(g, "ALEXANDRIA", st(c, w("city", sMark)), 70, Wd, H, 0.5, 0.18, { sub: "on the Mediterranean coast" }); },
-    cues: (c) => [{ f: c.w(w("331 BC,", sMark)), kind: "stamp" }, { f: c.w(w("city", sMark)), kind: "pop" }] });
-  const flourLines = (c: C, prog: number, eaten: number): CardDraw[] => {
-    const out: CardDraw[] = [];
-    for (let i = 0; i < 9; i++) {
-      const u = clamp01(prog * 9 - i), along = i < 5;
-      if (u <= 0) continue;
-      const len = 22 * u * (1 - eaten * (hash(i, 3) * 0.6 + 0.3));
-      out.push({ key: `flour|${Math.round(len * 4)}|${along}`, cw: 40, ch: 400, h: Math.max(0.1, len), pos: along ? [-12 + i * 6, 0.02, 14 - len / 2] as V3 : [-12 + len / 2, 0.02, 2 + (i - 5) * 6] as V3, flat: true, yaw: along ? 0 : Math.PI / 2, shadow: true, anchor: 0.5, lit: 0.6,
-        draw: (g) => { g.fillStyle = "#fbf6e8"; g.fillRect(8, 0, 24, 400); g.fillStyle = "rgba(255,255,255,0.8)"; g.fillRect(14, 0, 8, 400); } });
-    }
-    return out;
-  };
-  const sFlour = w("Legend", sMark);
-  add({ id: "flour", from: sFlour, scene: 6, set: "alexandria", light: "day", amb: "sea", state: () => ({ build: 0, light: 0, lib: 0 }),
-    cams: () => [K(0, [0, 18, 26], [0, 0, 6], 46), K(2, [2, 14, 22], [0, 0, 6], 44, { dur: 90 })],
-    actors: (c) => [...flourLines(c, u01(c, c.w(w("streets", sFlour)) - 10, c.d), 0), ...ch("builder", [-12 + 22 * u01(c, c.w(w("streets", sFlour)) - 10, c.d), 0, 14.6], c, { v: 0, view: "side", mode: "march", phase: walkPhase(c.f), expr: "neutral", prop: null }), ...propCard("sack", [-12 + 22 * u01(c, c.w(w("streets", sFlour)) - 10, c.d) + 0.5, 0.4, 14.8], c.f, { scale: 0.8 })],
-    over: (c, g, Wd, H) => { drawTag(g, "LEGEND SAYS", c.t - 2, 90, Wd, H); drawLabel(g, "BARLEY FLOUR", st(c, w("flour,", sFlour)), 50, Wd, H, 0.5, 0.2, { size: 44 }); },
-    cues: (c) => [{ f: c.w(w("streets", sFlour)) - 10, kind: "pour", dur: c.d - c.w(w("streets", sFlour)) + 10 }] });
-  const sBirds = w("and", w("flour,", sFlour));
-  add({ id: "birds", from: sBirds, scene: 6, set: "alexandria", light: "day", amb: "sea", state: () => ({ build: 0, light: 0, lib: 0 }),
-    cams: (c) => [K(0, [2, 9, 24], [0, 0.5, 8], 44), K(c.w(w("seers", sBirds)) - 6, [3, 1.7, 15], [0, 1.8, 10], 38, { dur: 22 })], kicks: (c) => [kick(c.w(w("feed", sBirds)), 0.06)],
-    actors: (c) => {
-      const eat = smooth(u01(c, c.w(w("ate", sBirds)), c.w(w("seers", sBirds)))), out = flourLines(c, 1, eat);
-      for (let i = 0; i < 12; i++) { const land = smooth(u01(c, 4 + i * 2, 30 + i * 2)), x = -12 + (i % 6) * 4.4 + hash(i, 1) * 2, z = 3 + Math.floor(i / 6) * 9; out.push(...propCard("bird", [x + (1 - land) * 6, lerp(10, 0.05, land), z], c.f, { phase: land < 1 ? (c.f / 5 + i * 0.3) % 1 : 0.25 })); }
-      const ts = c.w(w("seers", sBirds));
-      if (c.t > ts - 4) out.push(...ch("seer", [0, 0, 10], c, { expr: st(c, w("feed", sBirds)) > 0 ? "laugh" : "proud", wave: 1 }), ...(st(c, w("feed", sBirds)) > 0 ? [fxCard("sparkle", [0, 2.6, 10.1], 2, (st(c, w("feed", sBirds)) / 24) % 1, 2)] : []));
-      return out;
-    },
-    cues: (c) => [{ f: 4, kind: "birds", dur: 50 }, { f: c.w(w("feed", sBirds)), kind: "sparkle" }] });
-  const sGrow = w("Alexandria", sBirds);
-  add({ id: "grow", from: sGrow, scene: 6, set: "alexandria", light: "golden", amb: "sea", xin: 6,
-    state: (c) => ({ build: smooth(u01(c, 4, c.w(w("famous", sGrow)))), light: smooth(u01(c, c.w(w("lighthouse", sGrow)) - 16, c.w(w("lighthouse", sGrow)) + 10)), lib: smooth(u01(c, c.w(w("library,", sGrow)) - 14, c.w(w("library,", sGrow)) + 10)) }),
-    cams: (c) => [K(0, [-10, 40, 74], [0, 0, -10], 50), K(4, [-4, 30, 60], [6, 0, -24], 50, { dur: c.w(w("lighthouse", sGrow)) - 4 }), K(c.w(w("library,", sGrow)) - 16, [-6, 14, 40], [-28, 3, 10], 46, { dur: 22 })],
-    shadowSize: 90,
-    over: (c, g, Wd, H) => { drawLabel(g, "LIGHTHOUSE", st(c, w("lighthouse", sGrow)), 70, Wd, H, 0.7, 0.18, { sub: "Pharos" }); drawLabel(g, "LIBRARY", st(c, w("library,", sGrow)), 70, Wd, H, 0.3, 0.18); drawTag(g, "BUILT BY THE PTOLEMIES", st(c, w("both", sGrow)), 70, Wd, H); },
-    cues: (c) => [{ f: 4, kind: "build", dur: c.w(w("famous", sGrow)) - 4 }, { f: c.w(w("lighthouse", sGrow)), kind: "pop" }, { f: c.w(w("library,", sGrow)), kind: "pop" }, { f: c.w(w("both", sGrow)), kind: "pop", gain: 0.5 }] });
+  // ===================== S11 — FINAL EXILE AND DEATH =====================
+  const sHel = w("This", 749);
+  add({ id: "helena_map", from: sHel, scene: 11, amb: "map", xin: 12,
+    map: (c) => ({ f: c.f, view: [-2, 16, 0.33], realms: [fr(0.5)], routes: [{ pts: ROUTE_HELENA, u: smooth(u01(c, 0, c.w(w("Helena,", sHel)) + 20)) }], token: { at: partial2(ROUTE_HELENA, smooth(u01(c, 0, c.w(w("Helena,", sHel)) + 20))), who: "nap_coat" },
+      labels: [{ text: "SAINT HELENA", at: P.StHelena, t: st(c, w("Helena,", sHel)), size: 40 }, { text: "≈2,000 km FROM AFRICA", at: [-5.7, -21], t: st(c, w("2,000", sHel)), size: 26, dy: 0 }] }),
+    cues: (c) => [{ f: 0, kind: "waves", dur: c.d }, { f: c.w(w("Helena,", sHel)), kind: "pop" }] });
+  const sMem = w("He", 770);
+  add({ id: "memoirs", from: sMem, scene: 11, set: "room", v: 1, light: "overcast", amb: "sea", xin: 10,
+    cams: () => [K(0, [0.8, 1.6, 4], [0, 1.4, -2], 38, { creep: 0.003 })], dof: { cInf: 10 },
+    actors: (c) => [...ch("nap_coat", [-1.2, 0, -2.2], c, { expr: "sad", wave: Math.sin(c.t / 10) > 0 ? 0.7 : 0.4, facing: 1 }), ...propCard("desk", [0.6, 0, -2.4], c.f), ...ch("scholar", [1.4, 0, -1.6], c, { mode: "sit", expr: "neutral", facing: -1 })],
+    cues: (c) => [{ f: 0, kind: "scribble", dur: c.d, gain: 0.6 }] });
+  const sDie = w("On", 778);
+  add({ id: "death", from: sDie, scene: 11, set: "room", v: 1, light: "dusk", amb: "sea", xin: 12,
+    cams: () => [K(0, [0.5, 1.4, 3.4], [0.6, 0.9, -2.4], 36, { creep: 0.002 })], dof: { cInf: 12 },
+    actors: (c) => [...propCard("chair", [0.6, 0, -2.6], c.f), ...propCard("bicorne_prop", [0.6, 0.62, -2.5], c.f, { z: 2 })],
+    fade: (c) => 0.4 * smooth(u01(c, c.w(w("died,", sDie)), c.w(w("died,", sDie)) + 30)),
+    over: (c, g, Wd, H) => { drawStamp(g, "MAY 5, 1821", st(c, w("fifth,", sDie)), 70, Wd, H); drawLabel(g, "1769 – 1821", st(c, w("51", sDie)), 999, Wd, H, 0.5, 0.18, { sub: "aged 51" }); },
+    cues: (c) => [{ f: c.w(w("fifth,", sDie)), kind: "stamp", gain: 0.6 }, { f: c.w(w("died,", sDie)), kind: "bell" }] });
+  const s1840 = w("Nineteen", 793);
+  add({ id: "return_1840", from: s1840, scene: 11, set: "paris", light: "snow", amb: "crowd_murmur", xin: 12, weather: "snowlight",
+    cams: () => [K(0, [6, 3, 16], [0, 2, -10], 46), K(2, [4, 2.6, 12], [0, 2.4, -10], 44, { dur: 140 })],
+    actors: (c) => [...propCard("coffin_cart", [-3 + 0.04 * c.t, 0, -2], c.f, { scale: 1.1 }), ...propCard("eagle", [-1 + 0.04 * c.t, 0, -2.6], c.f), ...crowd("townsman", 18, -9, 9, 2, 8, c, { expr: "sad" }, 21), ...crowd("guard", 6, -9, 9, -7, -5, c, { expr: "sad" }, 23)],
+    over: (c, g, Wd, H) => drawLabel(g, "PARIS, 1840", st(c, w("Paris,", s1840)), 999, Wd, H, 0.5, 0.18, { sub: "to Les Invalides" }),
+    cues: (c) => [{ f: c.w(w("Paris,", s1840)), kind: "drum_hit", gain: 0.5 }] });
 
-  // ===================== S7 — HIS DEATH =====================
-  const sNever = w("Alexander", 620);
-  add({ id: "never_saw", from: sNever, scene: 7, set: "alexandria", light: "dusk", amb: "sea", state: () => ({ build: 1, light: 1, lib: 1 }), xin: 10,
-    cams: () => [K(0, [-4, 2.2, -19], [2, 3, 6], 44)],
-    actors: (c) => ch("alex_king", [-1 - 0.05 * c.t, 0, -13], c, { view: "side", mode: "march", phase: walkPhase(c.f, 1.2), expr: "sad" }, { flip: true }) });
-  const sIll = w("In", sNever);
-  add({ id: "babylon_night", from: sIll, scene: 7, set: "babylon", light: "night", amb: "night", xin: 12,
-    cams: () => [K(0, [0, 3, 34], [0, 8, 0], 46), K(2, [0, 2.6, 28], [0, 8, 0], 44, { dur: 80 })],
-    over: (c, g, Wd, H) => { drawStamp(g, "323 BC", st(c, w("323 BC,", sIll)), 60, Wd, H); drawLabel(g, "BABYLON", st(c, w("Babylon,", sIll)), 50, Wd, H, 0.5, 0.18, { sub: "June 323 BC" }); },
-    cues: (c) => [{ f: c.w(w("323 BC,", sIll)), kind: "stamp", gain: 0.6 }] });
-  const bedB: V3 = [398.5, 0, -3.5];
-  const lampB: V3 = [400.4, 0, -3.9];
-  const room = (c: C, flame = 1, extra: CardDraw[] = []): CardDraw[] => [...propCard("bed", bedB, c.f), ...propCard("lamp", lampB, c.f), ...(flame > 0 ? [fxCard("flame", [lampB[0] + 0.15, 0.17, lampB[2] + 0.04], 0.22 * flame, (c.f / 10) % 1, 2), fxCard("glow", [lampB[0] + 0.15, 0.17, lampB[2] + 0.04], 1.4 * flame, 0, 2)] : []), ...extra];
-  const lampPts = (c: C, k = 1): PointL[] => [{ pos: [lampB[0], 1.3, lampB[2] + 0.6], color: "#ffb060", i: 6 * k * (0.92 + 0.08 * Math.sin(c.f * 0.5)), d: 14 }];
-  const sFever = w("he", w("Babylon,", sIll));
-  add({ id: "fever", from: sFever, scene: 7, set: "babylon", light: "lamp", amb: "night", xin: 8,
-    cams: () => [K(0, [401.5, 1.7, 3.5], [398.8, 0.9, -3.3], 38, { creep: 0.003 })], dof: { cInf: 10, focus: 6 },
-    actors: (c) => room(c, 1, [...ch("alex_sick", [bedB[0], 0.9, bedB[2]], c, { expr: "sick" }, { shadow: false }).map((d) => ({ ...d, roll: -Math.PI / 2, pos: [bedB[0] + 0.1, 0.92, bedB[2] + 0.08] as V3, anchor: 0.5, z: 1 })), ...propCard("pillow", [bedB[0] - 0.95, 0.66, bedB[2] + 0.1], c.f, { z: 2 }), ...ch("physician", [bedB[0] + 1.7, 0, bedB[2] + 1.2], c, { expr: "worried", facing: -1 })]),
-    points: (c) => lampPts(c), cues: (c) => [{ f: c.w(w("fever.", sFever)), kind: "drone_low" }] });
-  const sDead = w("Days", sFever);
-  add({ id: "lamp_out", from: sDead, scene: 7, set: "babylon", light: "lamp", amb: "night",
-    cams: () => [K(0, [lampB[0] + 1.3, 0.85, lampB[2] + 2.2], [lampB[0] + 0.1, 0.3, lampB[2]], 32, { creep: 0.002 })], dof: { cInf: 14, focus: 2.5 },
-    actors: (c) => { const td = c.w(w("dead,", sDead)), fl = c.t < td ? 1 : Math.max(0, 1 - (c.t - td) / 6); return room(c, fl, [...(c.t > td && c.t - td < 50 ? [fxCard("smoke", [lampB[0] + 0.15, 0.4 + (c.t - td) * 0.01, lampB[2] + 0.04], 0.8, (c.t - td) / 50, 3)] : [])]); },
-    points: (c) => lampPts(c, st(c, w("dead,", sDead)) < 0 ? 1 : Math.max(0.15, 1 - st(c, w("dead,", sDead)) / 6)),
-    over: (c, g, Wd, H) => drawLabel(g, "356 – 323 BC", st(c, w("thirty-two", sDead)), 80, Wd, H, 0.5, 0.18, { sub: "aged 32" }),
-    cues: (c) => [{ f: c.w(w("dead,", sDead)), kind: "blowout" }, { f: c.w(w("dead,", sDead)), kind: "bell" }] });
-  const sWhy = w("To", sDead);
-  add({ id: "mystery", from: sWhy, scene: 7, set: "babylon", light: "lamp", amb: "night",
-    cams: () => [K(0, [400, 1.7, 4.4], [400, 1.6, 0], 38, { creep: 0.003 })], dof: { cInf: 10, focus: 4.4 },
-    actors: (c) => [...ch("physician", [399, 0, 0], c, { expr: "worried", facing: 1, headTilt: 4 }), ...ch("general", [401, 0, 0.2], c, { v: 0, expr: "nervous", facing: -1 }), ...(st(c, w("knows", sWhy)) > 0 ? [fxCard("quest", [399, 2.5, 0], 0.7, st(c, w("knows", sWhy)) / 30, 1), fxCard("quest", [401.1, 2.6, 0.2], 0.7, Math.max(0, st(c, w("knows", sWhy)) - 6) / 30, 2)] : [])],
-    points: (c) => [{ pos: [400, 2.4, 2], color: "#ffb060", i: 2.5, d: 12 }], cues: (c) => [{ f: c.w(w("knows", sWhy)), kind: "pop" }, { f: c.w(w("knows", sWhy)) + 6, kind: "pop" }] });
-
-  // ===================== S8 — LEGACY =====================
-  const sHeir = w("He", 660);
-  add({ id: "no_heir", from: sHeir, scene: 8, set: "pella", light: "dusk", amb: "wind", xin: 10,
-    cams: () => [K(0, [0, 1.6, -4], [0, 1.8, -10.6], 36, { creep: 0.003 })], dof: { cInf: 10, focus: 6.6 },
-    actors: (c) => [...propCard("throne", [0, 1.55, -10.8], c.f), ...propCard("crown_fall", [0, 2.12, -10.6], c.f, { z: 1 })] });
-  const sStrong = w("Asked", sHeir);
-  add({ id: "strongest", from: sStrong, scene: 8, set: "pella", light: "dusk", amb: "wind",
-    cams: (c) => [K(0, [0, 1.8, -1], [0, 1.8, -9], 40), K(c.w(w("strongest.\"", sStrong)) - 4, [0, 1.8, -3.5], [0, 1.9, -9], 34, { dur: 10 })], kicks: (c) => [kick(c.w(w("strongest.\"", sStrong)), 0.1)],
-    actors: (c) => { const tS = st(c, w("strongest.\"", sStrong)); return [...propCard("throne", [0, 1.55, -10.8], c.f), ...[0, 1, 2].flatMap((k) => ch("general", [-2.4 + k * 2.4, 0, -7.4 + (k === 1 ? -0.4 : 0)], c, { v: k, seed: 60 + k, expr: tS > 0 ? "sly" : "neutral", facing: k === 0 ? 1 : k === 2 ? -1 : 0, look: tS > 0 ? (k === 0 ? 1 : -1) : 0 })),
-      ...(tS > 0 ? [0, 1, 2].map((k) => fxCard("bang", [-2.4 + k * 2.4, 2.6, -7.3], 0.6, (tS - k * 3) / 24, k)) : [])]; },
-    over: (c, g, Wd, H) => drawTag(g, "AS THE STORY GOES", c.t - 2, 70, Wd, H),
-    cues: (c) => [{ f: c.w(w("strongest.\"", sStrong)), kind: "sting" }] });
-  const sBreak = w("His", sStrong);
-  add({ id: "breakup", from: sBreak, scene: 8, xin: 8, amb: "map",
-    map: (c) => { const tb = c.w(w("broke", sBreak)); return { f: c.f, view: [48 + 2.5 * u01(c, 0, c.d), 32.5 - 0.6 * u01(c, 0, c.d), 1.05 + 0.08 * u01(c, 0, c.d)], full: 1, breakup: smooth(u01(c, tb, tb + 24)),
-      labels: [{ text: "PTOLEMIES", at: [30, 26], t: st(c, w("Ptolemies", sBreak)), sub: "Egypt", col: "#7a5a10", dy: 0 }, { text: "SELEUCIDS", at: [55, 33.5], t: st(c, w("Seleucids", sBreak)), sub: "Asia", col: "#1f4a7a", dy: 0 }, { text: "ANTIGONIDS", at: [22.2, 43.2], t: st(c, w("Antigonids", sBreak)), sub: "Macedonia", col: "#7a1f24", dy: 0 }] }; },
-    cues: (c) => [{ f: c.w(w("fought", sBreak)), kind: "clash", gain: 0.5 }, { f: c.w(w("broke", sBreak)), kind: "crack" }, ...["Ptolemies", "Seleucids", "Antigonids"].map((x) => ({ f: c.w(w(x, sBreak)), kind: "pop" }))] });
-  const sLeg = w("But", sBreak);
-  add({ id: "not_land", from: sLeg, scene: 8, amb: "map",
-    map: (c) => ({ f: c.f, view: [50.5 - 2.5 * u01(c, 0, c.d), 31.9 + 0.6 * u01(c, 0, c.d), 1.13 - 0.08 * u01(c, 0, c.d)], full: 1, breakup: 1 - 0.7 * smooth(u01(c, 0, c.d)) }) });
-  const sCult = w("Greek", sLeg);
-  add({ id: "culture", from: sCult, scene: 8, amb: "map",
-    map: (c) => ({ f: c.f, view: [48 + 4 * u01(c, 0, c.d), 32.5, 1.05], full: 0.3, culture: smooth(u01(c, 0, c.w(w("blending", sCult)))),
-      labels: [{ text: "HELLENISTIC AGE", at: [50, 26.5], t: st(c, w("Hellenistic", sCult)), size: 70, col: "#7a1f24", dy: 0 }, { text: "GREEK LANGUAGE · ART · IDEAS", at: [48, 44.5], t: c.t - 4, size: 34, dy: 0 }] }),
-    cues: (c) => [{ f: 0, kind: "swell" }, { f: c.w(w("Hellenistic", sCult)), kind: "title_hit" }] });
-  const s13 = w("He", sCult);
-  add({ id: "thirteen", from: s13, scene: 8, set: "pella", light: "golden", amb: "wind", xin: 8,
-    cams: () => [K(0, [0.3, 1.7, 6], [0, 1.95, 2], 34, { creep: 0.003 })], dof: { cInf: 12, focus: 6 },
-    actors: (c) => ch("alex_king", [0, 0, 2], c, { expr: "proud" }),
-    over: (c, g, Wd, H) => drawStamp(g, "336 – 323 BC", st(c, w("thirteen", s13)), 60, Wd, H, [0.32, 0.16]),
-    cues: (c) => [{ f: c.w(w("thirteen", s13)), kind: "stamp" }] });
-  const sEnd = w("People", s13);
-  add({ id: "finale", from: sEnd, scene: 8, xin: 10, amb: "map",
+  // ===================== S12 — LEGACY =====================
+  const sCost = w("His", 809);
+  add({ id: "cost", from: sCost, scene: 12, amb: "map", xin: 10,
+    map: (c) => ({ f: c.f, view: [14, 49, 1.0], realms: [{ polys: EMPIRE_1812, col: "#27408b", alpha: 0.35 }], dim: 0.3,
+      battles: [P.Lodi, P.Arcole, P.Rivoli, P.Pyramids, P.Austerlitz, P.Jena, P.Friedland, P.Borodino, P.Leipzig, P.Waterloo, [-3.7, 40.4] as LL, [-8.6, 41.1] as LL].map((at, k) => ({ at, t: c.t - k * 3 })) }),
+    cues: (c) => [{ f: 0, kind: "drone_low" }] });
+  const sOut = w("But", 815);
+  add({ id: "outlived", from: sOut, scene: 12, amb: "map", xin: 8,
+    map: (c) => ({ f: c.f, view: [12, 48, 1.1], realms: [fr(0.6)], glows: [[2, 47], [5, 51], [12, 43], [-4, 40], [10, 51], [20, 52], [5.5, 52.3], [8, 47]].map((at, k) => ({ at: at as LL, r: 120, t: c.t - k * 5, col: [255, 214, 120] as [number, number, number] })),
+      labels: [{ text: "LAWS", at: [-2, 44], t: st(c, w("laws,", sOut)), size: 34, dy: 0 }, { text: "SCHOOLS", at: [14, 53.5], t: st(c, w("schools,", sOut)), size: 34, dy: 0 }, { text: "THE METRIC SYSTEM", at: [16, 44.5], t: st(c, w("metric", sOut)), size: 34, dy: 0 }] }),
+    cues: (c) => [{ f: c.w(w("laws,", sOut)), kind: "pop" }, { f: c.w(w("schools,", sOut)), kind: "pop" }, { f: c.w(w("metric", sOut)), kind: "pop" }, { f: 0, kind: "swell" }] });
+  const sQ = w("So,", 832);
+  add({ id: "question", from: sQ, scene: 12, amb: "map", xin: 10,
     paint: (c, g, Wd, H) => {
-      const u = smooth(u01(c, 0, c.d + 30));
-      g.save(); g.filter = `blur(${Math.round(4 + 3 * u)}px)`;
-      drawMap(g, { f: c.f, view: [48, 32.5, 1.25 - 0.15 * u], full: 1, culture: 1 }, Wd, H);
-      g.restore();
-      const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "rgba(255,190,110,0.18)"); gr.addColorStop(1, "rgba(60,20,40,0.35)"); g.fillStyle = gr; g.fillRect(0, 0, Wd, H);
-      const hh = H * (0.95 - 0.12 * u), ww = hh * 0.6, x = Wd / 2 - ww / 2, y = H * 1.02 - hh;
-      const cv = HERO(); g.drawImage(cv, x, y, ww, hh);
-      for (let i = 0; i < 30; i++) { const px = (hash(i, 1) * Wd + c.f * (0.3 + hash(i, 2))) % Wd, py = (hash(i, 3) * H - c.f * 0.4 * hash(i, 4) + H) % H; g.fillStyle = `rgba(255,235,180,${0.25 + 0.4 * hash(i, 5)})`; g.beginPath(); g.arc(px, py, 2 + 3 * hash(i, 6), 0, 6.283); g.fill(); }
-      if (c.t > c.w(w("years.", sEnd)) + 8) { const a = clamp01((c.t - c.w(w("years.", sEnd)) - 8) / 14); g.globalAlpha = a; drawLabel(g, "ALEXANDER THE GREAT", 30, 999, Wd, H, 0.5, 0.12, { size: 56, sub: "356 – 323 BC" }); g.globalAlpha = 1; }
+      const u = smooth(u01(c, 0, c.d + 40));
+      g.save(); g.filter = `blur(${Math.round(4 + 3 * u)}px)`; drawMap(g, { f: c.f, view: [12, 49, 1.25 - 0.2 * u], realms: [{ polys: CLIENTS_1812, col: "#7a8fd0", alpha: 0.5 }, { polys: EMPIRE_1812, col: "#27408b", alpha: 0.7 }] }, Wd, H); g.restore();
+      const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "rgba(255,190,110,0.15)"); gr.addColorStop(1, "rgba(30,20,50,0.4)"); g.fillStyle = gr; g.fillRect(0, 0, Wd, H);
+      const hh = H * (0.98 - 0.16 * u), ww = hh * 0.6; g.drawImage(HERO(), Wd / 2 - ww / 2, H * 1.02 - hh, ww, hh);
+      const tb = st(c, w("brilliant", sQ)), ta = st(c, w("ambition", sQ));
+      drawLabel(g, "BRILLIANT LEADER?", tb, 999, Wd, H, 0.2, 0.42, { size: 44, col: "#27408b" });
+      drawLabel(g, "FATAL AMBITION?", ta, 999, Wd, H, 0.8, 0.42, { size: 44, col: "#8a1f24" });
+      if (c.t > c.w(w("weakness?", sQ)) + 14) { g.globalAlpha = clamp01((c.t - c.w(w("weakness?", sQ)) - 14) / 12); drawLabel(g, "NAPOLEON BONAPARTE", 30, 999, Wd, H, 0.5, 0.12, { size: 54, sub: "1769 – 1821" }); g.globalAlpha = 1; }
     },
-    cues: (c) => [{ f: 0, kind: "swell" }, { f: c.w(w("years.", sEnd)) + 8, kind: "title_hit", gain: 0.7 }] });
+    cues: (c) => [{ f: 0, kind: "swell" }, { f: c.w(w("brilliant", sQ)), kind: "pop" }, { f: c.w(w("ambition", sQ)), kind: "pop" }, { f: c.w(w("weakness?", sQ)) + 14, kind: "title_hit", gain: 0.7 }] });
 
-  // ---- resolve frames
   const lastE = W[W.length - 1].e;
-  const total = Math.ceil((lastE + 1.0) * FPS);
+  const total = Math.ceil((lastE + 1.6) * FPS);
   S.forEach((s, i) => { s.a = i === 0 ? 0 : Math.max(0, frameOfWord(s.from) - 2); });
   S.forEach((s, i) => { s.b = i + 1 < S.length ? S[i + 1].a! : total; });
   return { shots: S, total };
 };
 
+/** Moscow burning behind its wall: flames + smoke columns, grown by g (0..1) */
+const fires = (c: C, g: number): CardDraw[] => { const out: CardDraw[] = []; if (g <= 0) return out;
+  for (let k = 0; k < 7; k++) { const x = -60 + k * 20, z = -66 - (k % 3) * 8, s = (10 + (k % 3) * 4) * Math.min(1, g * (1 + k * 0.15)); out.push(fxCard("flame", [x, 6 + s * 0.45, z], s, ((c.f / 10) + k * 0.27) % 1, k), fxCard("smoke", [x, 10 + s, z - 4], s * 2, ((c.f / 90) + k * 0.2) % 1, k + 2)); }
+  return out; };
+const partial2 = (pts: LL[], u: number): LL => { const i = Math.min(pts.length - 2, Math.floor(u * (pts.length - 1))), k = u * (pts.length - 1) - i; return [lerp(pts[i][0], pts[i + 1][0], k), lerp(pts[i][1], pts[i + 1][1], k)]; };
 let HERO_C: HTMLCanvasElement | null = null;
 const HERO = () => {
   if (HERO_C) return HERO_C;
   HERO_C = document.createElement("canvas"); HERO_C.width = 1200; HERO_C.height = 2000;
-  const g = HERO_C.getContext("2d")!; g.scale(2, 2); bodyFront(new Pen(g), CAST.alex_king, { expr: "proud", mode: "stand", seed: 5, light: -2.1 });
+  const g = HERO_C.getContext("2d")!; g.scale(2, 2); bodyFront(new Pen(g), CAST.nap, { expr: "sly", mode: "stand", seed: 5, vest: true });
   return HERO_C;
 };
+export { drawSnow, drawRain };

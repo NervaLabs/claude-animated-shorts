@@ -22,7 +22,7 @@ export const CAST: Record<Who, Outfit> = {
   fr_soldier: { jacket: "#27408b", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: "#c0272d", belt: WHITE, lapels: WHITE, breeches: WHITE, rifle: true },
   guard: { jacket: "#1f2d5a", pants: "#2a2a3a", boots: BOOT, hat: "bearskin", tuft: "#c0272d", belt: WHITE, lapels: WHITE, breeches: WHITE, rifle: true, moustache: "#2a1d18" },
   redcoat: { jacket: "#c0272d", pants: "#5a5a64", boots: BOOT, hat: "shako", tuft: WHITE, belt: WHITE, breeches: "#5a5a64", rifle: true },
-  wellington: { jacket: "#2a3550", pants: "#2a2a3a", boots: BOOT, hat: "bicorne", breeches: "#e9dfc4", cloak: "#3a4560", skin: "#f3d6bc" },
+  wellington: { jacket: "#2a3550", pants: "#2a2a3a", boots: BOOT, hat: "bicorne", cockade: "#1c1a22", breeches: "#e9dfc4", cloak: "#3a4560", skin: "#f3d6bc" },
   blucher: { jacket: "#1f2a4a", pants: "#2a2a3a", boots: BOOT, hat: "cap", cap: "#1c1a22", moustache: "#ece8e0", lapels: "#b8312f", breeches: "#8a8c94", build: "stout", skin: "#efcbb0" },
   prussian: { jacket: "#1f2a4a", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: WHITE, belt: WHITE, breeches: "#8a8c94", rifle: true },
   russian: { jacket: "#2f5a3a", pants: "#2a2a3a", boots: BOOT, hat: "shako", tuft: "#2f5a3a", belt: WHITE, breeches: "#e8e4dc", rifle: true },
@@ -44,6 +44,7 @@ export const variant = (who: Who, v: number): Outfit => {
   if (who === "townsman") { const t = townsfolk(v); Object.assign(o, t); }
   if (who === "cadet") { o.hair = ["#7a5a3a", "#c9a46a", "#3a2a20", "#a8552a"][v % 4]; o.skin = SKINS[v % 3]; }
   if (who === "sans") { o.cap = v % 3 === 2 ? "#3a3a46" : "#c0272d"; o.jacket = ["#8a5a3a", "#5d7a3a", "#6a4a7a"][v % 3]; o.skin = SKINS[v % 4]; }
+  if (who === "nap_crown" && v === 1) o.crown = undefined; // before the crowning: bare head
   if (who === "mamluk") { o.dress = o.jacket = ["#c2563a", "#2f8a6a", "#d9a441", "#7b5ac9"][v % 4]; o.cap = ["#f4f0e6", "#e2b64a", "#c0272d"][v % 3]; }
   return o;
 };
@@ -329,7 +330,7 @@ const drawProp = (g: CanvasRenderingContext2D, kind: PropKind, ph: number, an: n
     }
     case "rosetta": p.poly([[60, 120], [200, 40], [440, 70], [460, 620], [40, 620]], "#4a4650", 9); for (let i = 0; i < 18; i++) p.stroke([[90, 140 + i * 26], [410 - (i % 4) * 12, 140 + i * 26]], 4, i < 5 ? "#a8a4b0" : i < 11 ? "#8a8690" : "#9a96a2"); break;
     case "sphinx": p.poly([[80, 760], [80, 560], [300, 470], [900, 470], [1000, 380], [1000, 200], [1080, 120], [1220, 130], [1280, 220], [1290, 520], [1340, 760]], "#d9b77a", 10); p.poly([[1020, 220], [1000, 420], [1060, 420], [1080, 260]], "#c9a46a", 6); p.ell(1200, 260, 12, 10, INK, 0); p.stroke([[1170, 330], [1230, 330]], 7); break;
-    case "book": p.poly([[40, 60], [460, 40], [470, 330], [50, 350]], "#27408b", 9); p.band([[60, 70], [70, 340]], "#e2b64a", 18, 4); g.font = "900 54px Cinzel, serif"; g.fillStyle = "#e2b64a"; g.textAlign = "center"; g.fillText("CODE", 270, 170); g.fillText("CIVIL", 270, 245); break;
+    case "book": p.poly([[40, 60], [460, 40], [470, 330], [50, 350]], "#27408b", 9); p.band([[60, 70], [70, 340]], "#e2b64a", 18, 4); g.font = "900 54px Cinzel, serif"; g.fillStyle = "#e2b64a"; g.textAlign = "center"; const tt = an > 0.75 ? ["MATHS", ""] : an > 0.25 ? ["HISTORY", ""] : ["CODE", "CIVIL"]; g.fillText(tt[0], 270, tt[1] ? 170 : 210); if (tt[1]) g.fillText(tt[1], 270, 245); break;
     case "painting": { p.poly([[20, 20], [1180, 20], [1180, 780], [20, 780]], "#c9963f", 14); p.poly([[70, 70], [1130, 70], [1130, 730], [70, 730]], "#6a3a2a", 6);
       for (let i = 0; i < 14; i++) { const x = 130 + i * 72, y = 470 + (i % 3) * 20; p.ell(x, y, 26, 30, "#f0d0b0", 4); p.poly([[x - 30, y + 30], [x + 30, y + 30], [x + 36, y + 200], [x - 36, y + 200]], ["#a3182a", "#f6f2ea", "#27408b", "#2a2a30"][i % 4], 4); }
       p.ell(600, 340, 30, 34, "#f0d0b0", 4); p.poly([[560, 380], [640, 380], [660, 600], [540, 600]], "#a3182a", 4); p.ell(600, 300, 34, 12, "#e2b64a", 3); break; }

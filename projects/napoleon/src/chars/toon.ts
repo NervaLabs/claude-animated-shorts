@@ -20,7 +20,7 @@ export type Outfit = {
   build?: Build;
   // ancient cast (our additions)
   beard?: string; beardLong?: boolean; cloak?: string; skirt?: string; shield?: string; shieldKind?: "round" | "wicker"; spear?: boolean;
-  scarEye?: boolean; plume?: string; crown?: "wreath" | "diadem" | "gold"; helmet?: string; robeTrim?: string;
+  scarEye?: boolean; plume?: string; crown?: "wreath" | "diadem" | "gold"; cockade?: string; helmet?: string; robeTrim?: string;
   // Napoleonic additions
   breeches?: string; tuft?: string; lapels?: string; epaulettes?: string; ermine?: boolean; forelock?: boolean;
 };
@@ -476,13 +476,13 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
     const col = "#1c1a22", yb = crown + 0.3 * HH;
     if (side) {
       const pts = R(ellPts(cx - 2 * u, yb, 44 * u, 0.42 * HH, 180, 360)); p.shadedFill(pts, col, "#0e0d12", light, 44 * u, 0.4); p.poly(pts, null, ow);
-      const [kx, ky] = R([[cx + 20 * u, yb - 0.12 * HH]])[0]; p.ell(kx, ky, 7 * u, 7 * u, "#c8283a", 1.5 * u); p.ell(kx, ky, 4.6 * u, 4.6 * u, "#f4f1ea", 0); p.ell(kx, ky, 2.4 * u, 2.4 * u, "#27408b", 0);
+      const [kx, ky] = R([[cx + 20 * u, yb - 0.12 * HH]])[0]; if (o.cockade) p.ell(kx, ky, 7 * u, 7 * u, o.cockade, 1.5 * u); else { p.ell(kx, ky, 7 * u, 7 * u, "#c8283a", 1.5 * u); p.ell(kx, ky, 4.6 * u, 4.6 * u, "#f4f1ea", 0); p.ell(kx, ky, 2.4 * u, 2.4 * u, "#27408b", 0); }
     } else {
       const pts = R([[cx - 82 * u, yb + 0.02 * HH], [cx - 62 * u, crown + 0.02 * HH], [cx - 30 * u, crown - 0.14 * HH], [cx, crown - 0.2 * HH], [cx + 30 * u, crown - 0.14 * HH], [cx + 62 * u, crown + 0.02 * HH], [cx + 82 * u, yb + 0.02 * HH], [cx + 40 * u, yb - 0.03 * HH], [cx, yb - 0.01 * HH], [cx - 40 * u, yb - 0.03 * HH]]);
       p.shadedFill(pts, col, "#0e0d12", light, 70 * u, 0.4); p.poly(pts, null, ow);
       p.stroke(R([[cx - 74 * u, yb - 0.02 * HH], [cx - 30 * u, crown - 0.06 * HH], [cx + 30 * u, crown - 0.06 * HH], [cx + 74 * u, yb - 0.02 * HH]]), 1.6 * u, "#3a3644");
       const s2 = facing || 1, [kx, ky] = R([[cx + s2 * 34 * u, crown + 0.06 * HH]])[0];
-      p.ell(kx, ky, 9 * u, 9 * u, "#c8283a", 1.8 * u); p.ell(kx, ky, 6 * u, 6 * u, "#f4f1ea", 0); p.ell(kx, ky, 3.2 * u, 3.2 * u, "#27408b", 0);
+      if (o.cockade) p.ell(kx, ky, 9 * u, 9 * u, o.cockade, 1.8 * u); else { p.ell(kx, ky, 9 * u, 9 * u, "#c8283a", 1.8 * u); p.ell(kx, ky, 6 * u, 6 * u, "#f4f1ea", 0); p.ell(kx, ky, 3.2 * u, 3.2 * u, "#27408b", 0); }
     }
   } else if (o.hat === "bearskin") {
     const col = "#17151b", yb = crown + 0.3 * HH, pts = R(ellPts(cx, yb - 0.42 * HH, 52 * u, 0.62 * HH, 180, 360).concat([[cx + 50 * u, yb], [cx - 50 * u, yb]]));

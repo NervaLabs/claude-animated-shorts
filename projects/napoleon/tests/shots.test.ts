@@ -15,13 +15,13 @@ test("shots tile the video with no gaps or overlaps", () => {
   assert.ok(total >= Math.ceil(words()[words().length - 1].e * 30) + 25);
 });
 test("shot count and lengths", () => {
-  assert.ok(shots.length >= 60 && shots.length <= 95, String(shots.length));
+  assert.ok(shots.length >= 60 && shots.length <= 110, String(shots.length));
   for (const s of shots) { const d = s.b! - s.a!; assert.ok(d >= 15, `${s.id} too short: ${d}`); assert.ok(d <= 520, `${s.id} too long: ${d}`); }
 });
 test("scene boundaries land on their first words", () => {
   const first = new Map<number, string>();
   for (const s of shots) if (!first.has(s.scene)) first.set(s.scene, words()[s.from].cap);
-  assert.deepEqual([...first.entries()].sort((a, b) => a[0] - b[0]).map((e) => e[1]), ["In", "His", "Then,", "The", "Babylon,", "Along", "Alexander", "He"]);
+  assert.deepEqual([...first.entries()].sort((a, b) => a[0] - b[0]).map((e) => e[1]), ["One", "He", "Then,", "In", "In", "So", "Exactly", "But", "Now", "Ten", "This", "His"]);
 });
 test("every 3D shot has camera keys; every cue is inside the video", () => {
   for (const s of shots) {
