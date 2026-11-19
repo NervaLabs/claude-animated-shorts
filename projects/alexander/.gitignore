@@ -1,0 +1,8 @@
+node_modules/
+out/
+dist/
+bench/*.js
+bench/*.jpg
+voice/*.wav
+voice/*.mp3
+!voice/take.mp3
