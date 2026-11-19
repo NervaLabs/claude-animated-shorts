@@ -17,7 +17,7 @@ export const LIGHTS: Record<Light, LightPreset> = {
     sun: "#ffcf96", sunI: 2.1, sunDir: [0.7, 0.32, -0.45], card: "#ffe6cc", cardMin: 0.95, grade: G(0.03, 1.04, 1.0, 1.04, 0.2, [1.02, 1, 0.97]), glow: 0.6 },
   dawn: { skyTop: "#6f7fcf", skyHor: "#ffb7a6", fog: "#dcb4bc", fogNear: 50, fogFar: 900, hemiSky: "#ccc6f4", hemiGround: "#977a86", hemiI: 1.9,
     sun: "#ffd2b0", sunI: 1.8, sunDir: [-0.75, 0.25, 0.4], card: "#ffe9e4", cardMin: 0.95, grade: G(0.03, 1.04, 1.0, 1.04, 0.22), glow: 0.6 },
-  dusk: { skyTop: "#3b3f8f", skyHor: "#e98f7c", fog: "#a8809f", fogNear: 40, fogFar: 800, hemiSky: "#a7a2e6", hemiGround: "#76607a", hemiI: 1.8,
+  dusk: { skyTop: "#3b3f8f", skyHor: "#e98f7c", fog: "#a8809f", fogNear: 40, fogFar: 800, hemiSky: "#b0abec", hemiGround: "#84708a", hemiI: 2.3,
     sun: "#ff9f74", sunI: 1.5, sunDir: [0.8, 0.18, -0.3], card: "#f0d0d8", cardMin: 0.9, grade: G(0.03, 0.98, 1.0, 1.06, 0.28), glow: 0.8 },
   night: { skyTop: "#232a7a", skyHor: "#7d76d8", fog: "#877aea", fogNear: 40, fogFar: 700, hemiSky: "#a29ef2", hemiGround: "#5a4a8a", hemiI: 2.3,
     sun: "#c4bff5", sunI: 1.6, sunDir: [-0.3, 0.8, -0.5], card: "#d6d2f8", cardMin: 0.85, grade: G(0.04, 1.02, 1.05, 1.1, 0.28), glow: 1.0, moon: true, stars: true },

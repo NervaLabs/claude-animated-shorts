@@ -137,12 +137,13 @@ const drawFx = (g: CanvasRenderingContext2D, kind: FxKind, t: number, s: number)
 
 // ---------------- props (side view, facing screen-right unless flipped) ----------------
 type PropKind = "horse" | "horse_rear" | "chariot" | "elephant" | "ship" | "bird" | "scroll" | "dagger" | "flag_mac" | "flag_per" | "torch" | "wreath"
-  | "token_m" | "token_p" | "geom" | "pillow" | "bed" | "lamp" | "crown_fall" | "tablet" | "sack" | "brazier" | "spear_beach";
+  | "token_m" | "token_p" | "geom" | "pillow" | "bed" | "lamp" | "crown_fall" | "tablet" | "sack" | "brazier" | "spear_beach" | "cradle" | "horse_shadow" | "throne";
 export const PROP_SIZE: Record<PropKind, [number, number, number]> = { // canvas w, h, metres tall
   horse: [1100, 900, 2.3], horse_rear: [1100, 1000, 2.6], chariot: [1400, 900, 2.0], elephant: [1300, 1100, 3.6], ship: [1600, 1200, 9], bird: [300, 200, 0.45],
   scroll: [500, 300, 0.5], dagger: [300, 120, 0.35], flag_mac: [500, 1400, 4.2], flag_per: [500, 1400, 4.2], torch: [200, 900, 2.2], wreath: [300, 200, 0.4],
   token_m: [120, 160, 0.16], token_p: [120, 160, 0.16], geom: [1000, 1000, 2.2], pillow: [600, 240, 0.4], bed: [1400, 600, 1.1], lamp: [300, 400, 0.55],
   crown_fall: [320, 220, 0.42], tablet: [400, 300, 0.4], sack: [300, 360, 0.6], brazier: [400, 600, 1.2], spear_beach: [200, 1200, 3.4],
+  cradle: [700, 500, 0.9], horse_shadow: [1100, 900, 2.3], throne: [500, 700, 1.6],
 };
 export const propCard = (kind: PropKind, pos: V3, f: number, o: { flip?: boolean; phase?: number; scale?: number; rider?: Who; roll?: number; flat?: boolean; yaw?: number; anim?: number; z?: number; alpha?: number } = {}): CardDraw[] => {
   const [cw, ch, hm] = PROP_SIZE[kind];
@@ -243,7 +244,11 @@ const drawProp = (g: CanvasRenderingContext2D, kind: PropKind, ph: number, an: n
       break;
     }
     case "torch": p.band([[100, 300], [100, 900]], "#6a4a2a", 26, 7); p.poly([[60, 280], [140, 280], [120, 330], [80, 330]], "#4a3a30", 7); break;
-    case "wreath": case "crown_fall": for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.1 + 0.8 * (i / 12)); p.ell(160 + Math.cos(a) * 120, 60 + Math.sin(a) * 110, 22, 11, "#e2b64a", 5, 0, 360, (a * 180) / Math.PI + 90); } break;
+    case "wreath": case "crown_fall": {
+      p.band([[150, 150], [120, 205]], "#c0353a", 14, 4); p.band([[170, 150], [205, 200]], "#c0353a", 14, 4);
+      for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2; p.ell(160 + Math.cos(a) * 118, 100 + Math.sin(a) * 48, 24, 12, i % 2 ? "#e2b64a" : "#f2cf5a", 5, 0, 360, (a * 180) / Math.PI + 90); }
+      break;
+    }
     case "token_m": case "token_p": p.ell(60, 120, 40, 22, kind === "token_m" ? "#b8312f" : "#5b2d8c", 6); p.poly([[30, 120], [60, 20], [90, 120]], kind === "token_m" ? "#b8312f" : "#5b2d8c", 6); break;
     case "geom": { // geometry drawn in sand: circle, triangle, construction lines, revealed by anim 0..1
       g.globalAlpha = 0.9; g.lineCap = "round";
@@ -260,6 +265,19 @@ const drawProp = (g: CanvasRenderingContext2D, kind: PropKind, ph: number, an: n
     case "sack": p.poly([[60, 340], [40, 160], [110, 90], [190, 90], [260, 160], [240, 340]], "#d8c8a0", 8); p.stroke([[110, 100], [190, 100]], 8, "#8a6a4a"); break;
     case "brazier": p.poly([[60, 120], [340, 120], [280, 260], [120, 260]], "#4a3a30", 8); p.band([[200, 260], [200, 560]], "#4a3a30", 20, 6); p.band([[110, 580], [290, 580]], "#4a3a30", 20, 6); break;
     case "spear_beach": p.band([[100, 1180], [100, 120]], "#9a6a3a", 26, 7); p.poly([[70, 150], [100, 20], [130, 150]], "#c9ccd2", 7); break;
+    case "cradle": { // wicker basket on rockers, swaddled baby with a tiny bean head, eyes per anim (0 shut, 1 open)
+      p.poly([[90, 260], [610, 260], [560, 430], [140, 430]], "#c9a06a", 9);
+      for (let i = 0; i < 7; i++) p.stroke([[150 + i * 68, 270], [170 + i * 62, 420]], 5, "#9a7448");
+      p.arc(350, 470, 300, 60, 200, 340, 12, "#8a5a34");
+      p.ell(330, 250, 190, 70, "#f3ead8", 8); // swaddle
+      p.ell(470, 205, 78, 72, "#ffe2c2", 9); // head
+      p.arc(470, 155, 70, 40, 200, 340, 9, "#b5793a");
+      if (an > 0.5) { p.dot(448, 205, 9); p.dot(494, 205, 9); } else { p.stroke([[436, 207], [458, 207]], 6); p.stroke([[482, 207], [504, 207]], 6); }
+      p.arc(472, 230, 14, 8, 20, 160, 5);
+      break;
+    }
+    case "horse_shadow": { g.globalAlpha = 0.55; const c2 = document.createElement("canvas"); c2.width = 1100; c2.height = 900; drawHorse(new Pen(c2.getContext("2d")!), ph, "#1a1226", 0); const cg = c2.getContext("2d")!; cg.globalCompositeOperation = "source-in"; cg.fillStyle = "#1a1226"; cg.fillRect(0, 0, 1100, 900); g.drawImage(c2, 0, 0); break; }
+    case "throne": p.poly([[100, 680], [400, 680], [400, 380], [100, 380]], "#8a5a34", 9); p.poly([[120, 380], [380, 380], [360, 60], [140, 60]], "#b8312f", 9); p.poly([[80, 400], [420, 400], [420, 350], [80, 350]], "#e2b64a", 8); break;
   }
 };
 

@@ -15,13 +15,14 @@ export const inkMaterial = (width = 3) => {
 export const inkEdges = (root: THREE.Object3D, angle = 32, width = 3) => {
   root.updateMatrixWorld(true);
   const pos: number[] = [];
-  const v = new THREE.Vector3();
+  const v = new THREE.Vector3(), inv = root.matrixWorld.clone().invert(), rel = new THREE.Matrix4();
   root.traverse((o) => {
     const m = o as THREE.Mesh;
     if (!m.isMesh || m.userData.ink === false || (m as any).isInstancedMesh) return;
     const eg = new THREE.EdgesGeometry(m.geometry, m.userData.inkAngle ?? angle);
     const a = eg.attributes.position as THREE.BufferAttribute;
-    for (let i = 0; i < a.count; i++) { v.fromBufferAttribute(a, i).applyMatrix4(m.matrixWorld); pos.push(v.x, v.y, v.z); }
+    rel.multiplyMatrices(inv, m.matrixWorld);
+    for (let i = 0; i < a.count; i++) { v.fromBufferAttribute(a, i).applyMatrix4(rel); pos.push(v.x, v.y, v.z); }
     eg.dispose();
   });
   if (!pos.length) return null;

@@ -14,7 +14,7 @@ export const buildAegae = (): SetHandle => {
   for (let i = 0; i < 9; i++) { prof.push(new THREE.Vector2(8 + i * 1.1, 0.5 + i * 0.5)); prof.push(new THREE.Vector2(8 + (i + 1) * 1.1, 0.5 + i * 0.5)); }
   prof.push(new THREE.Vector2(8 + 9 * 1.1, 0));
   const seats = new THREE.Mesh(new THREE.LatheGeometry(prof, 48, Math.PI / 2, Math.PI), lam({ map: rep(blocks("seat", "#d8ccb4", "#b0a288", 64, 32), 18, 2) }));
-  seats.rotation.y = Math.PI; seats.castShadow = seats.receiveShadow = true; seats.userData.inkAngle = 50; ink.add(seats);
+  seats.castShadow = seats.receiveShadow = true; seats.userData.inkAngle = 50; ink.add(seats);
   const orch = mesh(new THREE.CircleGeometry(7.8, 40), lam({ map: rep(paving(), 5, 5) }), [0, 0.03, 0], { parent: root, ink: false }); orch.rotation.x = -Math.PI / 2;
   // stage building with columns and a central gateway
   box(24, 5.5, 3, lam({ map: rep(blocks("skene", "#e2d6bc", "#bfae8e"), 5, 1) }), [0, 0, 12.5], ink);

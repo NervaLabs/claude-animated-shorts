@@ -9,7 +9,7 @@ import { rng } from "./paint.ts";
 
 export const buildAlexandria = (): SetHandle => {
   const root = new THREE.Group();
-  terrain(root, 900, 110, (x, z) => (z < -20 ? -1.4 : noise2(x, z, 9) * 0.7), sand(), 80);
+  terrain(root, 900, 110, (x, z) => (z < -20 ? -1.4 : noise2(x, z, 9) * 0.7 * Math.min(1, Math.max(0, (Math.hypot(x, z - 15) - 40) / 30))), sand(), 80);
   sea(root, 1200, [0, -0.5, -620], "#2b86b8", "#a8dcf0");
   terrain(root, 60, 20, (x, z) => Math.max(-1.5, 3.5 - Math.hypot(x - 40, z + 80) * 0.18), sand(), 6, [40, 0, -80]);
   // city blocks: grid of houses, each rises with state.build at its own seeded moment
@@ -19,7 +19,7 @@ export const buildAlexandria = (): SetHandle => {
     const x = i * 11 + (r() - 0.5) * 2, z = -8 + j * 11 + (r() - 0.5) * 2;
     if (x < -22 && x > -40 && z > 2 && z < 20) continue;
     const g = house(root, [x, 0, z], 6 + r() * 3, 6 + r() * 3, 3.5 + r() * 3, 0, ["#f2ead8", "#efe0c2", "#f6efe2"][(i + j + 9) % 3], ["#c0573a", "#c86a44"][(i + j + 9) % 2]);
-    blocksG.push({ g, t: 0.05 + 0.8 * r() * (0.4 + 0.6 * (j / 7)) });
+    inkEdges(g); blocksG.push({ g, t: 0.05 + 0.8 * r() * (0.4 + 0.6 * (j / 7)) });
   }
   // library colonnade
   const lib = temple(root, [-30, 0, 11], 14, 8, 7, 5, { roof: "#c0573a" });
@@ -31,7 +31,7 @@ export const buildAlexandria = (): SetHandle => {
   const fire = mesh(new THREE.SphereGeometry(2.2, 10, 8), lam({ color: "#ffb43a", emissive: "#ffb43a" }), [0, 61.5, 0], { parent: lh, ink: false, shadow: false });
   for (let i = 0; i < 14; i++) { const x = -60 + i * 9, z = 70 + (i % 2) * 8; tree(root, [x, 0, z], "palm", 1.1, i + 90); }
   mountains(root, [0, 0, 60], 420, 10, 20, 45, "#c8b8b0", 11, [0.4, Math.PI - 0.4]);
-  inkEdges(root);
+  inkEdges(lib); inkEdges(lh);
   return {
     root, anchors: { shore: [0, 0, -6], centre: [0, 0, 14], pharos: [40, 1.5, -80], library: [-30, 0, 11] },
     update: (_f, st) => {

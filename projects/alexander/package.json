@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --format=esm --outfile=dist/bundle.js --sourcemap",
+    "build": "esbuild src/main.ts --bundle --format=esm --loader:.woff2=dataurl --outfile=dist/bundle.js --log-level=warning",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --no-warnings --test tests/*.test.ts"
+    "test": "node --experimental-strip-types --no-warnings --test tests/*.test.ts",
+    "test:shots": "esbuild tests/shots.test.ts --bundle --platform=node --format=esm --loader:.woff2=dataurl --outfile=dist/tests/shots.test.mjs --log-level=warning && node --test dist/tests/shots.test.mjs"
   },
   "dependencies": {
     "d3-geo": "^3.1.1",
